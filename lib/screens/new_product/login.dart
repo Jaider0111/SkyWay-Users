@@ -66,7 +66,7 @@ class Login extends StatelessWidget {
                                           Expanded(
                                             child: Container(
                                               decoration: BoxDecoration(
-                                                  color: Colors.grey,
+                                                  color: Colors.grey[300],
                                                   borderRadius:
                                                       new BorderRadius.circular(
                                                           15)),
@@ -97,7 +97,7 @@ class Login extends StatelessWidget {
                                         Expanded(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                                color: Colors.grey,
+                                                color: Colors.grey[300],
                                                 borderRadius:
                                                     new BorderRadius.circular(
                                                         15)),
@@ -191,7 +191,7 @@ class Login extends StatelessWidget {
               ),
               Container(
                 child: Image(
-                  image: AssetImage("images/login2.png"),
+                  image: AssetImage("assets/images/login2.png"),
                   width: 800,
                   alignment: Alignment.topRight,
                 ),

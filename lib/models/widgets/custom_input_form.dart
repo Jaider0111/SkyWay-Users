@@ -12,6 +12,8 @@ class CustomInputText extends StatelessWidget {
   final int maxLines;
   final inputFormatters;
   final enabled;
+  final AutovalidateMode autovalidateMode;
+  final Function onEditingComplete;
 
   const CustomInputText({
     Key key,
@@ -25,6 +27,8 @@ class CustomInputText extends StatelessWidget {
     this.maxLines = 1,
     this.inputFormatters,
     this.enabled = true,
+    this.autovalidateMode = AutovalidateMode.onUserInteraction,
+    this.onEditingComplete,
   }) : super(key: key);
 
   @override
@@ -32,6 +36,7 @@ class CustomInputText extends StatelessWidget {
     return Column(
       children: [
         TextFormField(
+          autovalidateMode: autovalidateMode,
           enabled: enabled,
           inputFormatters: inputFormatters,
           maxLines: maxLines,
@@ -39,6 +44,7 @@ class CustomInputText extends StatelessWidget {
           validator: validator,
           onChanged: valueCallback,
           cursorColor: Theme.of(context).primaryColor,
+          style: Theme.of(context).textTheme.bodyText1,
           initialValue: initialValue,
           obscureText: !showText,
           decoration: InputDecoration(

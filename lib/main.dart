@@ -1,22 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:skyway_users/consts/routes.dart';
 import 'package:skyway_users/consts/themes.dart';
-import 'package:skyway_users/screens/new_product/add_product.dart';
+import 'package:skyway_users/providers/auth_provider.dart';
+import 'package:skyway_users/providers/products_provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  Bloc.observer = BlocObserver();
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(MultiBlocProvider(
+    providers: [
+      BlocProvider<ProductsProvider>(
+        create: (_) => ProductsProvider(),
+      ),
+      BlocProvider<AuthProvider>(
+        create: (_) => AuthProvider(),
+      ),
+    ],
+    child: MyApp(),
+  ));
+}
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final Future<FirebaseApp> _inicialization = Firebase.initializeApp();
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'SkyWay',
-      theme: defaultTheme,
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Skyway'),
-        ),
-        body: AddProductPage(),
-      ),
+    return FutureBuilder(
+      future: _inicialization,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) return ErrorWidget(snapshot.error);
+        if (snapshot.connectionState == ConnectionState.done)
+          return MaterialApp(
+            title: 'SkyWay',
+            routes: routes,
+            initialRoute: 'addProduct',
+            theme: defaultTheme,
+            debugShowCheckedModeBanner: false,
+          );
+        return ErrorWidget("Espera");
+      },
     );
   }
 }

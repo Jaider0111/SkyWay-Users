@@ -1,14 +1,16 @@
-import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagesView extends StatefulWidget {
   final BoxConstraints constraints;
   final bool isWeb;
-  final void Function(List<String>) updateImages;
+  final void Function(List<Uint8List>) updateImages;
 
   ImagesView({
     Key key,
@@ -22,36 +24,16 @@ class ImagesView extends StatefulWidget {
 }
 
 class _ImagesViewState extends State<ImagesView> {
-  List<String> images = [];
+  List<Uint8List> images = [];
   final picker = ImagePicker();
-
-  Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        images.add(pickedFile.path);
-        widget.updateImages(images);
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  void dropImage() {
-    setState(() {
-      images.removeAt(_currentImage.floor() - 1);
-      _imagePageController.jumpToPage(_currentImage.floor() - 1);
-      widget.updateImages(images);
-    });
-  }
+  double _currentImage = 0.0;
+  var _fileBytes;
+  List<Image> _imageWidgets = [];
 
   final _imagePageController = PageController(
-    viewportFraction: 0.4,
+    viewportFraction: 0.35,
     initialPage: 1,
   );
-
-  double _currentImage = 0.0;
 
   void _imageScrollLisener() {
     setState(() {
@@ -75,79 +57,69 @@ class _ImagesViewState extends State<ImagesView> {
 
   @override
   Widget build(BuildContext context) {
+    final constraints = widget.constraints;
     return SizedBox(
-      height: (widget.constraints.maxWidth > 800)
-          ? widget.constraints.maxHeight
-          : min(widget.constraints.maxWidth, widget.constraints.maxHeight),
-      width: (widget.constraints.maxWidth > 800)
-          ? widget.constraints.maxWidth / 2
-          : widget.constraints.maxWidth,
+      height: (constraints.maxWidth > 800.0)
+          ? constraints.maxHeight
+          : min(constraints.maxWidth, constraints.maxHeight),
+      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth,
       child: Card(
-        color: Colors.orange,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40)),
-        margin: EdgeInsets.all(20),
-        elevation: 4.0,
-        child: Stack(
+        child: Column(
           children: [
-            Positioned(
-              top: 10,
-              left: 10,
-              right: 10,
-              height: 40,
+            SizedBox(height: 20),
+            SizedBox(
+              height: 40.0,
               child: AutoSizeText(
                 "Muestranos tu producto",
                 textAlign: TextAlign.center,
                 maxLines: 1,
-                minFontSize: 0,
-                style: TextStyle(fontSize: 25),
+                minFontSize: 0.0,
+                style: TextStyle(fontSize: 25.0),
               ),
             ),
-            Positioned(
-              top: 60,
-              right: 30,
-              left: 30,
-              bottom: 60,
-              child: (images.length == 0)
-                  ? IconButton(
-                      icon: Icon(Icons.camera_alt_outlined),
-                      onPressed: getImage,
-                      iconSize: widget.constraints.maxWidth / 4,
-                    )
-                  : PageView.builder(
-                      controller: _imagePageController,
-                      itemCount: images.length + 1,
-                      itemBuilder: (context, index) {
-                        if (index == 0) return SizedBox.shrink();
-                        double val = _currentImage - index + 1;
-                        double mod = -1.5 * pow(val, 2) + 3 * val + 0.5;
-                        double trans = ((widget.constraints.maxWidth > 800)
-                                ? widget.constraints.maxWidth
-                                : widget.constraints.maxWidth * 2) /
-                            11 *
-                            (1 - val.clamp(0, 2));
-                        return Transform(
-                          alignment: Alignment.center,
-                          transform: Matrix4.identity()
-                            ..setEntry(2, 3, 0.002)
-                            ..scale(mod.clamp(1, 2))
-                            ..translate(trans),
-                          child: Opacity(
-                            opacity: mod.clamp(0, 1),
-                            child: (widget.isWeb)
-                                ? Image.network(
-                                    images[index - 1],
-                                    fit: BoxFit.contain,
-                                  )
-                                : Image.file(
-                                    File(images[index - 1]),
-                                    fit: BoxFit.contain,
-                                  ),
-                          ),
-                        );
-                      },
-                    ),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                child: (images.length == 0)
+                    ? IconButton(
+                        icon: Icon(Icons.camera_alt_outlined),
+                        onPressed: getImage,
+                        iconSize: constraints.maxWidth / 4.8,
+                      )
+                    : PageView.builder(
+                        controller: _imagePageController,
+                        itemCount: images.length + 1,
+                        itemBuilder: (context, index) {
+                          if (index == 0) return SizedBox.shrink();
+                          double val = _currentImage - index + 1;
+                          double mod = -1.5 * pow(val, 2) + 3.0 * val + 0.5;
+                          double trans = ((constraints.maxWidth > 800.0)
+                                  ? constraints.maxWidth
+                                  : constraints.maxWidth * 2.0) /
+                              11 *
+                              (1 - val.clamp(0.0, 2.0)) *
+                              1.2;
+                          return Transform(
+                            alignment: Alignment.center,
+                            transform: Matrix4.identity()
+                              ..setEntry(2, 3, 0.002)
+                              ..translate(trans)
+                              ..scale((mod).clamp(1, 2)),
+                            child: Opacity(
+                              opacity: mod.clamp(0.0, 1.0),
+                              child: Image.memory(
+                                images[index - 1],
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
             ),
-            Positioned(
+            SizedBox(height: 20),
+            SizedBox(
+              height: 40,
               child: Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -158,13 +130,10 @@ class _ImagesViewState extends State<ImagesView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(Icons.add_a_photo),
-                          SizedBox(width: 5),
+                          SizedBox(width: 5.0),
                           AutoSizeText("Agregar foto")
                         ],
                       ),
-                      style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                          padding: EdgeInsets.symmetric(horizontal: 15)),
                     ),
                     if (images.length != 0)
                       ElevatedButton(
@@ -173,24 +142,84 @@ class _ImagesViewState extends State<ImagesView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.delete_forever),
-                            SizedBox(width: 5),
+                            SizedBox(width: 5.0),
                             AutoSizeText("Eliminar foto")
                           ],
                         ),
-                        style: ElevatedButton.styleFrom(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            padding: EdgeInsets.symmetric(horizontal: 20)),
                       ),
                   ],
                 ),
               ),
-              bottom: 20,
-              left: 20,
-              right: 20,
             ),
+            SizedBox(height: 20)
           ],
         ),
       ),
     );
+  }
+
+  Future getImage() async {
+    ImageSource x = ImageSource.gallery;
+    if (!widget.isWeb)
+      await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Selecciona la fuente de la imagen"),
+            content: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                IconButton(
+                  icon: Icon(Icons.camera_alt_sharp),
+                  color: Colors.grey,
+                  iconSize: 40.0,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    x = ImageSource.camera;
+                  },
+                ),
+                IconButton(
+                  icon: Icon(Icons.image_rounded),
+                  color: Colors.grey,
+                  iconSize: 40.0,
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    x = ImageSource.gallery;
+                  },
+                ),
+              ],
+            ),
+            actions: [
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  x = null;
+                },
+                child: Text("Cancelar"),
+              ),
+            ],
+          );
+        },
+      );
+    if (x == null) return;
+    final pickedFile = await picker.getImage(source: x);
+
+    if (pickedFile != null) {
+      _fileBytes = await pickedFile.readAsBytes();
+      _imageWidgets.add(Image.memory(_fileBytes));
+      images.add(_fileBytes);
+      widget.updateImages(images);
+    } else {
+      print('No image selected.');
+    }
+    setState(() {});
+  }
+
+  void dropImage() {
+    setState(() {
+      images.removeAt(_currentImage.floor() - 1);
+      _imagePageController.jumpToPage(_currentImage.floor() - 1);
+      widget.updateImages(images);
+    });
   }
 }

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>903943053519-e8389gr1cg9fipoqilmuah4jtec5eb64.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.903943053519-e8389gr1cg9fipoqilmuah4jtec5eb64</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD4o_xyAAOHN4vQGC-CqyXKJste5dOghZA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>903943053519</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.skywayUsers</string>
+	<key>PROJECT_ID</key>
+	<string>skyway-d302a</string>
+	<key>STORAGE_BUCKET</key>
+	<string>skyway-d302a.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:903943053519:ios:a5ef6b29f92a16f3b497ba</string>
+</dict>
+</plist>

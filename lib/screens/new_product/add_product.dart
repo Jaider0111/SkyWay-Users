@@ -40,11 +40,11 @@ class _AddProductPageState extends State<AddProductPage> {
       decoration: BoxDecoration(
           gradient: LinearGradient(
         colors: [
-          Colors.deepOrange,
-          Colors.deepPurple,
+          Colors.orange[700],
+          Colors.black26,
         ],
-        begin: Alignment.topRight,
-        end: Alignment.topLeft,
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
       )),
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {

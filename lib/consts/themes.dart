@@ -38,14 +38,14 @@ final defaultTheme = ThemeData.light().copyWith(
     headline5: TextStyle(color: Colors.black, fontSize: 25.0),
     headline6: TextStyle(color: Colors.black, fontSize: 35.0),
   ),
+  scrollbarTheme: ScrollbarThemeData(
+    isAlwaysShown: true,
+  ),
   elevatedButtonTheme: ElevatedButtonThemeData(
     style: ElevatedButton.styleFrom(
       padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 12.0),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
-      primary: Colors.green[600],
-      textStyle: TextStyle(
-        color: Colors.black,
-      ),
+      primary: Colors.black54, //Colors.green[600],
       alignment: Alignment.center,
       elevation: 6.0,
     ),
@@ -54,7 +54,7 @@ final defaultTheme = ThemeData.light().copyWith(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
     margin: EdgeInsets.all(20.0),
     elevation: 6.0,
-    color: Colors.orange[200],
+    color: Colors.white38,
   ),
   buttonBarTheme: ButtonBarThemeData(alignment: MainAxisAlignment.spaceEvenly),
   dialogTheme: DialogTheme(

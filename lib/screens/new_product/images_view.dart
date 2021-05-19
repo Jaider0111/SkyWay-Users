@@ -28,17 +28,16 @@ class _ImagesViewState extends State<ImagesView> {
   final picker = ImagePicker();
   double _currentImage = 0.0;
   var _fileBytes;
-  List<Image> _imageWidgets = [];
 
   final _imagePageController = PageController(
-    viewportFraction: 0.35,
+    viewportFraction: 0.4,
     initialPage: 1,
   );
 
   void _imageScrollLisener() {
     setState(() {
       _currentImage = _imagePageController.page;
-      if (_currentImage < 1) _imagePageController.jumpToPage(1);
+      if (_currentImage <= 1) _imagePageController.jumpToPage(1);
     });
   }
 
@@ -58,28 +57,29 @@ class _ImagesViewState extends State<ImagesView> {
   @override
   Widget build(BuildContext context) {
     final constraints = widget.constraints;
+    final height = (constraints.maxWidth > 800.0)
+        ? constraints.maxHeight
+        : min(constraints.maxWidth, constraints.maxHeight);
+    final width =
+        (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth;
     return SizedBox(
-      height: (constraints.maxWidth > 800.0)
-          ? constraints.maxHeight
-          : min(constraints.maxWidth, constraints.maxHeight),
-      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth,
+      height: height,
+      width: width,
       child: Card(
         child: Column(
           children: [
-            SizedBox(height: 20),
-            SizedBox(
-              height: 40.0,
-              child: AutoSizeText(
-                "Muestranos tu producto",
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                minFontSize: 0.0,
-                style: TextStyle(fontSize: 25.0),
-              ),
+            SizedBox(height: 50.0),
+            AutoSizeText(
+              "Muestranos tu producto",
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              minFontSize: 0.0,
+              style: TextStyle(fontSize: 25.0),
             ),
+            SizedBox(height: 15.0),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0),
                 child: (images.length == 0)
                     ? IconButton(
                         icon: Icon(Icons.camera_alt_outlined),
@@ -97,14 +97,14 @@ class _ImagesViewState extends State<ImagesView> {
                                   ? constraints.maxWidth
                                   : constraints.maxWidth * 2.0) /
                               11 *
-                              (1 - val.clamp(0.0, 2.0)) *
+                              (1 - val.clamp(0.6, 1.4)) *
                               1.2;
                           return Transform(
                             alignment: Alignment.center,
                             transform: Matrix4.identity()
                               ..setEntry(2, 3, 0.002)
                               ..translate(trans)
-                              ..scale((mod).clamp(1, 2)),
+                              ..scale((mod / 2 * 1.6).clamp(0.8, 1.6)),
                             child: Opacity(
                               opacity: mod.clamp(0.0, 1.0),
                               child: Image.memory(
@@ -117,41 +117,38 @@ class _ImagesViewState extends State<ImagesView> {
                       ),
               ),
             ),
-            SizedBox(height: 20),
-            SizedBox(
-              height: 40,
-              child: Center(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
+            SizedBox(height: 15.0),
+            Center(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  ElevatedButton(
+                    onPressed: getImage,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add_a_photo),
+                        SizedBox(width: 5.0),
+                        AutoSizeText("Agregar foto")
+                      ],
+                    ),
+                  ),
+                  if (images.length != 0)
                     ElevatedButton(
-                      onPressed: getImage,
+                      onPressed: dropImage,
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.add_a_photo),
+                          Icon(Icons.delete_forever),
                           SizedBox(width: 5.0),
-                          AutoSizeText("Agregar foto")
+                          AutoSizeText("Eliminar foto")
                         ],
                       ),
                     ),
-                    if (images.length != 0)
-                      ElevatedButton(
-                        onPressed: dropImage,
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.delete_forever),
-                            SizedBox(width: 5.0),
-                            AutoSizeText("Eliminar foto")
-                          ],
-                        ),
-                      ),
-                  ],
-                ),
+                ],
               ),
             ),
-            SizedBox(height: 20)
+            SizedBox(height: 50.0)
           ],
         ),
       ),
@@ -203,10 +200,8 @@ class _ImagesViewState extends State<ImagesView> {
       );
     if (x == null) return;
     final pickedFile = await picker.getImage(source: x);
-
     if (pickedFile != null) {
       _fileBytes = await pickedFile.readAsBytes();
-      _imageWidgets.add(Image.memory(_fileBytes));
       images.add(_fileBytes);
       widget.updateImages(images);
     } else {

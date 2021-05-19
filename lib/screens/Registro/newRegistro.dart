@@ -12,6 +12,7 @@ import 'package:skyway_users/models/collections/categories.dart';
 import 'package:skyway_users/models/collections/persona.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/registro_Provider.dart';
+import 'package:skyway_users/screens/Registro/perfil_view.dart';
 import 'package:skyway_users/screens/new_product/images_view.dart';
 
 class RegistroPage extends StatefulWidget {
@@ -23,7 +24,7 @@ class RegistroPage extends StatefulWidget {
 
 class RegistroState extends State<RegistroPage> {
   final _formKey = GlobalKey<FormState>();
-   List<Uint8List> _perfil = [];
+  List<Uint8List> _perfil = [];
   String _Nombre;
   String _Apellidos;
   String _Doc;
@@ -215,7 +216,7 @@ class RegistroState extends State<RegistroPage> {
                   maxLines: 2,
                   textAlign: TextAlign.center,
                 ),
-                ImagesView(
+                PerfilView(
                   updateImages: (imgs) => _perfil = imgs,
                   isWeb: kIsWeb,
                   constraints: constraints,
@@ -254,31 +255,36 @@ class RegistroState extends State<RegistroPage> {
                       (val.length > 0) ? null : "Debes llenar este campo",
                 ),
                 CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _Tel = val,
-                  label: "Ingresa tu numero telefonico",
-                  icon: Icons.phone,
-                  keyboardType: TextInputType.number,
-                ),
+                    initialValue: "",
+                    valueCallback: (val) => _Tel = val,
+                    label: "Ingresa tu numero telefonico",
+                    icon: Icons.phone,
+                    keyboardType: TextInputType.number,
+                    validator: (val) =>
+                        (val.length > 0) ? null : "Debes llenar este campo"),
                 CustomInputText(
                     initialValue: "",
                     valueCallback: (val) => _dir,
                     label: "Ingresa tu direccion",
-                    icon: Icons.location_city),
+                    icon: Icons.location_city,
+                    validator: (val) =>
+                        (val.length > 0) ? null : "Debes llenar este campo"),
                 CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _Password = val,
-                  label: "Ingresa tu contraseña",
-                  icon: Icons.lock,
-                  showText: false,
-                ),
+                    initialValue: "",
+                    valueCallback: (val) => _Password = val,
+                    label: "Ingresa tu contraseña",
+                    icon: Icons.lock,
+                    showText: false,
+                    validator: (val) =>
+                        (val.length > 0) ? null : "Debes llenar este campo"),
                 CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _CPassword = val,
-                  label: "Confirma tu contraseña",
-                  icon: Icons.lock,
-                  showText: false,
-                ),
+                    initialValue: "",
+                    valueCallback: (val) => _CPassword = val,
+                    label: "Confirma tu contraseña",
+                    icon: Icons.lock,
+                    showText: false,
+                    validator: (val) =>
+                        (val.length > 0) ? null : "Debes llenar este campo"),
                 SwitchListTile(
                     value: _Vendedor,
                     title: AutoSizeText("Soy vendedor",
@@ -298,17 +304,20 @@ class RegistroState extends State<RegistroPage> {
                   ),
                 if (_Vendedor)
                   CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _NombreTienda = val,
-                    label: "Como se llama tu tienda?",
-                    icon: Icons.shopping_cart,
-                  ),
+                      initialValue: "",
+                      valueCallback: (val) => _NombreTienda = val,
+                      label: "Como se llama tu tienda?",
+                      icon: Icons.shopping_cart,
+                      validator: (val) =>
+                          (val.length > 0) ? null : "Debes llenar este campo"),
                 if (_Vendedor)
                   CustomInputText(
                       initialValue: "",
-                      valueCallback: (val) => _NIT,
+                      valueCallback: (val) => _NIT = val,
                       label: "Ingresa tu NIT",
-                      icon: Icons.shop),
+                      icon: Icons.shop,
+                      validator: (val) =>
+                          (val.length > 0) ? null : "Debes llenar este campo"),
                 if (_Vendedor)
                   DropdownButtonFormField<String>(
                     autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -336,7 +345,7 @@ class RegistroState extends State<RegistroPage> {
                 if (_Vendedor)
                   CustomInputText(
                     initialValue: "",
-                    valueCallback: (val) => _Correo = val,
+                    valueCallback: (val) => _correot = val,
                     label: "Ingresa tu correo",
                     icon: Icons.mail,
                     validator: (val) =>
@@ -344,74 +353,77 @@ class RegistroState extends State<RegistroPage> {
                   ),
                 if (_Vendedor)
                   CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _Tel = val,
-                    label: "Ingresa tu numero telefonico",
-                    icon: Icons.phone,
-                    keyboardType: TextInputType.number,
-                  ),
+                      initialValue: "",
+                      valueCallback: (val) => _telt = val,
+                      label: "Ingresa tu numero telefonico",
+                      icon: Icons.phone,
+                      keyboardType: TextInputType.number,
+                      validator: (val) =>
+                          (val.length > 0) ? null : "Debes llenar este campo"),
                 if (_Vendedor)
                   CustomInputText(
                       initialValue: "",
-                      valueCallback: (val) => _dir,
+                      valueCallback: (val) => _direcciont = val,
                       label: "Ingresa tu direccion",
-                      icon: Icons.location_city),
+                      icon: Icons.location_city,
+                      validator: (val) =>
+                          (val.length > 0) ? null : "Debes llenar este campo"),
                 if (_Vendedor)
                   CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _Password = val,
-                    label: "Ingresa tu contraseña",
-                    icon: Icons.lock,
-                    showText: false,
-                  ),
+                      initialValue: "",
+                      valueCallback: (val) => _Passwordt = val,
+                      label: "Ingresa tu contraseña",
+                      icon: Icons.lock,
+                      showText: false,
+                      validator: (val) =>
+                          (val.length > 0) ? null : "Debes llenar este campo"),
                 if (_Vendedor)
                   CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _CPassword = val,
-                    label: "Confirma tu contraseña",
-                    icon: Icons.lock,
-                    showText: false,
+                      initialValue: "",
+                      valueCallback: (val) => _CPasswordt = val,
+                      label: "Confirma tu contraseña",
+                      icon: Icons.lock,
+                      showText: false,
+                      validator: (val) =>
+                          (val.length > 0) ? null : "Debes llenar este campo"),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: regist,
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.add_to_photos_rounded),
+                        SizedBox(width: 5.0),
+                        Text("Registate"),
+                      ],
+                    ),
                   ),
-                  Center(
-              child: ElevatedButton(
-                onPressed: regist,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.add_to_photos_rounded),
-                    SizedBox(width: 5.0),
-                    Text("Registrar nuevo producto"),
-                  ],
                 ),
-              ),
-            ),
               ],
             )));
   }
 
   void regist() async {
     bool valid = validate();
+    bool valid2 = validatet();
     _opts.forEach((element) {
       if (!_options.containsKey(element)) _options[element] = [];
     });
     if (!valid) return;
+    if (_Vendedor) {
+      if (!valid2) return;
+    }
     await showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
           title: Column(
             children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                size: 100.0,
-                color: Colors.red,
-              ),
-              Text("Advertencia!"),
+              Text("Estas a un paso"),
             ],
           ),
-          content: Text(
-              "¿Estas seguro de agregar este producto a tu lista de venta?"),
+          content: Text("Pulsa continuar para registrate"),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
@@ -442,7 +454,7 @@ class RegistroState extends State<RegistroPage> {
                 /* final images = await BlocProvider.of<registro_Provider>(this.context)
                     .saveImages(_images, _name);*/
                 TiendaModel tienda;
-                bool saves=true;
+                bool saves = true;
                 PersonaModel persona = PersonaModel(
                     Nombre: _Nombre,
                     Apellidos: _Apellidos,
@@ -466,9 +478,8 @@ class RegistroState extends State<RegistroPage> {
                     await BlocProvider.of<RegistroProvider>(this.context)
                         .savePersona(persona);
                 if (_Vendedor) {
-                  saves =
-                      await BlocProvider.of<RegistroProvider>(this.context)
-                          .saveStore(tienda);
+                  saves = await BlocProvider.of<RegistroProvider>(this.context)
+                      .saveStore(tienda);
                 }
                 Navigator.of(this.context).pop();
                 if (savep && saves)
@@ -497,8 +508,17 @@ class RegistroState extends State<RegistroPage> {
 
   bool validate() {
     bool valid = _formKey.currentState.validate();
-    if (_Password == _CPassword) {
-      messenger("Las constraseñas no coinciden", 3);
+    if (_Password != _CPassword) {
+      messenger("Las constraseñas para el usuario no coinciden", 3);
+      return false;
+    }
+    return valid;
+  }
+
+  bool validatet() {
+    bool valid = _formKey.currentState.validate();
+    if (_Passwordt != _CPasswordt) {
+      messenger("Las constraseñas para la tienda no coinciden", 3);
       return false;
     }
     return valid;

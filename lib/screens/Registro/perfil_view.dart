@@ -7,12 +7,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ImagesView extends StatefulWidget {
+class PerfilView extends StatefulWidget {
   final BoxConstraints constraints;
   final bool isWeb;
   final void Function(List<Uint8List>) updateImages;
 
-  ImagesView({
+  PerfilView({
     Key key,
     @required this.isWeb,
     @required this.updateImages,
@@ -23,7 +23,7 @@ class ImagesView extends StatefulWidget {
   _ImagesViewState createState() => _ImagesViewState();
 }
 
-class _ImagesViewState extends State<ImagesView> {
+class _ImagesViewState extends State<PerfilView> {
   List<Uint8List> images = [];
   final picker = ImagePicker();
   double _currentImage = 0.0;

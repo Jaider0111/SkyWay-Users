@@ -18,13 +18,26 @@ class UserModel {
       @required this.password,
       @required this.phone})
       : super();
-
+  
   UserModel.fromJson(Map<String, dynamic> map) {
-    this.email = map["correo"];
-    this.password = map["contrasena"];
-    this.name = map["nombres"];
-    this.lastname = map["apellidos"];
-    this.address = map["direccion"];
-    this.phone = map["telefono"];
+    this.email = map["email"];
+    this.password = map["password"];
+    this.name = map["first_name"];
+    this.lastname = map["last_name"];
+    this.address = map["address"];
+    this.phone = map["phone"];
+    this.identification = map["identification];
+  }
+  
+  Map<String, dynamic> ptoJson() {
+    return {
+      "identification": this.identification,
+      "first_name": this.name,
+      "last_name": this.lastname,
+      "address": this.address,
+      "email": this.email,
+      "password": this.password,
+      "phone": this.phone
+    };
   }
 }

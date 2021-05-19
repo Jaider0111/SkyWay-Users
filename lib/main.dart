@@ -1,10 +1,18 @@
+import 'dart:math';
+
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:skyway_users/consts/routes.dart';
-import 'package:skyway_users/consts/themes.dart';
+
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
-import 'package:firebase_core/firebase_core.dart';
+
+
+import 'consts/routes.dart';
+import 'consts/themes.dart';
+import 'models/collections/categories.dart';
+import 'models/widgets/custom_input_form.dart';
 
 void main() {
   Bloc.observer = BlocObserver();
@@ -40,7 +48,7 @@ class _MyAppState extends State<MyApp> {
           return MaterialApp(
             title: 'SkyWay',
             routes: routes,
-            initialRoute: 'dashboard',
+            initialRoute: 'registration',
             theme: defaultTheme,
             debugShowCheckedModeBanner: false,
           );

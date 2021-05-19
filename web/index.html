@@ -30,9 +30,27 @@
   <link rel="manifest" href="manifest.json">
 </head>
 <body>
+  <!-- The core Firebase JS SDK is always required and must be listed first -->
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-storage.js"></script>
+  <script>
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    var firebaseConfig = {
+      apiKey: "AIzaSyApSAb1QefqIxtbN0BEEUtcoxMst90e7es",
+      authDomain: "skyway-d302a.firebaseapp.com",
+      projectId: "skyway-d302a",
+      storageBucket: "skyway-d302a.appspot.com",
+      messagingSenderId: "903943053519",
+      appId: "1:903943053519:web:02085ee4023175aeb497ba",
+      measurementId: "G-3XBN81BB0X"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
   <!-- This script installs service_worker.js to provide PWA functionality to
-       application. For more information, see:
-       https://developers.google.com/web/fundamentals/primers/service-workers -->
+      application. For more information, see:
+      https://developers.google.com/web/fundamentals/primers/service-workers -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('flutter-first-frame', function () {

@@ -105,6 +105,9 @@ class _AddProductPageState extends State<AddProductPage> {
       height: (constraints.maxWidth > 800.0)
           ? constraints.maxHeight
           : min(constraints.maxWidth, constraints.maxHeight),
+      width: (constraints.maxWidth > 800)
+          ? constraints.maxWidth / 2
+          : constraints.maxWidth,
       width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth,
       child: Form(
         key: _formKey,

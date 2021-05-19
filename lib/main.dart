@@ -6,7 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:skyway_users/providers/auth_provider.dart';
-import 'package:skyway_users/providers/registro_Provider.dart';
+import 'package:skyway_users/providers/products_provider.dart';
+
 
 import 'consts/routes.dart';
 import 'consts/themes.dart';
@@ -18,8 +19,8 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiBlocProvider(
     providers: [
-      BlocProvider<RegistroProvider>(
-        create: (_) => RegistroProvider(),
+      BlocProvider<ProductsProvider>(
+        create: (_) => ProductsProvider(),
       ),
       BlocProvider<AuthProvider>(
         create: (_) => AuthProvider(),

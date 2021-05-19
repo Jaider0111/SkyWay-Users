@@ -64,6 +64,7 @@ class _ImagesViewState extends State<PerfilView> {
       height: (width > 400.0) ? height : min(width, height),
       width: (width > 400.0) ? width / 4.0 : width,
       child: Card(
+        color: Colors.white38,
         child: Column(
           children: [
             SizedBox(height: 20),

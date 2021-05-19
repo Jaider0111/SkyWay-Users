@@ -22,29 +22,41 @@ class _DashBoardPageState extends State<DashBoardPage> {
       appBar: appBar,
       body: LayoutBuilder(
         builder: (context, constraints) {
-          return Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Text("Binvenido a SkyWay"),
-                if (_type == "Tienda")
+          return Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.deepOrange,
+                  Colors.deepPurple,
+                ],
+                begin: Alignment.bottomRight,
+                end: Alignment.topLeft,
+              ),
+            ),
+            child: Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Text("Binvenido a SkyWay"),
+                  if (_type == "Tienda")
+                    ElevatedButton(
+                      onPressed: () {
+                        //TODO: businessId
+                        Navigator.of(context).pushNamed('addProduct', arguments: {
+                          "businessId": "businessIdDashboard",
+                        });
+                      },
+                      child: Text("Agregar Producto"),
+                    ),
                   ElevatedButton(
                     onPressed: () {
-                      //TODO: businessId
-                      Navigator.of(context).pushNamed('addProduct', arguments: {
-                        "businessId": "businessIdDashboard",
-                      });
+                      Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
                     },
-                    child: Text("Agregar Producto"),
+                    child: Text("Cerrar sesión"),
                   ),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
-                  },
-                  child: Text("Cerrar sesión"),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

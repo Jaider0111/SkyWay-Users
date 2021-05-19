@@ -5,13 +5,16 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 
-void main() {
-  runApp(new Login1());
+class Login1 extends StatefulWidget {
+  @override
+  _Login1State createState() => _Login1State();
 }
 
-class Login1 extends StatelessWidget {
+class _Login1State extends State<Login1> {
   String email;
+
   String password;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,13 +23,10 @@ class Login1 extends StatelessWidget {
         children: [
           Container(
               decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.deepOrange,
-                  Colors.deepPurple,
-                ]),
+            gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [
+              Colors.deepOrange,
+              Colors.deepPurple,
+            ]),
           )),
           Row(
             children: [
@@ -43,8 +43,7 @@ class Login1 extends StatelessWidget {
                       width: 625,
                       height: 650,
                       child: Theme(
-                        data: ThemeData(
-                            fontFamily: "Itim", primaryColor: Colors.black),
+                        data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
                         child: Padding(
                           padding: const EdgeInsets.all(25.0),
                           child: Column(
@@ -61,8 +60,7 @@ class Login1 extends StatelessWidget {
                                     children: [
                                       SizedBox(height: 30),
                                       Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 30.0),
+                                        padding: EdgeInsets.symmetric(horizontal: 30.0),
                                         child: Text(
                                           "¡Bienvenido a SkyWay, el mejor lugar para comprar!",
                                           textAlign: TextAlign.center,
@@ -77,19 +75,13 @@ class Login1 extends StatelessWidget {
                                             child: Container(
                                               decoration: BoxDecoration(
                                                   color: Colors.grey[300],
-                                                  borderRadius:
-                                                      new BorderRadius.circular(
-                                                          15)),
+                                                  borderRadius: new BorderRadius.circular(15)),
                                               child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 15,
-                                                    right: 15,
-                                                    top: 5),
+                                                padding:
+                                                    EdgeInsets.only(left: 15, right: 15, top: 5),
                                                 child: TextFormField(
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                  onChanged: (value) =>
-                                                      email = value,
+                                                  style: TextStyle(fontSize: 20),
+                                                  onChanged: (value) => email = value,
                                                   decoration: InputDecoration(
                                                       icon: Icon(Icons.person),
                                                       border: InputBorder.none,
@@ -98,11 +90,9 @@ class Login1 extends StatelessWidget {
                                                       focusedBorder: null,
                                                       labelText:
                                                           "Ingresa tu dirección de correo electrónico",
-                                                      labelStyle: TextStyle(
-                                                          fontSize: 20),
+                                                      labelStyle: TextStyle(fontSize: 20),
                                                       contentPadding:
-                                                          EdgeInsets.only(
-                                                              bottom: 15.0)),
+                                                          EdgeInsets.only(bottom: 15.0)),
                                                 ),
                                               ),
                                             ),
@@ -118,24 +108,18 @@ class Login1 extends StatelessWidget {
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: Colors.grey[300],
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        15)),
+                                                borderRadius: new BorderRadius.circular(15)),
                                             child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
+                                              padding: EdgeInsets.only(left: 15, right: 15),
                                               child: TextFormField(
                                                 style: TextStyle(fontSize: 20),
-                                                onChanged: (value) =>
-                                                    password = value,
+                                                onChanged: (value) => password = value,
                                                 obscureText: true,
                                                 decoration: InputDecoration(
                                                     icon: Icon(Icons.lock),
                                                     border: InputBorder.none,
-                                                    labelText:
-                                                        "Ingresa tu contraseña",
-                                                    labelStyle: TextStyle(
-                                                        fontSize: 20)),
+                                                    labelText: "Ingresa tu contraseña",
+                                                    labelStyle: TextStyle(fontSize: 20)),
                                               ),
                                             ),
                                           ),
@@ -148,8 +132,7 @@ class Login1 extends StatelessWidget {
                                         children: [
                                           SizedBox(width: 40),
                                           Expanded(
-                                            child:
-                                                FloatingActionButton.extended(
+                                            child: FloatingActionButton.extended(
                                               backgroundColor: Colors.green,
                                               onPressed: () => auth(context),
                                               label: Text(
@@ -169,11 +152,9 @@ class Login1 extends StatelessWidget {
                                         SizedBox(width: 20),
                                         TextButton(
                                           onPressed: () {
-                                            Navigator.push(
+                                            Navigator.pushNamed(
                                               context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      Login2()),
+                                              "registration",
                                             );
                                           },
                                           child: Text("¡Regístrate aquí!",
@@ -251,15 +232,33 @@ class Login1 extends StatelessWidget {
       },
     );
     await Future.delayed(Duration(seconds: 3));
-    final String answer =
-        await BlocProvider.of<AuthProvider>(context).login(email, password);
+    final String answer = await BlocProvider.of<AuthProvider>(context).login(email, password);
     Navigator.of(context).pop();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(answer),
-        duration: Duration(seconds: 2),
-      ),
-    );
+    if (answer == "Tienda" || answer == "Usuario")
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('dashboard', (route) => false, arguments: {"user": answer});
+    else if (answer == "incorrect email") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("La dirección de correo ingresada no se encuentra registrada"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else if (answer == "failed") {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("La contraseña ingresada es incorrecta"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Ha ocurrido un error de red intente nuevamente"),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 }
 
@@ -277,13 +276,10 @@ class Login2 extends StatelessWidget {
         children: [
           Container(
               decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.deepOrange,
-                  Colors.deepPurple,
-                ]),
+            gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [
+              Colors.deepOrange,
+              Colors.deepPurple,
+            ]),
           )),
           Row(
             children: [
@@ -300,8 +296,7 @@ class Login2 extends StatelessWidget {
                       width: 625,
                       height: 720,
                       child: Theme(
-                        data: ThemeData(
-                            fontFamily: "Itim", primaryColor: Colors.black),
+                        data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
                         child: Padding(
                           padding: const EdgeInsets.all(25.0),
                           child: Column(
@@ -318,8 +313,7 @@ class Login2 extends StatelessWidget {
                                     children: [
                                       SizedBox(height: 30),
                                       Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: 30.0),
+                                        padding: EdgeInsets.symmetric(horizontal: 30.0),
                                         child: Text(
                                           "¡Estás a punto de pertenecer a la familia SkyWay!",
                                           textAlign: TextAlign.center,
@@ -334,19 +328,13 @@ class Login2 extends StatelessWidget {
                                             child: Container(
                                               decoration: BoxDecoration(
                                                   color: Colors.grey[300],
-                                                  borderRadius:
-                                                      new BorderRadius.circular(
-                                                          15)),
+                                                  borderRadius: new BorderRadius.circular(15)),
                                               child: Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: 15,
-                                                    right: 15,
-                                                    top: 5),
+                                                padding:
+                                                    EdgeInsets.only(left: 15, right: 15, top: 5),
                                                 child: TextFormField(
-                                                  style:
-                                                      TextStyle(fontSize: 20),
-                                                  onChanged: (value) =>
-                                                      email = value,
+                                                  style: TextStyle(fontSize: 20),
+                                                  onChanged: (value) => email = value,
                                                   decoration: InputDecoration(
                                                       icon: Icon(Icons.person),
                                                       border: InputBorder.none,
@@ -355,11 +343,9 @@ class Login2 extends StatelessWidget {
                                                       focusedBorder: null,
                                                       labelText:
                                                           "Ingresa tu dirección de correo electrónico",
-                                                      labelStyle: TextStyle(
-                                                          fontSize: 20),
+                                                      labelStyle: TextStyle(fontSize: 20),
                                                       contentPadding:
-                                                          EdgeInsets.only(
-                                                              bottom: 15.0)),
+                                                          EdgeInsets.only(bottom: 15.0)),
                                                 ),
                                               ),
                                             ),
@@ -375,24 +361,18 @@ class Login2 extends StatelessWidget {
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: Colors.grey[300],
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        15)),
+                                                borderRadius: new BorderRadius.circular(15)),
                                             child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
+                                              padding: EdgeInsets.only(left: 15, right: 15),
                                               child: TextFormField(
                                                 style: TextStyle(fontSize: 20),
-                                                onChanged: (value) =>
-                                                    password = value,
+                                                onChanged: (value) => password = value,
                                                 obscureText: true,
                                                 decoration: InputDecoration(
                                                     icon: Icon(Icons.lock),
                                                     border: InputBorder.none,
-                                                    labelText:
-                                                        "Ingresa tu contraseña",
-                                                    labelStyle: TextStyle(
-                                                        fontSize: 20)),
+                                                    labelText: "Ingresa tu contraseña",
+                                                    labelStyle: TextStyle(fontSize: 20)),
                                               ),
                                             ),
                                           ),
@@ -406,26 +386,18 @@ class Login2 extends StatelessWidget {
                                           child: Container(
                                             decoration: BoxDecoration(
                                                 color: Colors.grey[300],
-                                                borderRadius:
-                                                    new BorderRadius.circular(
-                                                        15)),
+                                                borderRadius: new BorderRadius.circular(15)),
                                             child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  left: 15, right: 15),
+                                              padding: EdgeInsets.only(left: 15, right: 15),
                                               child: TextFormField(
                                                 style: TextStyle(fontSize: 20),
-                                                onChanged: (value) =>
-                                                    passwordConfirmation =
-                                                        value,
+                                                onChanged: (value) => passwordConfirmation = value,
                                                 obscureText: true,
                                                 decoration: InputDecoration(
-                                                    icon: Icon(
-                                                        Icons.check_circle),
+                                                    icon: Icon(Icons.check_circle),
                                                     border: InputBorder.none,
-                                                    labelText:
-                                                        "Confirma tu contraseña",
-                                                    labelStyle: TextStyle(
-                                                        fontSize: 20)),
+                                                    labelText: "Confirma tu contraseña",
+                                                    labelStyle: TextStyle(fontSize: 20)),
                                               ),
                                             ),
                                           ),
@@ -438,8 +410,7 @@ class Login2 extends StatelessWidget {
                                         children: [
                                           SizedBox(width: 40),
                                           Expanded(
-                                            child:
-                                                FloatingActionButton.extended(
+                                            child: FloatingActionButton.extended(
                                               backgroundColor: Colors.green,
                                               onPressed: () {},
                                               label: Text(

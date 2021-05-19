@@ -28,9 +28,6 @@ class AuthProvider extends Bloc {
     }
     return null;
   }
-  
-  @override
-  Stream mapEventToState(event) async* {}
 
   Future<String> savePersona(UserModel pModel) async {
     final url = Uri.https(baseUri, "registration/user");

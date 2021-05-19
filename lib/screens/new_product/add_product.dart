@@ -105,9 +105,6 @@ class _AddProductPageState extends State<AddProductPage> {
       height: (constraints.maxWidth > 800.0)
           ? constraints.maxHeight
           : min(constraints.maxWidth, constraints.maxHeight),
-      width: (constraints.maxWidth > 800)
-          ? constraints.maxWidth / 2
-          : constraints.maxWidth,
       width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth,
       child: Form(
         key: _formKey,
@@ -418,11 +415,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 if (save) {
                   messenger("Datos guardados", 2);
                   Navigator.of(this.context).pushNamed('dashboard');
-                  /*Navigator.of(this.context).pushNamedAndRemoveUntil(
-                    'dashboard',
-                    (_) => true,
-                    arguments: {'image': product.images[0]},
-                  );*/
+                  Navigator.of(this.context).pushNamedAndRemoveUntil('dashboard', (_) => false);
                 } else
                   messenger("Error al enviar datos", 2);
               },

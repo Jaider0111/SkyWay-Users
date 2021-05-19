@@ -27,6 +27,11 @@ class ProductModel {
       @required this.images})
       : super();
 
+  ProductModel.fromJson(dynamic json) {
+    this.name = json["name"];
+    this.description = json["description"];
+  }
+
   Map<String, dynamic> toJson() {
     return {
       "name": this.name,

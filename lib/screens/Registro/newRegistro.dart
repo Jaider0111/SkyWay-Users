@@ -107,11 +107,7 @@ class RegistroState extends State<RegistroPage> {
   }
 
   Widget _columnView(BoxConstraints constraints) {
-    return ListView(
-      children: [
-        productForm(constraints),
-      ],
-    );
+    return registerType(constraints);
   }
 
   Widget tiendaForm(BoxConstraints constraints) {

@@ -8,5 +8,5 @@ final Map<String, Widget Function(BuildContext)> routes = {
   'addProduct': (ctx) => AddProductPage(),
   'registration': (ctx) => RegistroPage(),
   'dashboard': (ctx) => DashBoardPage(),
-  'login': (ctx) => Login1(),
+  'login': (ctx) => Login(),
 };

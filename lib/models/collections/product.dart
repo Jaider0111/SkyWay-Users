@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 
 class ProductModel {
+  String id;
   String name;
   String description;
   String category;
@@ -28,12 +29,23 @@ class ProductModel {
       : super();
 
   ProductModel.fromJson(dynamic json) {
+    this.id = json["id"];
     this.name = json["name"];
     this.description = json["description"];
+    this.category = json["category"];
+    this.subcategory = json["subcategory"];
+    this.businessId = json["businessId"];
+    this.isCountable = json["isCountable"];
+    this.amount = json["amount"];
+    this.price = json["price"];
+    this.isCustomizable = json["isCustomizable"];
+    this.options = json["options"];
+    this.images = json["images"];
   }
 
   Map<String, dynamic> toJson() {
     return {
+      if (this.id != null) "id": this.id,
       "name": this.name,
       "description": this.description,
       "category": this.category,

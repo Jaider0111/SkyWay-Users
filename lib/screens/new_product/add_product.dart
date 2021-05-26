@@ -415,11 +415,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 if (save) {
                   messenger("Datos guardados", 2);
                   Navigator.of(this.context).pushNamed('dashboard');
-                  /*Navigator.of(this.context).pushNamedAndRemoveUntil(
-                    'dashboard',
-                    (_) => true,
-                    arguments: {'image': product.images[0]},
-                  );*/
+                  Navigator.of(this.context).pushNamedAndRemoveUntil('dashboard', (_) => false);
                 } else
                   messenger("Error al enviar datos", 2);
               },

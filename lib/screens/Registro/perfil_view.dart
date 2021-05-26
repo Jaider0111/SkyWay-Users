@@ -28,7 +28,6 @@ class _ImagesViewState extends State<PerfilView> {
   final picker = ImagePicker();
   double _currentImage = 0.0;
   var _fileBytes;
-  List<Image> _imageWidgets = [];
 
   final _imagePageController = PageController(
     viewportFraction: 0.35,
@@ -94,11 +93,10 @@ class _ImagesViewState extends State<PerfilView> {
                           if (index == 0) return SizedBox.shrink();
                           double val = _currentImage - index + 1;
                           double mod = -1.5 * pow(val, 2) + 3.0 * val + 0.5;
-                          double trans =
-                              ((width > 800.0) ? width : width * 2.0) /
-                                  11 *
-                                  (1 - val.clamp(0.0, 2.0)) *
-                                  1.2;
+                          double trans = ((width > 800.0) ? width : width * 2.0) /
+                              11 *
+                              (1 - val.clamp(0.0, 2.0)) *
+                              1.2;
                           return Transform(
                             alignment: Alignment.center,
                             transform: Matrix4.identity()
@@ -207,7 +205,6 @@ class _ImagesViewState extends State<PerfilView> {
 
     if (pickedFile != null) {
       _fileBytes = await pickedFile.readAsBytes();
-      _imageWidgets.add(Image.memory(_fileBytes));
       images.add(_fileBytes);
       widget.updateImages(images);
     } else {

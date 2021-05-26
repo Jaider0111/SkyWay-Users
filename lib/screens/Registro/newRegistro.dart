@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -7,13 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:skyway_users/models/collections/Tienda.dart';
+import 'package:skyway_users/models/collections/store.dart';
 import 'package:skyway_users/models/collections/categories.dart';
 import 'package:skyway_users/models/collections/user.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
+import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/Registro/perfil_view.dart';
-import 'package:skyway_users/screens/new_product/images_view.dart';
+import 'package:skyway_users/screens/appbar.dart';
 
 class RegistroPage extends StatefulWidget {
   RegistroPage({Key key}) : super(key: key);
@@ -59,15 +59,7 @@ class RegistroState extends State<RegistroPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
-        appBar: AppBar(
-          elevation: 0,
-          backgroundColor: Colors.black,
-          centerTitle: true,
-          title: Text(
-            'SkyWay',
-            style: TextStyle(fontSize: 30, fontFamily: "Pacifica"),
-          ),
-        ),
+        appBar: appBar,
         body: Container(
           decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -82,9 +74,7 @@ class RegistroState extends State<RegistroPage> {
             builder: (BuildContext context, BoxConstraints constraints) {
               return Column(
                 children: [
-                  (constraints.maxWidth > 800.0)
-                      ? _rowView(constraints)
-                      : _columnView(constraints),
+                  (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
                 ],
               );
             },
@@ -93,17 +83,19 @@ class RegistroState extends State<RegistroPage> {
   }
 
   Widget _rowView(BoxConstraints constraints) {
-    return Row(children: [
-      registerType(constraints),
-      SizedBox(
-        height: constraints.maxHeight,
-        width: constraints.maxWidth / 2,
-        child: Image.asset(
-          "assets/images/login_background.png",
-          fit: BoxFit.contain,
-        ),
-      )
-    ]);
+    return Row(
+      children: [
+        registerType(constraints),
+        SizedBox(
+          height: constraints.maxHeight,
+          width: constraints.maxWidth / 2,
+          child: Image.asset(
+            "assets/images/login_background.png",
+            fit: BoxFit.contain,
+          ),
+        )
+      ],
+    );
   }
 
   Widget _columnView(BoxConstraints constraints) {
@@ -113,10 +105,9 @@ class RegistroState extends State<RegistroPage> {
   Widget tiendaForm(BoxConstraints constraints) {
     return SizedBox(
         height: constraints.maxHeight - 240.0,
-        width: ((constraints.maxWidth > 800.0)
-                ? constraints.maxWidth / 2.0
-                : constraints.maxWidth) -
-            100.0,
+        width:
+            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
+                100.0,
         child: Form(
             key: _formKey2,
             child: ListView(padding: EdgeInsets.all(30.0), children: [
@@ -132,19 +123,16 @@ class RegistroState extends State<RegistroPage> {
                   valueCallback: (val) => _NombreTienda = val,
                   label: "Como se llama tu tienda?",
                   icon: Icons.shopping_cart,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo"),
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
               CustomInputText(
                   initialValue: "",
                   valueCallback: (val) => _NIT = val,
                   label: "Ingresa tu NIT",
                   icon: Icons.shop,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo"),
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
               DropdownButtonFormField<String>(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (val) =>
-                    (val != null) ? null : "Selecciona una categoria",
+                validator: (val) => (val != null) ? null : "Selecciona una categoria",
                 value: _Categoria,
                 style: Theme.of(context).textTheme.bodyText1,
                 elevation: 10,
@@ -169,8 +157,7 @@ class RegistroState extends State<RegistroPage> {
                 valueCallback: (val) => _correot = val,
                 label: "Ingresa tu correo",
                 icon: Icons.mail,
-                validator: (val) =>
-                    (val.length > 0) ? null : "Debes llenar este campo",
+                validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
               ),
               CustomInputText(
                   initialValue: "",
@@ -178,31 +165,27 @@ class RegistroState extends State<RegistroPage> {
                   label: "Ingresa tu numero telefonico",
                   icon: Icons.phone,
                   keyboardType: TextInputType.number,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo"),
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
               CustomInputText(
                   initialValue: "",
                   valueCallback: (val) => _direcciont = val,
                   label: "Ingresa tu direccion",
                   icon: Icons.location_city,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo"),
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
               CustomInputText(
                   initialValue: "",
                   valueCallback: (val) => _Passwordt = val,
                   label: "Ingresa tu contraseña",
                   icon: Icons.lock,
                   showText: false,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo"),
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
               CustomInputText(
                   initialValue: "",
                   valueCallback: (val) => _CPasswordt = val,
                   label: "Confirma tu contraseña",
                   icon: Icons.lock,
                   showText: false,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo"),
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
               Center(
                 child: ElevatedButton(
                   onPressed: registt,
@@ -248,19 +231,18 @@ class RegistroState extends State<RegistroPage> {
               title: Text("¿Eres vendedor?"),
             ),
           ),
-          (_type) ? tiendaForm(constraints) : productForm(constraints),
+          (_type) ? tiendaForm(constraints) : userForm(constraints),
         ],
       ),
     );
   }
 
-  Widget productForm(BoxConstraints constraints) {
+  Widget userForm(BoxConstraints constraints) {
     return SizedBox(
         height: constraints.maxHeight - 240.0,
-        width: ((constraints.maxWidth > 800.0)
-                ? constraints.maxWidth / 2.0
-                : constraints.maxWidth) -
-            100.0,
+        width:
+            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
+                100.0,
         child: Form(
             key: _formKey,
             child: ListView(
@@ -284,32 +266,28 @@ class RegistroState extends State<RegistroPage> {
                   valueCallback: (val) => _Nombre = val,
                   label: 'Ingresa tu nombre',
                   icon: Icons.badge,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo",
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
                 ),
                 CustomInputText(
                   initialValue: "",
                   valueCallback: (val) => _Apellidos = val,
                   label: 'Ingresa tus apellidos',
                   icon: Icons.badge,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo",
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
                 ),
                 CustomInputText(
                   initialValue: "",
                   valueCallback: (val) => _Doc = val,
                   label: "Ingresa tu documento",
                   icon: Icons.perm_identity,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo",
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
                 ),
                 CustomInputText(
                   initialValue: "",
                   valueCallback: (val) => _Correo = val,
                   label: "Ingresa tu correo",
                   icon: Icons.mail,
-                  validator: (val) =>
-                      (val.length > 0) ? null : "Debes llenar este campo",
+                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
                 ),
                 CustomInputText(
                     initialValue: "",
@@ -317,31 +295,27 @@ class RegistroState extends State<RegistroPage> {
                     label: "Ingresa tu numero telefonico",
                     icon: Icons.phone,
                     keyboardType: TextInputType.number,
-                    validator: (val) =>
-                        (val.length > 0) ? null : "Debes llenar este campo"),
+                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
                 CustomInputText(
                     initialValue: "",
-                    valueCallback: (val) => _dir,
+                    valueCallback: (val) => _dir = val,
                     label: "Ingresa tu direccion",
                     icon: Icons.location_city,
-                    validator: (val) =>
-                        (val.length > 0) ? null : "Debes llenar este campo"),
+                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
                 CustomInputText(
                     initialValue: "",
                     valueCallback: (val) => _Password = val,
                     label: "Ingresa tu contraseña",
                     icon: Icons.lock,
                     showText: false,
-                    validator: (val) =>
-                        (val.length > 0) ? null : "Debes llenar este campo"),
+                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
                 CustomInputText(
                     initialValue: "",
                     valueCallback: (val) => _CPassword = val,
                     label: "Confirma tu contraseña",
                     icon: Icons.lock,
                     showText: false,
-                    validator: (val) =>
-                        (val.length > 0) ? null : "Debes llenar este campo"),
+                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
                 Center(
                   child: ElevatedButton(
                     onPressed: regist,
@@ -405,34 +379,34 @@ class RegistroState extends State<RegistroPage> {
                     );
                   },
                 );
-                /* final images = await BlocProvider.of<registro_Provider>(this.context)
-                    .saveImages(_images, _name);*/
+                final image = (_perfil.length > 0)
+                    ? await BlocProvider.of<AuthProvider>(this.context)
+                        .saveImage(_perfil[0], "$_Nombre$_Apellidos")
+                    : null;
 
                 UserModel persona = UserModel(
-                    name: _Nombre,
-                    lastname: _Apellidos,
-                    identification: _Doc,
-                    email: _Correo,
-                    phone: int.tryParse(_Tel),
-                    password: _Password,
-                    address: _dir);
+                  name: _Nombre,
+                  lastname: _Apellidos,
+                  identification: _Doc,
+                  email: _Correo,
+                  phone: _Tel,
+                  password: _Password,
+                  address: _dir,
+                  image: image,
+                );
 
-                String savep = await BlocProvider.of<AuthProvider>(this.context)
-                    .savePersona(persona);
+                String savep =
+                    await BlocProvider.of<AuthProvider>(this.context).savePersona(persona);
 
                 Navigator.of(this.context).pop();
                 if (savep == "La identificacion ya se encuentra registrado")
-                  /*Navigator.of(this.context).pushNamedAndRemoveUntil(
-                    'dashboard',
-                    (_) => true,
-                    arguments: {'image': product.images[0]},
-                  );*/
                   messenger("La identificación ya se encuentra registrada", 3);
                 else if (savep == "El correo ya se encuentra registrado")
                   messenger("El correo ya se encuentra registrado", 3);
-                else if (savep != null)
+                else if (savep != null) {
                   messenger("Datos guardados", 2);
-                else
+                  Navigator.of(this.context).pushNamedAndRemoveUntil('login', (_) => false);
+                } else
                   messenger("Error al enviar datos", 2);
               },
               child: Row(
@@ -497,32 +471,27 @@ class RegistroState extends State<RegistroPage> {
                 /* final images = await BlocProvider.of<registro_Provider>(this.context)
                     .saveImages(_images, _name);*/
 
-                TiendaModel tienda = TiendaModel(
-                    telt: _telt,
-                    NIT: _NIT,
-                    Passwordt: _Passwordt,
-                    hora: ["8:00-12:00", "12:00-15:00"],
-                    NombreTienda: _NombreTienda,
-                    direcciont: _direcciont,
-                    Categoria: _Categoria,
-                    correot: _correot);
+                StoreModel tienda = StoreModel(
+                    phone: _telt,
+                    identification: _NIT,
+                    password: _Passwordt,
+                    schedule: ["8:00-12:00", "12:00-15:00"],
+                    name: _NombreTienda,
+                    address: _direcciont,
+                    category: _Categoria,
+                    email: _correot);
 
-                String saves = await BlocProvider.of<AuthProvider>(this.context)
-                    .saveStore(tienda);
+                String saves = await BlocProvider.of<AuthProvider>(this.context).saveStore(tienda);
 
                 Navigator.of(this.context).pop();
                 if (saves == "La identificacion ya se encuentra registrado")
-                  /*Navigator.of(this.context).pushNamedAndRemoveUntil(
-                    'dashboard',
-                    (_) => true,
-                    arguments: {'image': product.images[0]},
-                  );*/
                   messenger("La identificacion ya se encuentra registrada", 3);
                 else if (saves == "El correo ya se encuentra registrado")
                   messenger("El correo ya se encuentra registrado", 3);
-                else if (saves != null)
+                else if (saves != null) {
                   messenger("Datos guardados", 2);
-                else
+                  Navigator.of(this.context).pushNamedAndRemoveUntil('login', (_) => false);
+                } else
                   messenger("Error al enviar datos", 2);
               },
               child: Row(

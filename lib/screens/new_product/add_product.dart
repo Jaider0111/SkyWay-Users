@@ -46,6 +46,7 @@ class _AddProductPageState extends State<AddProductPage> {
   void initState() {
     _isCountable = false;
     _isCustomizable = false;
+    _category = BlocProvider.of<AuthProvider>(context).shop?.category;
     super.initState();
   }
 

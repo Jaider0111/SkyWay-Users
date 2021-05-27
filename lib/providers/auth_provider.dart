@@ -12,6 +12,7 @@ class AuthProvider extends Bloc {
 
   UserModel user;
   StoreModel shop;
+  String status;
 
   @override
   Stream mapEventToState(event) async* {}
@@ -24,8 +25,9 @@ class AuthProvider extends Bloc {
     final response = await http.get(url, headers: httpHeaders);
     if (response.statusCode == 200) {
       final resBody = json.decode(response.body);
-      final status = resBody["status"];
+      status = resBody["status"];
       final body = resBody["body"];
+      print(resBody);
       if (status == "Usuario")
         this.user = UserModel.fromJson(body);
       else if (status == "Tienda") this.shop = StoreModel.fromJson(body);

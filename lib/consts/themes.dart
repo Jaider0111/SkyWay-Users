@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 final defaultTheme = ThemeData.light().copyWith(
-  primaryColor: Colors.deepOrange,
+  primaryColor: Colors.black,
   buttonTheme: ButtonThemeData(
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
     buttonColor: Colors.blue[200],

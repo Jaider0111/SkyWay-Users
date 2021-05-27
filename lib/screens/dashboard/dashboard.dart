@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
+import 'package:skyway_users/screens/unauthorizedPage.dart';
 
 class DashBoardPage extends StatefulWidget {
   DashBoardPage({Key key}) : super(key: key);
@@ -16,19 +17,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
   AuthProvider _provider;
 
   @override
-  void initState() {
-    super.initState();
+  Widget build(BuildContext context) {
     _provider = BlocProvider.of<AuthProvider>(context);
-    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
-    _type = (args.containsKey("user")) ? args["user"] : null;
-    if (_type == null) {
-      Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
+    _type = _provider.status;
+    if (_type != "Usuario" && _type != "Tienda") {
+      return UnauthorizedPage(info: "Por favor inicia sesión en la aplicación");
     }
     _name = (_type == "Usuario") ? _provider.user.name : _provider.shop.name;
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
       body: LayoutBuilder(

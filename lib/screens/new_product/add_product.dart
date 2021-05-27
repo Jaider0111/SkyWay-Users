@@ -9,10 +9,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skyway_users/models/collections/categories.dart';
 import 'package:skyway_users/models/collections/product.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
+import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 import 'package:skyway_users/screens/new_product/images_view.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:skyway_users/screens/unauthorizedPage.dart';
 
 class AddProductPage extends StatefulWidget {
   AddProductPage({Key key}) : super(key: key);
@@ -36,6 +38,9 @@ class _AddProductPageState extends State<AddProductPage> {
   List<bool> _enabledFilds = [];
   List<Uint8List> _images = [];
   Map<String, List<String>> _options = Map();
+  AuthProvider _authProvider;
+  ProductsProvider _productsProvider;
+  String _type;
 
   @override
   void initState() {
@@ -46,6 +51,12 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    _authProvider = BlocProvider.of<AuthProvider>(context);
+    _productsProvider = BlocProvider.of<ProductsProvider>(context);
+    _type = _authProvider.status;
+    if (_type != "Tienda") {
+      return UnauthorizedPage(info: "Ingresa con tu cuenta de vendedor");
+    }
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
     if (args.containsKey("businessId"))
       _businessId = args["businessId"];
@@ -414,8 +425,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 Navigator.of(this.context).pop();
                 if (save) {
                   messenger("Datos guardados", 2);
-                  Navigator.of(this.context).pushNamed('dashboard');
-                  Navigator.of(this.context).pushNamedAndRemoveUntil('dashboard', (_) => false);
+                  Navigator.of(this.context).pop();
                 } else
                   messenger("Error al enviar datos", 2);
               },

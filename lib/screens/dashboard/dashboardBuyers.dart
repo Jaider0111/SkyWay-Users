@@ -1,5 +1,9 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:skyway_users/models/collections/product.dart';
+import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 
 class DashBoard2Page extends StatefulWidget {
@@ -10,6 +14,13 @@ class DashBoard2Page extends StatefulWidget {
 }
 
 class _DashBoard2PageState extends State<DashBoard2Page> {
+  bool load = false;
+  List<ProductModel> lista = [];
+  List<ProductModel> alimentos = [];
+  List<ProductModel> restaurantes = [];
+  List<ProductModel> farmacia = [];
+  List<ProductModel> otros = [];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,6 +59,10 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget sideBar(BoxConstraints constraints) {
+    if (!load) {
+      loadProducts();
+      load = true;
+    }
     return SizedBox(
         width: constraints.maxWidth / 6.0,
         height: constraints.maxHeight,
@@ -95,7 +110,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                 referAFriendWidget(constraints),
               ],
             ),
-            productsView(constraints),
+            productsView(constraints, lista),
           ],
         )));
   }
@@ -162,10 +177,11 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             scrollDirection: Axis.horizontal,
             physics: const BouncingScrollPhysics(),
             children: [
-              categoryWidget(constraints, "Alimentos", "diet.png"),
-              categoryWidget(constraints, "Restaurantes", "restaurant.png"),
-              categoryWidget(constraints, "Farmacia", "medicine.png"),
-              categoryWidget(constraints, "Otros", "settings.png"),
+              categoryWidget(constraints, "Alimentos", "diet.png", alimentos),
+              categoryWidget(
+                  constraints, "Restaurantes", "restaurant.png", restaurantes),
+              categoryWidget(constraints, "Farmacia", "medicine.png", farmacia),
+              categoryWidget(constraints, "Otros", "settings.png", otros),
             ],
           ),
         ),
@@ -230,7 +246,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     );
   }
 
-  Widget productsView(BoxConstraints constraints) {
+  Widget productsView(BoxConstraints constraints, List<ProductModel> list) {
     return SizedBox(
       width: constraints.maxWidth / 6.0 * 4.8,
       height: constraints.maxHeight / 6.0 * 2.75,
@@ -238,18 +254,27 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
         elevation: 10.0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
         color: Colors.white70,
-        child: ListView(
-          scrollDirection: Axis.horizontal,
-          physics: const BouncingScrollPhysics(),
-          children: [
-            productWidget(constraints, "Hamburguesa", null, "13.000", 4.5),
-          ],
+        child: Container(
+          margin: EdgeInsets.only(left: 10.0, right: 10.0),
+          child: ListView.builder(
+            scrollDirection: Axis.horizontal,
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int index) {
+              return productWidget(
+                  constraints,
+                  list[index].name,
+                  list[index].images[0],
+                  list[index].price.toString(),
+                  randomGn(3, 5));
+            },
+          ),
         ),
       ),
     );
   }
 
-  Widget categoryWidget(BoxConstraints constraints, name, image) {
+  Widget categoryWidget(
+      BoxConstraints constraints, name, image, List<ProductModel> list) {
     return Container(
       height: constraints.maxHeight / 6.0 * 1.9 - 20.0,
       width: constraints.maxHeight / 6.0 * 1.9 - 20.0,
@@ -276,7 +301,11 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   ),
                 ),
                 FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      lista = list;
+                    });
+                  },
                   mini: true,
                   backgroundColor: Colors.orange,
                   child: Icon(Icons.arrow_forward_ios_rounded),
@@ -359,9 +388,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                     width: 140.0,
                     height: 140.0,
                     child: Image(
-                      image:
-                          //Se debe cargar la imagen, esperar a JaiderTutos
-                          AssetImage("assets/images/hamburguesa_ejemplo.jpg"),
+                      image: NetworkImage(image),
                     )),
                 RatingBarIndicator(
                   rating: stars,
@@ -373,12 +400,14 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   itemSize: 30.0,
                   direction: Axis.horizontal,
                 ),
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Itim",
-                    fontSize: 20.0,
+                Expanded(
+                  child: Text(
+                    name,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Itim",
+                      fontSize: 20.0,
+                    ),
                   ),
                 ),
                 Row(
@@ -393,11 +422,15 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                       ),
                     ),
                     SizedBox(width: 5.0),
-                    FloatingActionButton(
-                      onPressed: () {},
-                      mini: true,
-                      backgroundColor: Colors.green,
-                      child: Icon(Icons.add),
+                    SizedBox(
+                      height: 25.0,
+                      width: 25.0,
+                      child: FloatingActionButton(
+                        onPressed: () {},
+                        mini: true,
+                        backgroundColor: Colors.green,
+                        child: Icon(Icons.add),
+                      ),
                     ),
                   ],
                 )
@@ -405,5 +438,37 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             ),
           ))),
     );
+  }
+
+  void loadProducts() async {
+    List products =
+        await BlocProvider.of<ProductsProvider>(this.context).getProducts();
+    products.forEach((product) {
+      ProductModel newProduct = new ProductModel.fromJson2(product);
+      if (newProduct.category == "Alimentos") {
+        alimentos.add(newProduct);
+        alimentos.toSet();
+      } else if (newProduct.category == "Restaurantes") {
+        restaurantes.add(newProduct);
+      } else if (newProduct.category == "Farmacia") {
+        farmacia.add(newProduct);
+      } else if (newProduct.category == "Otros") {
+        otros.add(newProduct);
+      }
+    });
+    print("DEBUG!");
+    print("Alimentos");
+    print(alimentos.length);
+    print("Restaurantes");
+    print(restaurantes.length);
+    print("Farmacia");
+    print(farmacia.length);
+    print("Otros");
+    print(otros.length);
+  }
+
+  randomGn(int a, int b) {
+    var rng = new Random();
+    return ((b - a) * rng.nextDouble() + a);
   }
 }

@@ -26,7 +26,8 @@ class ProductsProvider extends Bloc {
     return false;
   }
 
-  Future<List<String>> saveImages(List<Uint8List> _images, String productName) async {
+  Future<List<String>> saveImages(
+      List<Uint8List> _images, String productName) async {
     List<String> urls = [];
     String path = "$productName${DateTime.now().toIso8601String()}";
     fs.FirebaseStorage storage = fs.FirebaseStorage.instance;
@@ -43,6 +44,15 @@ class ProductsProvider extends Bloc {
   Future<Uint8List> getImage(String url) async {
     final response = await http.get(Uri.parse(url));
     if (response.statusCode == 200) return response.bodyBytes;
+    return null;
+  }
+
+  Future<List> getProducts() async {
+    String url = "http://localhost:8080/api/getProducts";
+    final response = await http.get(Uri.parse(url));
+    //final url = Uri.https(baseUri, "/api/getProducts");
+    //final response = await http.get(url);
+    if (response.statusCode == 200) return json.decode(response.body);
     return null;
   }
 }

@@ -13,6 +13,7 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   String email;
   String password;
+  final _loginKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
@@ -22,12 +23,16 @@ class _LoginState extends State<Login> {
         children: [
           Container(
               decoration: BoxDecoration(
-            gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [
-              Colors.deepOrange,
-              Colors.deepPurple,
-            ]),
+            gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Colors.deepOrange,
+                  Colors.deepPurple,
+                ]),
           )),
-          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+          LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
             if (constraints.maxWidth > 800.0)
               return Row(
                 children: [
@@ -59,32 +64,73 @@ class _LoginState extends State<Login> {
   Widget loginForm(BoxConstraints constraints) {
     return SizedBox(
       height: constraints.maxHeight,
-      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth,
+      width: (constraints.maxWidth > 800.0)
+          ? constraints.maxWidth / 2.0
+          : constraints.maxWidth,
       child: Theme(
         data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              height: 550.0,
-              width: 550.0,
-              child: Card(
-                elevation: 10,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-                child: Column(
-                  children: [
-                    SizedBox(height: 30),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 30.0),
-                      child: Text(
-                        "¡Bienvenido a SkyWay, el mejor lugar para comprar!",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 30),
+            Form(
+              key: _loginKey,
+              child: Container(
+                height: 550.0,
+                width: 550.0,
+                child: Card(
+                  elevation: 10,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)),
+                  child: Column(
+                    children: [
+                      SizedBox(height: 30),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 30.0),
+                        child: Text(
+                          "¡Bienvenido a SkyWay, el mejor lugar para comprar!",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 30),
+                        ),
                       ),
-                    ),
-                    SizedBox(height: 30),
-                    Row(
-                      children: [
+                      SizedBox(height: 30),
+                      Row(
+                        children: [
+                          SizedBox(width: 40),
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: new BorderRadius.circular(15)),
+                              child: Padding(
+                                padding: EdgeInsets.only(
+                                    left: 15, right: 15, top: 5),
+                                child: TextFormField(
+                                  style: TextStyle(fontSize: 20),
+                                  onChanged: (value) => email = value,
+                                  validator: (value) => (value.contains(RegExp(
+                                          r'^[\w\.\*-_\+]+@[a-z]+(\.[a-z]+)+$')))
+                                      ? null
+                                      : "Ingresa un correo correcto, imbecil! ",
+                                  decoration: InputDecoration(
+                                      icon: Icon(Icons.person),
+                                      border: InputBorder.none,
+                                      fillColor: Colors.grey,
+                                      focusColor: Colors.grey,
+                                      focusedBorder: null,
+                                      labelText:
+                                          "Ingresa tu correo electrónico",
+                                      labelStyle: TextStyle(fontSize: 20),
+                                      contentPadding:
+                                          EdgeInsets.only(bottom: 15.0)),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: 40)
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(children: [
                         SizedBox(width: 40),
                         Expanded(
                           child: Container(
@@ -92,85 +138,67 @@ class _LoginState extends State<Login> {
                                 color: Colors.grey[300],
                                 borderRadius: new BorderRadius.circular(15)),
                             child: Padding(
-                              padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                              padding: EdgeInsets.only(left: 15, right: 15),
                               child: TextFormField(
                                 style: TextStyle(fontSize: 20),
-                                onChanged: (value) => email = value,
+                                onChanged: (value) => password = value,
+                                validator: (value) => (value.length >= 4 ||
+                                        value.length == 0)
+                                    ? null
+                                    : "Contraseña debe contener al menos 8 caracteres",
+                                autovalidateMode: AutovalidateMode.always,
+                                obscureText: true,
                                 decoration: InputDecoration(
-                                    icon: Icon(Icons.person),
+                                    icon: Icon(Icons.lock),
                                     border: InputBorder.none,
-                                    fillColor: Colors.grey,
-                                    focusColor: Colors.grey,
-                                    focusedBorder: null,
-                                    labelText: "Ingresa tu correo electrónico",
-                                    labelStyle: TextStyle(fontSize: 20),
-                                    contentPadding: EdgeInsets.only(bottom: 15.0)),
+                                    labelText: "Ingresa tu contraseña",
+                                    labelStyle: TextStyle(fontSize: 20)),
                               ),
                             ),
                           ),
                         ),
-                        SizedBox(width: 40)
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Row(children: [
-                      SizedBox(width: 40),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                              color: Colors.grey[300], borderRadius: new BorderRadius.circular(15)),
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 15, right: 15),
-                            child: TextFormField(
-                              style: TextStyle(fontSize: 20),
-                              onChanged: (value) => password = value,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                  icon: Icon(Icons.lock),
-                                  border: InputBorder.none,
-                                  labelText: "Ingresa tu contraseña",
-                                  labelStyle: TextStyle(fontSize: 20)),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 40),
-                    ]),
-                    SizedBox(width: 40),
-                    SizedBox(height: 20),
-                    Row(
-                      children: [
                         SizedBox(width: 40),
-                        Expanded(
-                          child: FloatingActionButton.extended(
-                            backgroundColor: Colors.green,
-                            onPressed: () => auth(context),
-                            label: Text(
-                              "¡Ingresar!",
-                              style: TextStyle(fontSize: 24),
+                      ]),
+                      SizedBox(width: 40),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          SizedBox(width: 40),
+                          Expanded(
+                            child: FloatingActionButton.extended(
+                              backgroundColor: Colors.green,
+                              onPressed: () => auth(context),
+                              label: Text(
+                                "¡Ingresar!",
+                                style: TextStyle(fontSize: 24),
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 40)
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                      Text("¿No tienes una cuenta aún?", style: TextStyle(fontSize: 15)),
-                      SizedBox(width: 20),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pushNamed(
-                            context,
-                            "registration",
-                          );
-                        },
-                        child: Text("¡Regístrate aquí!", style: TextStyle(fontSize: 15)),
+                          SizedBox(width: 40)
+                        ],
                       ),
-                    ]),
-                    SizedBox(height: 20),
-                    signInButtons(),
-                  ],
+                      SizedBox(height: 20),
+                      Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("¿No tienes una cuenta aún?",
+                                style: TextStyle(fontSize: 15)),
+                            SizedBox(width: 20),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.pushNamed(
+                                  context,
+                                  "registration",
+                                );
+                              },
+                              child: Text("¡Regístrate aquí!",
+                                  style: TextStyle(fontSize: 15)),
+                            ),
+                          ]),
+                      SizedBox(height: 20),
+                      signInButtons(),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -210,6 +238,12 @@ class _LoginState extends State<Login> {
   }
 
   void auth(BuildContext context) async {
+    bool valid = _loginKey.currentState.validate();
+    valid = (!valid) ? valid : password.length >= 4;
+    if (!valid) {
+      messenger("Verifica los datos ingresados", 3, context);
+      return;
+    }
     showDialog(
       context: context,
       useSafeArea: true,
@@ -223,15 +257,18 @@ class _LoginState extends State<Login> {
       },
     );
     await Future.delayed(Duration(seconds: 3));
-    final String answer = await BlocProvider.of<AuthProvider>(context).login(email, password);
+    final String answer =
+        await BlocProvider.of<AuthProvider>(context).login(email, password);
     Navigator.of(context).pop();
     if (answer == "Tienda" || answer == "Usuario")
-      Navigator.of(context)
-          .pushNamedAndRemoveUntil('dashboard', (route) => false, arguments: {"user": answer});
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          'dashboard', (route) => false,
+          arguments: {"user": answer});
     else if (answer == "incorrect email") {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text("La dirección de correo electrónico ingresada no se encuentra registrada"),
+          content: Text(
+              "La dirección de correo electrónico ingresada no se encuentra registrada"),
           duration: Duration(seconds: 2),
         ),
       );

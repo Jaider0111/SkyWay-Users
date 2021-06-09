@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 
 final appBar = AppBar(
@@ -9,3 +11,12 @@ final appBar = AppBar(
     style: TextStyle(fontSize: 30, fontFamily: "Pacifica"),
   ),
 );
+
+void messenger(String message, int duration, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: duration),
+      ),
+    );
+  }

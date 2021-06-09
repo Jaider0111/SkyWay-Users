@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:skyway_users/screens/Profile/profile.dart';
 import 'package:skyway_users/screens/Registro/newRegistro.dart';
 import 'package:skyway_users/screens/dashboard/dashboard.dart';
 import 'package:skyway_users/screens/new_product/add_product.dart';
@@ -9,4 +10,5 @@ final Map<String, Widget Function(BuildContext)> routes = {
   'registration': (ctx) => RegistroPage(),
   'dashboard': (ctx) => DashBoardPage(),
   'login': (ctx) => Login(),
+  'profile': (ctx) => ProfilePage(),
 };

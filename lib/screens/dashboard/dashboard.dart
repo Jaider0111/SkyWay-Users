@@ -35,17 +35,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
       body: LayoutBuilder(
         //builder -> para que sea responsivo
         builder: (context, constraints) {
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepOrange,
-                  Colors.deepPurple,
-                ],
-                begin: Alignment.bottomRight,
-                end: Alignment.topLeft,
-              ),
-            ),
+          return BackgroundWidget(
+            constraints: constraints,
             child: Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -72,6 +63,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           .pushNamedAndRemoveUntil('login', (route) => false);
                     },
                     child: Text("Cerrar sesión"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil('search', (route) => false);
+                    },
+                    child: Text("Busqueda"),
                   ),
                   ElevatedButton(
                     onPressed: () {

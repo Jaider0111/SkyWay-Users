@@ -8,7 +8,10 @@ import 'package:flutter/rendering.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImagesView extends StatefulWidget {
-  final BoxConstraints constraints;
+  final String title;
+  final bool multiImage;
+  final double height;
+  final double width;
   final bool isWeb;
   final void Function(List<Uint8List>) updateImages;
 
@@ -16,7 +19,10 @@ class ImagesView extends StatefulWidget {
     Key key,
     @required this.isWeb,
     @required this.updateImages,
-    this.constraints,
+    @required this.height,
+    @required this.width,
+    @required this.multiImage,
+    this.title,
   }) : super(key: key);
 
   @override
@@ -31,13 +37,13 @@ class _ImagesViewState extends State<ImagesView> {
 
   final _imagePageController = PageController(
     viewportFraction: 0.4,
-    initialPage: 1,
+    initialPage: 2,
   );
 
   void _imageScrollLisener() {
     setState(() {
       _currentImage = _imagePageController.page;
-      if (_currentImage <= 1) _imagePageController.jumpToPage(1);
+      if (_currentImage < 1) _imagePageController.jumpToPage(1);
     });
   }
 
@@ -56,26 +62,23 @@ class _ImagesViewState extends State<ImagesView> {
 
   @override
   Widget build(BuildContext context) {
-    final constraints = widget.constraints;
-    final height = (constraints.maxWidth > 800.0)
-        ? constraints.maxHeight
-        : min(constraints.maxWidth, constraints.maxHeight);
-    final width =
-        (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth;
+    final height = widget.height;
+    final width = widget.width;
     return SizedBox(
       height: height,
       width: width,
       child: Card(
         child: Column(
           children: [
-            SizedBox(height: 50.0),
-            AutoSizeText(
-              "Muestranos tu producto",
-              textAlign: TextAlign.center,
-              maxLines: 1,
-              minFontSize: 0.0,
-              style: TextStyle(fontSize: 25.0),
-            ),
+            SizedBox(height: min(width / 13.0, 50.0)),
+            if (widget.title != null)
+              AutoSizeText(
+                widget.title,
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                minFontSize: 0.0,
+                style: TextStyle(fontSize: 25.0),
+              ),
             SizedBox(height: 15.0),
             Expanded(
               child: Padding(
@@ -84,7 +87,7 @@ class _ImagesViewState extends State<ImagesView> {
                     ? IconButton(
                         icon: Icon(Icons.camera_alt_outlined),
                         onPressed: getImage,
-                        iconSize: constraints.maxWidth / 4.8,
+                        iconSize: width / 4,
                       )
                     : PageView.builder(
                         controller: _imagePageController,
@@ -93,9 +96,7 @@ class _ImagesViewState extends State<ImagesView> {
                           if (index == 0) return SizedBox.shrink();
                           double val = _currentImage - index + 1;
                           double mod = -1.5 * pow(val, 2) + 3.0 * val + 0.5;
-                          double trans = ((constraints.maxWidth > 800.0)
-                                  ? constraints.maxWidth
-                                  : constraints.maxWidth * 2.0) /
+                          double trans = ((width > 400.0) ? width * 2.0 : width * 4.0) /
                               11 *
                               (1 - val.clamp(0.6, 1.4)) *
                               1.2;
@@ -122,17 +123,18 @@ class _ImagesViewState extends State<ImagesView> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  ElevatedButton(
-                    onPressed: getImage,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.add_a_photo),
-                        SizedBox(width: 5.0),
-                        AutoSizeText("Agregar foto")
-                      ],
+                  if (widget.multiImage || (widget.multiImage && images.length < 1))
+                    ElevatedButton(
+                      onPressed: getImage,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add_a_photo),
+                          SizedBox(width: 5.0),
+                          AutoSizeText("Agregar foto")
+                        ],
+                      ),
                     ),
-                  ),
                   if (images.length != 0)
                     ElevatedButton(
                       onPressed: dropImage,
@@ -148,7 +150,7 @@ class _ImagesViewState extends State<ImagesView> {
                 ],
               ),
             ),
-            SizedBox(height: 50.0)
+            SizedBox(height: min(width / 13.0, 50.0)),
           ],
         ),
       ),

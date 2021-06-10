@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class CustomInputText extends StatelessWidget {
+  final TextStyle errorStyle;
   final ValueChanged<String> valueCallback;
   final String label;
   final String initialValue;
@@ -29,6 +30,7 @@ class CustomInputText extends StatelessWidget {
     this.enabled = true,
     this.autovalidateMode = AutovalidateMode.onUserInteraction,
     this.onEditingComplete,
+    this.errorStyle,
   }) : super(key: key);
 
   @override
@@ -48,6 +50,7 @@ class CustomInputText extends StatelessWidget {
           initialValue: initialValue,
           obscureText: !showText,
           decoration: InputDecoration(
+            errorStyle: errorStyle,
             labelText: label,
             prefixIcon: Icon(icon),
           ),

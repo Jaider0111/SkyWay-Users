@@ -10,6 +10,7 @@ class StoreModel {
   String phone;
   String address;
   String category;
+  String image;
 
   StoreModel({
     @required this.name,
@@ -20,6 +21,7 @@ class StoreModel {
     @required this.email,
     @required this.phone,
     @required this.address,
+    this.image,
   }) : super();
 
   StoreModel.fromJson(dynamic json) {
@@ -32,19 +34,21 @@ class StoreModel {
     this.schedule = json["schedule"];
     this.phone = json["phone"];
     this.address = json["address"];
+    this.image = json["image"];
   }
 
   Map<String, dynamic> toJson() {
     return {
       if (this.id != null) "id": this.id,
-      "identification": identification,
-      "name": name,
-      "password": password,
-      "category": category,
-      "schedule": schedule,
-      "phone": phone,
-      "email": email,
-      "address": address,
+      "identification": this.identification,
+      "name": this.name,
+      "password": this.password,
+      "category": this.category,
+      "schedule": this.schedule,
+      "phone": this.phone,
+      "email": this.email,
+      "address": this.address,
+      "image": this.image,
     };
   }
 }

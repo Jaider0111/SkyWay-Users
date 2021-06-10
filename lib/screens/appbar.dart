@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:flutter/material.dart';
 
 final appBar = AppBar(
@@ -38,3 +40,12 @@ class BackgroundWidget extends StatelessWidget {
     );
   }
 }
+
+void messenger(String message, int duration, BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: duration),
+      ),
+    );
+  }

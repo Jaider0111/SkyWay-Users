@@ -42,7 +42,7 @@ class ProductModel {
     this.price = json["price"];
     this.isCustomizable = json["isCustomizable"];
     this.options = json["options"];
-    this.images = json["images"];
+    this.images = (json["images"] as List).map((e) => e.toString()).toList();
   }
 
   ProductModel.fromJson2(dynamic json) {

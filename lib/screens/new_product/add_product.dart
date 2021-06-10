@@ -12,7 +12,7 @@ import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
-import 'package:skyway_users/screens/new_product/images_view.dart';
+import 'package:skyway_users/screens/images_view.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:skyway_users/screens/unauthorizedPage.dart';
 
@@ -65,23 +65,14 @@ class _AddProductPageState extends State<AddProductPage> {
       _businessId = "negocioDePrueba";
     return Scaffold(
       appBar: appBar,
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-          colors: [
-            Colors.deepOrange,
-            Colors.deepPurple,
-          ],
-          begin: Alignment.bottomRight,
-          end: Alignment.topLeft,
-        )),
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return (constraints.maxWidth > 800.0)
-                ? _rowView(constraints)
-                : _columnView(constraints);
-          },
-        ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return BackgroundWidget(
+            constraints: constraints,
+            child:
+                (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
+          );
+        },
       ),
     );
   }
@@ -90,9 +81,12 @@ class _AddProductPageState extends State<AddProductPage> {
     return Row(
       children: [
         ImagesView(
+          multiImage: true,
+          title: "Muestranos tu producto",
           updateImages: (imgs) => _images = imgs,
           isWeb: kIsWeb,
-          constraints: constraints,
+          height: constraints.maxHeight,
+          width: constraints.maxWidth / 2.0,
         ),
         productForm(constraints)
       ],
@@ -103,9 +97,12 @@ class _AddProductPageState extends State<AddProductPage> {
     return ListView(
       children: [
         ImagesView(
+          multiImage: true,
+          title: "Muestranos tu producto",
           updateImages: (imgs) => _images = imgs,
           isWeb: kIsWeb,
-          constraints: constraints,
+          height: min(constraints.maxWidth, constraints.maxHeight),
+          width: constraints.maxWidth,
         ),
         productForm(constraints),
       ],
@@ -406,8 +403,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     );
                   },
                 );
-                final images = await BlocProvider.of<ProductsProvider>(this.context)
-                    .saveImages(_images, _name);
+                final images = await _productsProvider.saveImages(_images, _name);
                 ProductModel product = ProductModel(
                   name: _name,
                   description: _description,
@@ -421,8 +417,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   options: (_isCustomizable) ? _options : null,
                   images: images,
                 );
-                bool save =
-                    await BlocProvider.of<ProductsProvider>(this.context).saveProduct(product);
+                bool save = await _productsProvider.saveProduct(product);
                 Navigator.of(this.context).pop();
                 if (save) {
                   messenger("Datos guardados", 2);

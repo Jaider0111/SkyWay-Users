@@ -14,35 +14,25 @@ class _LoginState extends State<Login> {
   String email;
   String password;
   final _loginKey = GlobalKey<FormState>();
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: appBar,
       body: Stack(
         children: [
-          Container(
-              decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topRight,
-                end: Alignment.bottomLeft,
-                colors: [
-                  Colors.deepOrange,
-                  Colors.deepPurple,
-                ]),
-          )),
-          LayoutBuilder(
-              builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.maxWidth > 800.0)
-              return Row(
-                children: [
-                  loginForm(constraints),
-                  backgroundImage(constraints),
-                ],
-              );
-            else {
-              return loginForm(constraints);
-            }
+          LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+            return BackgroundWidget(
+              constraints: constraints,
+              child: (constraints.maxWidth > 800.0)
+                  ? Row(
+                      children: [
+                        loginForm(constraints),
+                        backgroundImage(constraints),
+                      ],
+                    )
+                  : loginForm(constraints),
+            );
           }),
         ],
       ),
@@ -64,9 +54,7 @@ class _LoginState extends State<Login> {
   Widget loginForm(BoxConstraints constraints) {
     return SizedBox(
       height: constraints.maxHeight,
-      width: (constraints.maxWidth > 800.0)
-          ? constraints.maxWidth / 2.0
-          : constraints.maxWidth,
+      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth,
       child: Theme(
         data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
         child: Column(

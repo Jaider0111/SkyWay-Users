@@ -20,24 +20,18 @@ class _LoginState extends State<Login> {
       appBar: appBar,
       body: Stack(
         children: [
-          Container(
-              decoration: BoxDecoration(
-            gradient: LinearGradient(begin: Alignment.topRight, end: Alignment.bottomLeft, colors: [
-              Colors.deepOrange,
-              Colors.deepPurple,
-            ]),
-          )),
           LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-            if (constraints.maxWidth > 800.0)
-              return Row(
-                children: [
-                  loginForm(constraints),
-                  backgroundImage(constraints),
-                ],
-              );
-            else {
-              return loginForm(constraints);
-            }
+            return BackgroundWidget(
+              constraints: constraints,
+              child: (constraints.maxWidth > 800.0)
+                  ? Row(
+                      children: [
+                        loginForm(constraints),
+                        backgroundImage(constraints),
+                      ],
+                    )
+                  : loginForm(constraints),
+            );
           }),
         ],
       ),

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
 class ProductModel {
@@ -41,6 +43,15 @@ class ProductModel {
     this.isCustomizable = json["isCustomizable"];
     this.options = json["options"];
     this.images = json["images"];
+  }
+
+  ProductModel.fromJson2(dynamic json) {
+    this.name = json["name"];
+    this.category = json["category"];
+    this.price = json["price"];
+    List dynList = json["images"];
+    List<String> strList = dynList.map((s) => s as String).toList();
+    this.images = strList;
   }
 
   Map<String, dynamic> toJson() {

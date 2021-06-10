@@ -128,6 +128,7 @@ class _LoginState extends State<Login> {
                           ),
                           SizedBox(width: 40)
                         ],
+
                       ),
                       SizedBox(height: 20),
                       Row(children: [
@@ -139,6 +140,7 @@ class _LoginState extends State<Login> {
                                 borderRadius: new BorderRadius.circular(15)),
                             child: Padding(
                               padding: EdgeInsets.only(left: 15, right: 15),
+
                               child: TextFormField(
                                 style: TextStyle(fontSize: 20),
                                 onChanged: (value) => password = value,
@@ -260,9 +262,13 @@ class _LoginState extends State<Login> {
     final String answer =
         await BlocProvider.of<AuthProvider>(context).login(email, password);
     Navigator.of(context).pop();
-    if (answer == "Tienda" || answer == "Usuario")
+    if (answer == "Tienda")
       Navigator.of(context).pushNamedAndRemoveUntil(
           'dashboard', (route) => false,
+          arguments: {"user": answer});
+    else if (answer == "Usuario")
+      Navigator.of(context).pushNamedAndRemoveUntil(
+          'dashboard_for_buyers', (route) => false,
           arguments: {"user": answer});
     else if (answer == "incorrect email") {
       ScaffoldMessenger.of(context).showSnackBar(

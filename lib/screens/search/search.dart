@@ -226,7 +226,8 @@ class SearchProductView extends StatelessWidget {
       FadeInImage.assetNetwork(
         placeholder: "assets/images/loader.gif",
         image: product.images[0],
-        width: min(400, constraints.width),
+        width: min(300, constraints.width),
+        height: min(300, constraints.width),
         fit: BoxFit.fitWidth,
       ),
       SizedBox(
@@ -234,62 +235,65 @@ class SearchProductView extends StatelessWidget {
         height: 20.0,
       ),
       Expanded(
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Text(
-                  product.name,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Itim",
-                    fontSize: 40.0,
+        child: SizedBox(
+          height: min(300, constraints.width),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Text(
+                    product.name,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Itim",
+                      fontSize: 40.0,
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.favorite_border),
+                    iconSize: 40.0,
+                  ),
+                ],
+              ),
+              Text(
+                "\$${formatter.format(product.price)}",
+                style: TextStyle(
+                  color: Colors.black,
+                  fontFamily: "Itim",
+                  fontSize: 30.0,
+                ),
+              ),
+              RatingBarIndicator(
+                rating: Random().nextDouble() * 5,
+                itemBuilder: (context, index) => Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                itemCount: 5,
+                itemSize: 50.0,
+                direction: Axis.horizontal,
+              ),
+              SizedBox(
+                height: 50.0,
+                width: 50.0,
+                child: FloatingActionButton(
+                  onPressed: () {},
+                  mini: true,
+                  backgroundColor: Colors.green,
+                  child: Icon(
+                    Icons.add,
+                    size: 35.0,
                   ),
                 ),
-                IconButton(
-                  onPressed: () {},
-                  icon: Icon(Icons.favorite_border),
-                  iconSize: 40.0,
-                ),
-              ],
-            ),
-            Text(
-              "\$${formatter.format(product.price)}",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Itim",
-                fontSize: 30.0,
-              ),
-            ),
-            RatingBarIndicator(
-              rating: Random().nextDouble() * 5,
-              itemBuilder: (context, index) => Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              itemCount: 5,
-              itemSize: 50.0,
-              direction: Axis.horizontal,
-            ),
-            SizedBox(
-              height: 50.0,
-              width: 50.0,
-              child: FloatingActionButton(
-                onPressed: () {},
-                mini: true,
-                backgroundColor: Colors.green,
-                child: Icon(
-                  Icons.add,
-                  size: 35.0,
-                ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     ];
@@ -299,7 +303,8 @@ class SearchProductView extends StatelessWidget {
         child: (constraints.width >= 600)
             ? Row(
                 children: children,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
               )
             : Column(children: children),
       ),

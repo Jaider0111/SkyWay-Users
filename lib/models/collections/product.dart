@@ -42,7 +42,7 @@ class ProductModel {
     this.amount = json["amount"];
     this.price = json["price"];
     this.isCustomizable = json["isCustomizable"];
-    this.options = (json["options"] as Map).map((key, value) =>
+    this.options = (json["options"] as Map)?.map((key, value) =>
         MapEntry(key.toString(), (value as List).map((e) => e.toString()).toList()));
     this.images = (json["images"] as List).map((e) => e.toString()).toList();
   }

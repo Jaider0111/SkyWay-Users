@@ -19,17 +19,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
   @override
   Widget build(BuildContext context) {
     _provider = BlocProvider.of<AuthProvider>(context);
-    _type = "Tienda";
-    _name = "prueba";
-
-    /*
     _type = _provider.status;
-    
+
     if (_type != "Usuario" && _type != "Tienda") {
       return UnauthorizedPage(info: "Por favor inicia sesión en la aplicación");
     }
-    */
-    //_name = (_type == "Usuario") ? _provider.user.name : _provider.shop.name;
+    _name = (_type == "Usuario") ? _provider.user.name : _provider.shop.name;
     return Scaffold(
       appBar: appBar,
       body: LayoutBuilder(
@@ -46,8 +41,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   if (_type == "Tienda")
                     ElevatedButton(
                       onPressed: () {
-                        Navigator.of(context)
-                            .pushNamed('addProduct', arguments: {
+                        Navigator.of(context).pushNamed('addProduct', arguments: {
                           "businessId": _provider.shop.id,
                         });
                       },
@@ -59,14 +53,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   ElevatedButton(
                     onPressed: () {
                       _provider.logout();
-                      Navigator.of(context)
-                          .pushNamedAndRemoveUntil('login', (route) => false);
+                      Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
                     },
                     child: Text("Cerrar sesión"),
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil('search', (route) => false);
+                      Navigator.of(context).pushNamed('search');
                     },
                     child: Text("Busqueda"),
                   ),

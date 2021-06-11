@@ -3,8 +3,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:skyway_users/models/collections/order.dart';
 import 'package:skyway_users/models/collections/product.dart';
+import 'package:skyway_users/models/collections/user.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
+import 'package:skyway_users/providers/auth_provider.dart';
 
 import '../appbar.dart';
 
@@ -28,6 +33,8 @@ class CheckoutState extends State<CheckoutPage> {
   int _year;
   int _pay;
   bool _creditCard;
+  List<String> _opts = [];
+  Map<String, List<String>> _options = Map();
 
   List<ProductModel> _productsList;
   int _total = 0;
@@ -36,65 +43,73 @@ class CheckoutState extends State<CheckoutPage> {
   void initState() {
     _creditCard = false;
     super.initState();
-    _productsList = [
-      new ProductModel(
-          name: "Producto",
-          description: "description",
-          category: "category",
-          subcategory: "subcategory",
-          businessId: "businessId",
-          isCountable: false,
-          price: 10000,
-          isCustomizable: false,
-          images: null),
-      new ProductModel(
-          name: "Producto2",
-          description: "description2",
-          category: "categor2y",
-          subcategory: "subcate2gory",
-          businessId: "businessId2",
-          isCountable: false,
-          price: 20000,
-          isCustomizable: false,
-          images: null),
-      new ProductModel(
-          name: "Producto3",
-          description: "description3",
-          category: "categor3y",
-          subcategory: "subcate3gory",
-          businessId: "businessId3",
-          isCountable: false,
-          price: 30000,
-          isCustomizable: false,
-          images: null),
-      new ProductModel(
-          name: "Producto4",
-          description: "description4",
-          category: "category4",
-          subcategory: "subcategory4",
-          businessId: "businessI4d",
-          isCountable: false,
-          price: 10000,
-          isCustomizable: false,
-          images: null),
-      new ProductModel(
-          name: "Producto5",
-          description: "description5",
-          category: "category5",
-          subcategory: "subcategory5",
-          businessId: "businessId5",
-          isCountable: false,
-          price: 10000,
-          isCustomizable: false,
-          images: null),
-    ];
-    for (int i = 0; i < _productsList.length; i++) {
-      _total += _productsList[i].price;
-    }
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
+    if (args.containsKey("listP")) {
+      _productsList = args["listP"];
+      for (int i = 0; i < _productsList.length; i++) {
+        _total += _productsList[i].price;
+      }
+    } else {
+      _productsList = [
+        new ProductModel(
+            name: "Producto",
+            description: "description",
+            category: "category",
+            subcategory: "subcategory",
+            businessId: "businessId",
+            isCountable: false,
+            price: 10000,
+            isCustomizable: false,
+            images: null),
+        new ProductModel(
+            name: "Producto2",
+            description: "description2",
+            category: "categor2y",
+            subcategory: "subcate2gory",
+            businessId: "businessId2",
+            isCountable: false,
+            price: 20000,
+            isCustomizable: false,
+            images: null),
+        new ProductModel(
+            name: "Producto3",
+            description: "description3",
+            category: "categor3y",
+            subcategory: "subcate3gory",
+            businessId: "businessId3",
+            isCountable: false,
+            price: 30000,
+            isCustomizable: false,
+            images: null),
+        new ProductModel(
+            name: "Producto4",
+            description: "description4",
+            category: "category4",
+            subcategory: "subcategory4",
+            businessId: "businessI4d",
+            isCountable: false,
+            price: 10000,
+            isCustomizable: false,
+            images: null),
+        new ProductModel(
+            name: "Producto5",
+            description: "description5",
+            category: "category5",
+            subcategory: "subcategory5",
+            businessId: "businessId5",
+            isCountable: false,
+            price: 10000,
+            isCustomizable: false,
+            images: null),
+      ];
+      for (int i = 0; i < _productsList.length; i++) {
+        _total += _productsList[i].price;
+      }
+    }
     return Scaffold(
         appBar: appBar,
         body: Container(
@@ -240,6 +255,29 @@ class CheckoutState extends State<CheckoutPage> {
                               FilteringTextInputFormatter.digitsOnly
                             ])
                       : creditCard(constraints),
+                  Center(
+                      child: Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: doOrder,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.done),
+                            SizedBox(width: 5.0),
+                            Text("Hacer pedido"),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.of(context).pushNamed('shoppingCart');
+                        },
+                        child: Text("Volver al carrito de compras"),
+                      ),
+                    ],
+                  )),
                 ]))));
   }
 
@@ -285,5 +323,130 @@ class CheckoutState extends State<CheckoutPage> {
                 icon: Icons.date_range,
               ),
             ])));
+  }
+
+  void doOrder() async {
+    bool valid = validate();
+
+    _opts.forEach((element) {
+      if (!_options.containsKey(element)) _options[element] = [];
+    });
+    if (!valid) return;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Column(
+            children: [
+              Text("Estas seguro que quieres hacer el pedido"),
+            ],
+          ),
+          content: Text("Pulsa continuar para ordenar el pedido"),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Row(
+                children: [
+                  Icon(Icons.cancel),
+                  SizedBox(width: 10),
+                  Text("Cancelar"),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return SimpleDialog(
+                      children: [
+                        SpinKitPouringHourglass(
+                          color: Colors.deepOrange,
+                          size: 150,
+                        ),
+                      ],
+                    );
+                  },
+                );
+                orderModel pedido;
+                if (!_creditCard) {
+                  pedido = orderModel(
+                      orderId: _address + _indication,
+                      name: _Name,
+                      address: _address,
+                      floorApto: _indication,
+                      bonus: _propina,
+                      creditCard: _creditCard,
+                      creditCardNumber: null,
+                      cvv: null,
+                      month: null,
+                      year: null,
+                      pay: _pay,
+                      order: _productsList,
+                      price: _total);
+                } else {
+                  pedido = orderModel(
+                      orderId: _address + _indication,
+                      name: _Name,
+                      address: _address,
+                      floorApto: _indication,
+                      bonus: _propina,
+                      creditCard: _creditCard,
+                      creditCardNumber: _cardNumber,
+                      cvv: _cvv,
+                      month: _month,
+                      year: _year,
+                      pay: null,
+                      order: _productsList,
+                      price: _total);
+                }
+
+                String savedOrder =
+                    await BlocProvider.of<AuthProvider>(this.context)
+                        .saveOrder(pedido);
+
+                Navigator.of(this.context).pop();
+                if (savedOrder == "El pedido no se ha generado correctamente")
+                  messenger("El pedido no se ha generado correctamente", 3);
+                else if (savedOrder != null) {
+                  messenger("Pedido Recibido", 3);
+                } else
+                  messenger("Error al hacer el pedido", 2);
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.navigate_next),
+                  SizedBox(width: 10),
+                  Text("Continuar"),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool validate() {
+    bool valid = _formKey.currentState.validate();
+    if (!_creditCard) {
+      if (_pay < _total) {
+        messenger("Debes ingresar un valor valido", 3);
+        return false;
+      }
+      return valid;
+    }
+    return valid;
+  }
+
+  void messenger(String message, int duration) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        duration: Duration(seconds: duration),
+      ),
+    );
   }
 }

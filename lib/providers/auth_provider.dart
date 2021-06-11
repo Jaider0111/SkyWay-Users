@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
 import 'package:skyway_users/core/utilities/http_info.dart';
+import 'package:skyway_users/models/collections/order.dart';
 import 'package:skyway_users/models/collections/store.dart';
 import 'package:skyway_users/models/collections/user.dart';
 import 'package:firebase_storage/firebase_storage.dart' as fs;
@@ -55,6 +56,19 @@ class AuthProvider extends Bloc {
     final response = await http.post(
       url,
       body: json.encode(tModel.toJson()),
+      headers: httpHeaders,
+    );
+    print(response.body);
+    if (response.statusCode == 200) return response.body;
+    return null;
+  }
+
+  Future<String> saveOrder(orderModel oModel) async {
+    final url = Uri.https(baseUri, "checkout");
+    print(oModel.toJson());
+    final response = await http.post(
+      url,
+      body: json.encode(oModel.toJson()),
       headers: httpHeaders,
     );
     print(response.body);

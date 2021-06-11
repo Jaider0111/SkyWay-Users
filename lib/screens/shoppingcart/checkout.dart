@@ -106,6 +106,7 @@ class CheckoutState extends State<CheckoutPage> {
             isCustomizable: false,
             images: null),
       ];
+      _total = 0;
       for (int i = 0; i < _productsList.length; i++) {
         _total += _productsList[i].price;
       }
@@ -138,8 +139,18 @@ class CheckoutState extends State<CheckoutPage> {
 
   Widget _rowView(BoxConstraints constraints) {
     return Row(children: [
-      productInList(_productsList, constraints),
-      DataForm(constraints)
+      Expanded(child: SizedBox()),
+      Column(
+        children: [
+          Text(
+            "PRODUCTOS A COMPRAR",
+            style: TextStyle(fontSize: 20.0),
+          ),
+          productInList(_productsList, constraints),
+        ],
+      ),
+      DataForm(constraints),
+      Expanded(child: SizedBox()),
     ]);
   }
 
@@ -151,11 +162,17 @@ class CheckoutState extends State<CheckoutPage> {
     return Card(
       child: Row(
         children: [
+          SizedBox(
+            width: 20.0,
+          ),
           Text(product.name),
           Expanded(child: SizedBox()),
           Text(product.category),
           Expanded(child: SizedBox()),
-          Text("\$" + product.price.toString())
+          Text("\$" + product.price.toString()),
+          SizedBox(
+            width: 20.0,
+          ),
         ],
       ),
     );
@@ -258,6 +275,9 @@ class CheckoutState extends State<CheckoutPage> {
                   Center(
                       child: Row(
                     children: [
+                      SizedBox(
+                        width: 80.0,
+                      ),
                       ElevatedButton(
                         onPressed: doOrder,
                         child: Row(
@@ -270,11 +290,22 @@ class CheckoutState extends State<CheckoutPage> {
                           ],
                         ),
                       ),
+                      SizedBox(
+                        width: 20.0,
+                      ),
                       ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pushNamed('shoppingCart');
                         },
-                        child: Text("Volver al carrito de compras"),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.shopping_cart),
+                            SizedBox(width: 5.0),
+                            Text("Volver al carrito"),
+                          ],
+                        ),
                       ),
                     ],
                   )),

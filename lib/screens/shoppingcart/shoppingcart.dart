@@ -127,69 +127,121 @@ class ShoppingCartState extends State<ShoppingCartPage> {
         ),
       );
     if (_productsLista.length < 2)
-      return Row(
+      return Column(
         children: [
-          Card(child: productCard(constraints, _productsLista[n1], n1)),
-          if (_modify)
-            SizedBox(
-                height: (constraints.maxWidth > 800.0)
-                    ? constraints.maxHeight
-                    : min(constraints.maxWidth, constraints.maxHeight),
-                width: (constraints.maxWidth > 800.0)
-                    ? constraints.maxWidth / 3
-                    : constraints.maxWidth,
-                child: bigProductCard(constraints, _productToModify))
+          Text(
+            "CARRITO DE COMPRAS",
+            style: TextStyle(fontSize: 50.0),
+          ),
+          Row(
+            children: [
+              Expanded(child: SizedBox()),
+              Card(child: productCard(constraints, _productsLista[n1], n1)),
+              if (_modify)
+                SizedBox(
+                    height: (constraints.maxWidth > 800.0)
+                        ? constraints.maxHeight - 100.0
+                        : min(constraints.maxWidth, constraints.maxHeight),
+                    width: (constraints.maxWidth > 800.0)
+                        ? constraints.maxWidth / 3
+                        : constraints.maxWidth,
+                    child: bigProductCard(constraints, _productToModify))
+              else
+                SizedBox(
+                    height: (constraints.maxWidth > 800.0)
+                        ? constraints.maxHeight - 100.0
+                        : min(constraints.maxWidth, constraints.maxHeight),
+                    width: (constraints.maxWidth > 800.0)
+                        ? constraints.maxWidth / 3
+                        : constraints.maxWidth,
+                    child: goToCheckout(
+                      constraints,
+                    )),
+              Expanded(child: SizedBox()),
+            ],
+          ),
         ],
       );
     if (_productsLista.length < 3)
-      return Row(
+      return Column(
         children: [
-          Card(child: productCard(constraints, _productsLista[n1], n1)),
-          Card(child: productCard(constraints, _productsLista[n2], n2)),
-          if (_modify)
-            SizedBox(
-                height: (constraints.maxWidth > 800.0)
-                    ? constraints.maxHeight
-                    : min(constraints.maxWidth, constraints.maxHeight),
-                width: (constraints.maxWidth > 800.0)
-                    ? constraints.maxWidth / 3
-                    : constraints.maxWidth,
-                child: bigProductCard(constraints, _productToModify))
+          Text(
+            "CARRITO DE COMPRAS",
+            style: TextStyle(fontSize: 50.0),
+          ),
+          Row(
+            children: [
+              Expanded(child: SizedBox()),
+              Card(child: productCard(constraints, _productsLista[n1], n1)),
+              Card(child: productCard(constraints, _productsLista[n2], n2)),
+              if (_modify)
+                SizedBox(
+                    height: (constraints.maxWidth > 800.0)
+                        ? constraints.maxHeight - 100.0
+                        : min(constraints.maxWidth, constraints.maxHeight),
+                    width: (constraints.maxWidth > 800.0)
+                        ? constraints.maxWidth / 3
+                        : constraints.maxWidth,
+                    child: bigProductCard(constraints, _productToModify))
+              else
+                SizedBox(
+                    height: (constraints.maxWidth > 800.0)
+                        ? constraints.maxHeight - 100.0
+                        : min(constraints.maxWidth, constraints.maxHeight),
+                    width: (constraints.maxWidth > 800.0)
+                        ? constraints.maxWidth / 3
+                        : constraints.maxWidth,
+                    child: goToCheckout(
+                      constraints,
+                    )),
+              Expanded(child: SizedBox()),
+            ],
+          ),
         ],
       );
     else
-      return Row(
+      return Column(
         children: [
-          IconButton(
-            icon: Icon(Icons.chevron_left),
-            onPressed: () => backProduct(),
+          Text(
+            "CARRITO DE COMPRAS",
+            style: TextStyle(fontSize: 50.0),
           ),
-          Card(child: productCard(constraints, _productsLista[n1], n1)),
-          Card(child: productCard(constraints, _productsLista[n2], n2)),
-          IconButton(
-            icon: Icon(Icons.chevron_right),
-            onPressed: () => nextProduct(),
+          Row(
+            children: [
+              Expanded(child: SizedBox()),
+              IconButton(
+                icon: Icon(Icons.chevron_left),
+                onPressed: () => backProduct(),
+              ),
+              Card(child: productCard(constraints, _productsLista[n1], n1)),
+              Card(child: productCard(constraints, _productsLista[n2], n2)),
+              IconButton(
+                icon: Icon(Icons.chevron_right),
+                onPressed: () => nextProduct(),
+              ),
+              if (_modify)
+                SizedBox(
+                    height: (constraints.maxWidth > 800.0)
+                        ? constraints.maxHeight - 100.0
+                        : min(constraints.maxWidth, constraints.maxHeight),
+                    width: (constraints.maxWidth > 800.0)
+                        ? constraints.maxWidth / 3
+                        : constraints.maxWidth,
+                    child: bigProductCard(constraints, _productToModify))
+              else
+                SizedBox(
+                    height: (constraints.maxWidth > 800.0)
+                        ? constraints.maxHeight - 100.0
+                        : min(constraints.maxWidth, constraints.maxHeight),
+                    width: (constraints.maxWidth > 800.0)
+                        ? constraints.maxWidth / 3
+                        : constraints.maxWidth,
+                    child: goToCheckout(
+                      constraints,
+                    )),
+              Expanded(child: SizedBox()),
+            ],
           ),
-          if (_modify)
-            SizedBox(
-                height: (constraints.maxWidth > 800.0)
-                    ? constraints.maxHeight
-                    : min(constraints.maxWidth, constraints.maxHeight),
-                width: (constraints.maxWidth > 800.0)
-                    ? constraints.maxWidth / 3
-                    : constraints.maxWidth,
-                child: bigProductCard(constraints, _productToModify))
-          else
-            SizedBox(
-                height: (constraints.maxWidth > 800.0)
-                    ? constraints.maxHeight
-                    : min(constraints.maxWidth, constraints.maxHeight),
-                width: (constraints.maxWidth > 800.0)
-                    ? constraints.maxWidth / 3
-                    : constraints.maxWidth,
-                child: goToCheckout(
-                  constraints,
-                ))
         ],
       );
   }
@@ -305,17 +357,39 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.of(context).pushNamed('checkout');
-            },
-            child: Text("Ir a pagar"),
-          ),
-          ElevatedButton(
-            onPressed: () {
               Navigator.of(context).pushNamed('checkout', arguments: {
                 "listP": _productsList,
               });
             },
-            child: Text("Seguir comprando"),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.payments),
+                SizedBox(width: 5.0),
+                Text("Ir a pagar"),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          SizedBox(
+            height: 20.0,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pushNamed('shoppingCart');
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.shop),
+                SizedBox(width: 5.0),
+                Text("Seguir comprando"),
+              ],
+            ),
           ),
         ]));
   }

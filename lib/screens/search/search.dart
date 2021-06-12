@@ -12,6 +12,7 @@ import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:intl/intl.dart';
+import 'package:skyway_users/screens/navigation_bar.dart';
 
 void main(List<String> args) {
   runApp(MaterialApp(
@@ -61,11 +62,7 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(
-                  width: constraints.maxWidth * 0.18,
-                  height: constraints.maxHeight,
-                  child: Card(),
-                ),
+                NavBar(width: constraints.maxWidth / 6.0, height: constraints.maxHeight),
                 Expanded(
                   child: Card(
                     color: Colors.white24,

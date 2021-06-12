@@ -5,6 +5,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:skyway_users/models/collections/product.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
+import 'package:skyway_users/screens/navigation_bar.dart';
 
 class DashBoard2Page extends StatefulWidget {
   DashBoard2Page({Key key}) : super(key: key);
@@ -38,8 +39,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             ),
           ),
         ),
-        LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
+        LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
           return Container(
             width: constraints.maxWidth,
             height: constraints.maxHeight,
@@ -63,36 +63,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       loadProducts();
       load = true;
     }
-    return SizedBox(
-        width: constraints.maxWidth / 6.0,
-        height: constraints.maxHeight,
-        child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            color: Colors.white70,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                      width: constraints.maxWidth / 6.0 / 2.0 + 10.0,
-                      height: constraints.maxWidth / 6.0 / 2.0 + 70.0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/images/logoapp.png"),
-                              fit: BoxFit.fill),
-                        ),
-                      )),
-                  sideBarButton("Home", Icons.home_rounded),
-                  sideBarButton("Mis ordenes", Icons.assignment_turned_in),
-                  sideBarButton("Ver perfil", Icons.account_circle),
-                  sideBarButton("Editar perfil", Icons.mode_edit),
-                  sideBarButton("Salir", Icons.directions),
-                ],
-              ),
-            )));
+    final width = constraints.maxWidth / 6.0;
+    final height = constraints.maxHeight;
+    return NavBar(width: width, height: height);
   }
 
   Widget bigPanel(BoxConstraints constraints) {
@@ -121,8 +94,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: constraints.maxHeight / 6.0,
       child: Card(
           elevation: 10.0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           color: Colors.white70,
           child: Padding(
             padding: const EdgeInsets.only(left: 20.0, right: 20.0),
@@ -178,8 +150,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             physics: const BouncingScrollPhysics(),
             children: [
               categoryWidget(constraints, "Alimentos", "diet.png", alimentos),
-              categoryWidget(
-                  constraints, "Restaurantes", "restaurant.png", restaurantes),
+              categoryWidget(constraints, "Restaurantes", "restaurant.png", restaurantes),
               categoryWidget(constraints, "Farmacia", "medicine.png", farmacia),
               categoryWidget(constraints, "Otros", "settings.png", otros),
             ],
@@ -195,8 +166,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: constraints.maxHeight / 6.0 * 1.9,
       child: Card(
           elevation: 10.0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           color: Colors.white70,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -235,8 +205,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                     child: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage("assets/images/stonks.jpg"),
-                            fit: BoxFit.fill),
+                            image: AssetImage("assets/images/stonks.jpg"), fit: BoxFit.fill),
                         borderRadius: BorderRadius.circular(30),
                       ),
                     ))
@@ -260,12 +229,8 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             scrollDirection: Axis.horizontal,
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
-              return productWidget(
-                  constraints,
-                  list[index].name,
-                  list[index].images[0],
-                  list[index].price.toString(),
-                  randomGn(3, 5));
+              return productWidget(constraints, list[index].name, list[index].images[0],
+                  list[index].price.toString(), randomGn(3, 5));
             },
           ),
         ),
@@ -273,8 +238,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     );
   }
 
-  Widget categoryWidget(
-      BoxConstraints constraints, name, image, List<ProductModel> list) {
+  Widget categoryWidget(BoxConstraints constraints, name, image, List<ProductModel> list) {
     return Container(
       height: constraints.maxHeight / 6.0 * 1.9 - 20.0,
       width: constraints.maxHeight / 6.0 * 1.9 - 20.0,
@@ -317,54 +281,34 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget searchWidget(BoxConstraints constraints) {
-    return SizedBox(
-      width: constraints.maxWidth / 6.0 * 4.8 / 1.5,
-      height: constraints.maxHeight / 6.0 * 0.5,
-      child: Theme(
-        data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(30.0)),
-          child: Padding(
-            padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-            child: TextFormField(
-              style: TextStyle(fontSize: 20),
-              onChanged: (null),
-              decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  border: InputBorder.none,
-                  fillColor: Colors.grey,
-                  focusColor: Colors.grey,
-                  focusedBorder: null,
-                  labelText:
-                      "Ingresa el nombre del producto o restaurante que buscas ...",
-                  labelStyle: TextStyle(fontSize: 20),
-                  contentPadding: EdgeInsets.only(bottom: 15.0)),
+    return InkWell(
+      onTap: () => Navigator.of(context).pushNamed('search'),
+      child: SizedBox(
+        width: constraints.maxWidth / 6.0 * 4.8 / 1.5,
+        height: constraints.maxHeight / 6.0 * 0.5,
+        child: Theme(
+          data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
+          child: Container(
+            decoration:
+                BoxDecoration(color: Colors.white, borderRadius: new BorderRadius.circular(30.0)),
+            child: Padding(
+              padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+              child: TextFormField(
+                enabled: false,
+                style: TextStyle(fontSize: 20),
+                onChanged: (null),
+                decoration: InputDecoration(
+                    icon: Icon(Icons.search),
+                    border: InputBorder.none,
+                    fillColor: Colors.grey,
+                    focusColor: Colors.grey,
+                    focusedBorder: null,
+                    labelText: "Ingresa el nombre del producto o restaurante que buscas ...",
+                    labelStyle: TextStyle(fontSize: 20),
+                    contentPadding: EdgeInsets.only(bottom: 15.0)),
+              ),
             ),
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget sideBarButton(name, IconData icon) {
-    return TextButton(
-      onPressed: () {},
-      child: Padding(
-        padding: const EdgeInsets.only(left: 10.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            Icon(icon, color: Colors.black),
-            SizedBox(width: 5.0),
-            Text(name,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Itim",
-                  fontSize: 22.0,
-                )),
-          ],
         ),
       ),
     );
@@ -375,8 +319,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: constraints.maxHeight / 6.0 * 1.9 - 20.0,
       width: constraints.maxHeight / 6.0 * 1.9 - 20.0,
       child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           color: Colors.white,
           child: Center(
               child: Padding(
@@ -441,8 +384,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   void loadProducts() async {
-    List products =
-        await BlocProvider.of<ProductsProvider>(this.context).getProducts();
+    List products = await BlocProvider.of<ProductsProvider>(this.context).getProducts();
     products.forEach((product) {
       ProductModel newProduct = new ProductModel.fromJson2(product);
       if (newProduct.category == "Alimentos") {

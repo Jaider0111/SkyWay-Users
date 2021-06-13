@@ -45,10 +45,17 @@ class ProductsProvider extends Bloc {
     if (response.statusCode == 200) return response.bodyBytes;
     return null;
   }
+
   Future<ProductModel> getProductById(String id) async {
-    String url = "http://localhost:8080/api/products";
-    final response = await http.get(Uri.parse(url));
-    if (response.statusCode == 200) return json.decode(response.body);
+    final url = Uri.https(baseUri, "api/products", {"id": id});
+    final response = await http.get(
+      url,
+      headers: httpHeaders,
+    );
+    if (response.statusCode == 200) {
+      ProductModel ans = ProductModel.fromJson(json.decode(response.body));
+      return ans;
+    }
     return null;
   }
 

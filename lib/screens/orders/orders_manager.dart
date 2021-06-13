@@ -106,7 +106,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
                           (child: SingleChildScrollView
                             (child: Column
                               (mainAxisSize:MainAxisSize.min,
-                                children:[for (var p in o.products) Text(getProductById(p).name)]
+                                children:[for (var kp in o.products.keys) Text(getProductById(kp).name + " " + o.products[kp].toString())]
                               )
                             )
                           )

@@ -4,7 +4,7 @@ class OrderModel {
   String id;
 
   String status;
-  List products;
+  Map<String, int> products;
   int total; // prices are int so total is int
   DateTime date;
 

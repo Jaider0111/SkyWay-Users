@@ -11,7 +11,7 @@ class OrdersProvider extends Bloc {
     Stream mapEventToState(event) async* {}
   
     Future<List> getOrders(String businessId) async {
-      final url = Uri.https(baseUri, "api/orders/get", {"id": businessId});
+      final url = Uri.http("localhost:8080", "api/orders/get", {"businessId": businessId});
       final response = await http.get(
         url,
         headers: httpHeaders,

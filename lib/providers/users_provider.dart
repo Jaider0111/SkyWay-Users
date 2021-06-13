@@ -12,7 +12,7 @@ class UsersProvider extends Bloc {
   Stream mapEventToState(event) async* {}
 
   Future<UserModel> getUserById(String id) async {
-    final url = Uri.https(baseUri, "api/consumers/get", {"id": id});
+    final url = Uri.http("localhost:8080", "api/consumers/get", {"id": id});
     final response = await http.get(
       url,
       headers: httpHeaders,

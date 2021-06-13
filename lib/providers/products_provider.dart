@@ -47,7 +47,7 @@ class ProductsProvider extends Bloc {
   }
 
   Future<ProductModel> getProductById(String id) async {
-    final url = Uri.https(baseUri, "api/products", {"id": id});
+    final url = Uri.http("localhost:8080", "api/products", {"id": id});
     final response = await http.get(
       url,
       headers: httpHeaders,

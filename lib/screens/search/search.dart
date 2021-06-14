@@ -73,25 +73,8 @@ class _SearchPageState extends State<SearchPage> {
                           Card(
                             margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
                             child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Icon(Icons.location_on),
-                                  Text(
-                                    "Mi ubicación",
-                                    style: TextStyle(fontWeight: FontWeight.bold),
-                                  ),
-                                  SizedBox(width: 15.0),
-                                  Text("Calle 45 #16-84"),
-                                  Expanded(child: SizedBox()),
-                                  CircleAvatar(child: Icon(Icons.notifications_active)),
-                                  SizedBox(width: 10.0),
-                                  CircleAvatar(child: Icon(Icons.shopping_cart)),
-                                  SizedBox(width: 10.0),
-                                  CircleAvatar(child: Icon(Icons.person)),
-                                ],
-                              ),
+                              padding: const EdgeInsets.all(5.0),
+                              child: TopBar(),
                             ),
                           ),
                           Expanded(
@@ -125,9 +108,21 @@ class _SearchPageState extends State<SearchPage> {
                                                     category = val;
                                                   });
                                                 },
+                                                search: (val) {
+                                                  isSearching = true;
+                                                  resultIds = null;
+                                                  makeSearch(cat: val);
+                                                },
                                               ),
                                               SizedBox(height: 10.0),
-                                              SubcategoryListViewer(category: category),
+                                              SubcategoryListViewer(
+                                                category: category,
+                                                onTab: (val) {
+                                                  isSearching = true;
+                                                  resultIds = null;
+                                                  makeSearch(cat: category, subcat: val);
+                                                },
+                                              ),
                                             ],
                                           ),
                                         ),
@@ -167,14 +162,67 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  void makeSearch() async {
-    resultIds = await _productsProvider.searchProducts(search);
+  void makeSearch({String cat = '', String subcat = ''}) async {
+    if (cat == '' && subcat == '')
+      resultIds = await _productsProvider.searchProducts(search);
+    else
+      resultIds = await _productsProvider.searchProductsByCatOrSubcat(cat, subcat);
     products = List.filled(resultIds.length, null);
     setState(() {});
     for (var i = 0; i < resultIds.length; i++) {
       products[i] = await _productsProvider.getProductById(resultIds[i]);
       setState(() {});
     }
+  }
+}
+
+class TopBar extends StatelessWidget {
+  const TopBar({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Icon(Icons.location_on),
+        Text(
+          "Mi ubicación",
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        SizedBox(width: 15.0),
+        Text("Calle 45 #16-84"),
+        Expanded(child: SizedBox()),
+        FloatingActionButton(
+          heroTag: 'notification',
+          backgroundColor: Colors.white38,
+          onPressed: () {},
+          child: Image(
+            width: 40.0,
+            image: AssetImage("assets/images/bell2.png"),
+          ),
+        ),
+        SizedBox(width: 10.0),
+        FloatingActionButton(
+          heroTag: 'cart',
+          backgroundColor: Colors.white38,
+          onPressed: () {},
+          child: Image(
+            image: AssetImage("assets/images/shopping-cart.png"),
+          ),
+        ),
+        SizedBox(width: 10.0),
+        FloatingActionButton(
+          heroTag: 'user',
+          backgroundColor: Colors.white38,
+          onPressed: () {},
+          child: Image(
+            image: AssetImage("assets/images/user.png"),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -206,7 +254,7 @@ class SearchResults extends StatelessWidget {
   }
 }
 
-class SearchProductView extends StatelessWidget {
+class SearchProductView extends StatefulWidget {
   const SearchProductView({
     Key key,
     @required this.product,
@@ -217,14 +265,26 @@ class SearchProductView extends StatelessWidget {
   final Size constraints;
 
   @override
+  _SearchProductViewState createState() => _SearchProductViewState();
+}
+
+class _SearchProductViewState extends State<SearchProductView> {
+  bool favorite;
+
+  @override
+  void initState() {
+    super.initState();
+    favorite = false;
+  }
+
   Widget build(BuildContext context) {
     final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     final children = [
       FadeInImage.assetNetwork(
         placeholder: "assets/images/loader.gif",
-        image: product.images[0],
-        width: min(300, constraints.width),
-        height: min(300, constraints.width),
+        image: widget.product.images[0],
+        width: min(300, widget.constraints.width),
+        height: min(300, widget.constraints.width),
         fit: BoxFit.fitWidth,
       ),
       SizedBox(
@@ -233,7 +293,7 @@ class SearchProductView extends StatelessWidget {
       ),
       Expanded(
         child: SizedBox(
-          height: min(300, constraints.width),
+          height: min(300, widget.constraints.width),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -244,7 +304,7 @@ class SearchProductView extends StatelessWidget {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Text(
-                    product.name,
+                    widget.product.name,
                     style: TextStyle(
                       color: Colors.black,
                       fontFamily: "Itim",
@@ -252,14 +312,21 @@ class SearchProductView extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.favorite_border),
+                    onPressed: () {
+                      setState(() {
+                        favorite = !favorite;
+                      });
+                    },
+                    icon: Icon(
+                      (favorite) ? Icons.favorite : Icons.favorite_border,
+                    ),
+                    color: Colors.red,
                     iconSize: 40.0,
                   ),
                 ],
               ),
               Text(
-                "\$${formatter.format(product.price)}",
+                "\$${formatter.format(widget.product.price)}",
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Itim",
@@ -267,7 +334,7 @@ class SearchProductView extends StatelessWidget {
                 ),
               ),
               RatingBarIndicator(
-                rating: Random().nextDouble() * 5,
+                rating: widget.product.stars,
                 itemBuilder: (context, index) => Icon(
                   Icons.star,
                   color: Colors.amber,
@@ -297,7 +364,7 @@ class SearchProductView extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: (constraints.width >= 600)
+        child: (widget.constraints.width >= 600)
             ? Row(
                 children: children,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -323,61 +390,64 @@ class SearchBar extends StatelessWidget {
   Widget build(BuildContext context) {
     String search;
     String error;
-    return Container(
-      height: 60.0,
-      decoration: BoxDecoration(
-        color: Colors.white30,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.0),
-          bottomRight: Radius.circular(20.0),
-          topRight: Radius.circular(40.0),
-          bottomLeft: Radius.circular(40.0),
-        ),
-        border: Border.all(width: 2.0, color: Colors.black26),
-      ),
-      child: Row(
-        children: [
-          SizedBox(width: 15.0),
-          Expanded(
-            child: TextFormField(
-              autofocus: true,
-              onChanged: (val) => search = val,
-              autovalidateMode: AutovalidateMode.onUserInteraction,
-              validator: (val) =>
-                  (val != null && val != '') ? null : "Ingresa el contenido de la busqueda",
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                hintText: "¿Que deseas buscar?",
-                enabledBorder: InputBorder.none,
-                errorText: error,
-              ),
-            ),
+    return Hero(
+      tag: 'searchBar',
+      child: Container(
+        height: 60.0,
+        decoration: BoxDecoration(
+          color: Colors.white30,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.0),
+            bottomRight: Radius.circular(20.0),
+            topRight: Radius.circular(40.0),
+            bottomLeft: Radius.circular(40.0),
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (search != null && search != '') {
-                error = null;
-                onTap(search);
-              } else
-                error = "Ingresa el contenido de la busqueda";
-            },
-            child: Text("Buscar"),
-            style: ElevatedButton.styleFrom(
-              padding: EdgeInsets.symmetric(
-                horizontal: 50.0,
-                vertical: 28.0,
-              ),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20.0),
-                  bottomRight: Radius.circular(20.0),
-                  topRight: Radius.circular(40.0),
-                  bottomLeft: Radius.circular(40.0),
+          border: Border.all(width: 2.0, color: Colors.black26),
+        ),
+        child: Row(
+          children: [
+            SizedBox(width: 15.0),
+            Expanded(
+              child: TextFormField(
+                autofocus: true,
+                onChanged: (val) => search = val,
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (val) =>
+                    (val != null && val != '') ? null : "Ingresa el contenido de la busqueda",
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: "¿Que deseas buscar?",
+                  enabledBorder: InputBorder.none,
+                  errorText: error,
                 ),
               ),
             ),
-          )
-        ],
+            ElevatedButton(
+              onPressed: () {
+                if (search != null && search != '') {
+                  error = null;
+                  onTap(search);
+                } else
+                  error = "Ingresa el contenido de la busqueda";
+              },
+              child: Text("Buscar"),
+              style: ElevatedButton.styleFrom(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 50.0,
+                  vertical: 28.0,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20.0),
+                    bottomRight: Radius.circular(20.0),
+                    topRight: Radius.circular(40.0),
+                    bottomLeft: Radius.circular(40.0),
+                  ),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -388,10 +458,12 @@ class CategoryListViewer extends StatelessWidget {
     Key key,
     @required this.category,
     @required this.onChange,
+    @required this.search,
   }) : super(key: key);
 
   final String category;
   final void Function(String) onChange;
+  final void Function(String) search;
 
   @override
   Widget build(BuildContext context) {
@@ -420,17 +492,23 @@ class CategoryListViewer extends StatelessWidget {
                       color: (category == categories[index]) ? Colors.white : Colors.white70,
                       child: InkWell(
                         onTap: () {
-                          onChange(categories[index]);
+                          if (category == categories[index])
+                            search(category);
+                          else
+                            onChange(categories[index]);
                         },
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Icon(
-                                catIcons[categories[index]],
-                                size: 50.0,
-                              ),
+                              SizedBox(
+                                  width: 70.0,
+                                  height: 70.0,
+                                  child: Image(
+                                    image:
+                                        AssetImage("assets/images/" + catImages[categories[index]]),
+                                  )),
                               SizedBox(
                                 height: 10.0,
                               ),
@@ -455,9 +533,11 @@ class SubcategoryListViewer extends StatelessWidget {
   const SubcategoryListViewer({
     Key key,
     @required this.category,
+    @required this.onTab,
   }) : super(key: key);
 
   final String category;
+  final void Function(String) onTab;
 
   @override
   Widget build(BuildContext context) {
@@ -479,24 +559,31 @@ class SubcategoryListViewer extends StatelessWidget {
                 itemBuilder: (BuildContext context, int index) {
                   return SizedBox(
                     height: 150.0,
-                    width: 180.0,
+                    width: 195.0,
                     child: Card(
                       elevation: 18,
                       color: Colors.white60,
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            Icon(
-                              catIcons[category],
-                              size: 50.0,
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Text(subcategories[category][index]),
-                          ],
+                      child: InkWell(
+                        onTap: () {
+                          onTab(subcategories[category][index]);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              SizedBox(
+                                  width: 70.0,
+                                  height: 70.0,
+                                  child: Image(
+                                    image: NetworkImage(catImages[subcategories[category][index]]),
+                                  )),
+                              SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(subcategories[category][index]),
+                            ],
+                          ),
                         ),
                       ),
                     ),

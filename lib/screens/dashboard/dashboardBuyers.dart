@@ -105,6 +105,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                 Row(children: [
                   SizedBox(width: 10.0),
                   FloatingActionButton(
+                    heroTag: 'notification',
                     backgroundColor: Colors.white38,
                     onPressed: () {},
                     child: Image(
@@ -114,6 +115,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   ),
                   SizedBox(width: 10.0),
                   FloatingActionButton(
+                    heroTag: 'cart',
                     backgroundColor: Colors.white38,
                     onPressed: () {},
                     child: Image(
@@ -122,6 +124,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   ),
                   SizedBox(width: 10.0),
                   FloatingActionButton(
+                    heroTag: 'user',
                     backgroundColor: Colors.white38,
                     onPressed: () {},
                     child: Image(
@@ -216,6 +219,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget productsView(BoxConstraints constraints, List<ProductModel> list) {
+    print(list.length);
     return SizedBox(
       width: constraints.maxWidth / 6.0 * 4.8,
       height: constraints.maxHeight / 6.0 * 2.75,
@@ -281,31 +285,34 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget searchWidget(BoxConstraints constraints) {
-    return InkWell(
-      onTap: () => Navigator.of(context).pushNamed('search'),
-      child: SizedBox(
-        width: constraints.maxWidth / 6.0 * 4.8 / 1.5,
-        height: constraints.maxHeight / 6.0 * 0.5,
-        child: Theme(
-          data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
-          child: Container(
-            decoration:
-                BoxDecoration(color: Colors.white, borderRadius: new BorderRadius.circular(30.0)),
-            child: Padding(
-              padding: EdgeInsets.only(left: 15, right: 15, top: 5),
-              child: TextFormField(
-                enabled: false,
-                style: TextStyle(fontSize: 20),
-                onChanged: (null),
-                decoration: InputDecoration(
-                    icon: Icon(Icons.search),
-                    border: InputBorder.none,
-                    fillColor: Colors.grey,
-                    focusColor: Colors.grey,
-                    focusedBorder: null,
-                    labelText: "Ingresa el nombre del producto o restaurante que buscas ...",
-                    labelStyle: TextStyle(fontSize: 20),
-                    contentPadding: EdgeInsets.only(bottom: 15.0)),
+    return Hero(
+      tag: 'searchBar',
+      child: InkWell(
+        onTap: () => Navigator.of(context).pushNamed('search'),
+        child: SizedBox(
+          width: constraints.maxWidth / 6.0 * 4.8 / 1.5,
+          height: constraints.maxHeight / 6.0 * 0.5,
+          child: Theme(
+            data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
+            child: Container(
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: new BorderRadius.circular(30.0)),
+              child: Padding(
+                padding: EdgeInsets.only(left: 15, right: 15, top: 5),
+                child: TextFormField(
+                  enabled: false,
+                  style: TextStyle(fontSize: 20),
+                  onChanged: (null),
+                  decoration: InputDecoration(
+                      icon: Icon(Icons.search),
+                      border: InputBorder.none,
+                      fillColor: Colors.grey,
+                      focusColor: Colors.grey,
+                      focusedBorder: null,
+                      labelText: "Ingresa el nombre del producto o restaurante que buscas ...",
+                      labelStyle: TextStyle(fontSize: 20),
+                      contentPadding: EdgeInsets.only(bottom: 15.0)),
+                ),
               ),
             ),
           ),
@@ -397,6 +404,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       } else if (newProduct.category == "Otros") {
         otros.add(newProduct);
       }
+    });
+    setState(() {
+      lista = alimentos;
     });
     print("DEBUG!");
     print("Alimentos");

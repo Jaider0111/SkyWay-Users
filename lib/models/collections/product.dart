@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,20 +16,22 @@ class ProductModel {
   bool isCustomizable;
   List<String> images;
   Map<String, List<String>> options;
+  double stars;
 
-  ProductModel(
-      {@required this.name,
-      @required this.description,
-      @required this.category,
-      @required this.subcategory,
-      @required this.businessId,
-      @required this.isCountable,
-      this.amount,
-      @required this.price,
-      @required this.isCustomizable,
-      this.options,
-      @required this.images})
-      : super();
+  ProductModel({
+    @required this.name,
+    @required this.description,
+    @required this.category,
+    @required this.subcategory,
+    @required this.businessId,
+    @required this.isCountable,
+    this.amount,
+    @required this.price,
+    @required this.isCustomizable,
+    this.options,
+    @required this.images,
+    this.stars,
+  }) : super();
 
   ProductModel.fromJson(dynamic json) {
     this.id = json["id"];
@@ -45,6 +47,7 @@ class ProductModel {
     this.options = (json["options"] as Map)?.map((key, value) =>
         MapEntry(key.toString(), (value as List).map((e) => e.toString()).toList()));
     this.images = (json["images"] as List).map((e) => e.toString()).toList();
+    this.stars = Random().nextDouble() * 5.0;
   }
 
   ProductModel.fromJson2(dynamic json) {

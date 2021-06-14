@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skyway_users/consts/themes.dart';
@@ -40,61 +38,64 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        width: width,
-        height: height,
-        child: Card(
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            color: Colors.white70,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                      width: width / 2.0 + 10.0,
-                      height: width / 2.0 + 70.0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/images/logoapp.png"), fit: BoxFit.fill),
-                        ),
-                      )),
-                  NavBarButton(
-                    name: "Home",
-                    icon: Icons.home_rounded,
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('dashboard_for_buyers');
-                    },
-                  ),
-                  NavBarButton(
-                    name: "Mis ordenes",
-                    icon: Icons.assignment_turned_in,
-                    onPressed: () {},
-                  ),
-                  NavBarButton(
-                    name: "Ver perfil",
-                    icon: Icons.account_circle,
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('profile');
-                    },
-                  ),
-                  NavBarButton(
-                    name: "Editar perfil",
-                    icon: Icons.mode_edit,
-                    onPressed: () {},
-                  ),
-                  NavBarButton(
-                    name: "Salir",
-                    icon: Icons.directions,
-                    onPressed: () {
-                      BlocProvider.of<AuthProvider>(context).logout();
-                      Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
-                    },
-                  ),
-                ],
-              ),
-            )));
+    return Hero(
+      tag: 'navbar',
+      child: SizedBox(
+          width: width,
+          height: height,
+          child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              color: Colors.white70,
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    SizedBox(
+                        width: width / 2.0 + 10.0,
+                        height: width / 2.0 + 70.0,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: AssetImage("assets/images/logoapp.png"), fit: BoxFit.fill),
+                          ),
+                        )),
+                    NavBarButton(
+                      name: "Home",
+                      icon: Icons.home_rounded,
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('dashboard_for_buyers');
+                      },
+                    ),
+                    NavBarButton(
+                      name: "Mis ordenes",
+                      icon: Icons.assignment_turned_in,
+                      onPressed: () {},
+                    ),
+                    NavBarButton(
+                      name: "Ver perfil",
+                      icon: Icons.account_circle,
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('profile');
+                      },
+                    ),
+                    NavBarButton(
+                      name: "Editar perfil",
+                      icon: Icons.mode_edit,
+                      onPressed: () {},
+                    ),
+                    NavBarButton(
+                      name: "Salir",
+                      icon: Icons.directions,
+                      onPressed: () {
+                        BlocProvider.of<AuthProvider>(context).logout();
+                        Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
+                      },
+                    ),
+                  ],
+                ),
+              ))),
+    );
   }
 }
 

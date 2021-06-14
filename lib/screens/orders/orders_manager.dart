@@ -65,30 +65,30 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             return (constraints.maxWidth > 800.0)
-                ? _rowView(constraints)
-                : _columnView(constraints);
+                ? FutureBuilder(future: _rowView(constraints))
+                : FutureBuilder(future: _columnView(constraints));
           },
         ),
       ),
     );
   }
-  Widget _rowView(BoxConstraints constraints) {
+  Future<Widget> _rowView(BoxConstraints constraints) async {
     return Row(
       children: [
-        ordersTable(constraints)
+        await ordersTable(constraints)
       ],
     );
   }
 
-  Widget _columnView(BoxConstraints constraints) {
+  Future<Widget> _columnView(BoxConstraints constraints) async  {
     return ListView(
       children: [
-        ordersTable(constraints),
+        await ordersTable(constraints),
       ],
     );
   }
 
-  Widget ordersTable(BoxConstraints constraints) {
+  Future<Widget> ordersTable(BoxConstraints constraints) async {
 
     return DataTable(
       columns: [
@@ -100,13 +100,13 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
       ],
       rows:[for (var o in ordersList) DataRow(
         cells: [DataCell(Text(o.date.toString())),
-                DataCell(Text(getUserById(o.consumerId).fullName())),
-                DataCell(Text(getUserById(o.consumerId).phone)),
+                DataCell(Text((await getUserById(o.consumerId)).fullName())),
+                DataCell(Text((await getUserById(o.consumerId)).phone)),
                 DataCell(Expanded
                           (child: SingleChildScrollView
                             (child: Column
                               (mainAxisSize:MainAxisSize.min,
-                                children:[for (var kp in o.products.keys) Text(getProductById(kp).name + " " + o.products[kp].toString())]
+                                children:[for (var kp in o.products.keys) Text((await getProductById(kp)).name + " " + o.products[kp].toString())]
                               )
                             )
                           )
@@ -124,15 +124,17 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
       ordersList.add(order);
     });
   }
-  ProductModel getProductById(String id) {
-    var p = BlocProvider.of<ProductsProvider>(this.context).getProductById(id);
+  Future<ProductModel> getProductById(String id) async {
+    var p = await BlocProvider.of<ProductsProvider>(this.context).getProductById(id);
     ProductModel product = new ProductModel.fromJson(p);
     return product;
   }
 
-  UserModel getUserById(String id) {
-    var u = BlocProvider.of<UsersProvider>(this.context).getUserById(id);
+
+  Future<UserModel> getUserById(String id) async {
+    var u = await BlocProvider.of<UsersProvider>(this.context).getUserById(id);
     UserModel user = new UserModel.fromJson(u);
     return user;
   }
 }
+

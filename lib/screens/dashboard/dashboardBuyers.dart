@@ -182,7 +182,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             children: [
               categoryWidget(constraints, "Alimentos", "diet.png", alimentos),
               categoryWidget(
-                  constraints, "Restaurantes", "restaurant.png", restaurantes),
+                  constraints, "Restaurantes", "cutlery.png", restaurantes),
               categoryWidget(constraints, "Farmacia", "medicine.png", farmacia),
               categoryWidget(constraints, "Otros", "settings.png", otros),
             ],
@@ -283,45 +283,39 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     return Container(
       height: constraints.maxHeight / 6.0 * 1.9 - 20.0,
       width: constraints.maxHeight / 6.0 * 1.9 - 20.0,
-      child: Card(
-          color: Colors.white,
-          child: Center(
-              child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                SizedBox(
-                    height: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 3.0,
-                    width: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 3.0,
-                    child: Image(
-                      image: AssetImage("assets/images/" + image),
-                    )),
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontFamily: "Itim",
-                    fontSize: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 10.8,
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            lista = list;
+          });
+        },
+        child: Card(
+            color: Colors.white,
+            child: Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  SizedBox(
+                      height: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 2.3,
+                      width: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 2.3,
+                      child: Image(
+                        image: AssetImage("assets/images/" + image),
+                      )),
+                  Text(
+                    name,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Itim",
+                      fontSize:
+                          (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 10.8,
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 8.0,
-                  width: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 8.0,
-                  child: FloatingActionButton(
-                    onPressed: () {
-                      setState(() {
-                        lista = list;
-                      });
-                    },
-                    mini: true,
-                    backgroundColor: Colors.orange,
-                    child: Icon(Icons.arrow_forward_ios_rounded),
-                  ),
-                )
-              ],
-            ),
-          ))),
+                ],
+              ),
+            ))),
+      ),
     );
   }
 
@@ -394,7 +388,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
               child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(
                     height: (constraints.maxHeight / 6.0 * 1.9 - 20.0) * 2 / 3,
@@ -409,16 +403,18 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                     color: Colors.amber,
                   ),
                   itemCount: 5,
-                  itemSize: (constraints.maxHeight / 6.0 * 1.9 - 20.0) * 1 / 10,
+                  itemSize: (constraints.maxHeight / 6.0 * 1.9 - 20.0) * 1 / 8,
                   direction: Axis.horizontal,
                 ),
                 Expanded(
-                  child: Text(
-                    name,
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontFamily: "Itim",
-                      fontSize: 20.0,
+                  child: Center(
+                    child: Text(
+                      name,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontFamily: "Itim",
+                        fontSize: 20.0,
+                      ),
                     ),
                   ),
                 ),

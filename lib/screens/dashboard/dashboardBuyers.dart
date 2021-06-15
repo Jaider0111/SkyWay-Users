@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:intl/intl.dart';
 import 'package:skyway_users/models/collections/product.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
@@ -85,11 +86,13 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                               fit: BoxFit.fill),
                         ),
                       )),
-                  sideBarButton("Home", Icons.home_rounded),
-                  sideBarButton("Mis ordenes", Icons.assignment_turned_in),
-                  sideBarButton("Ver perfil", Icons.account_circle),
-                  sideBarButton("Editar perfil", Icons.mode_edit),
-                  sideBarButton("Salir", Icons.directions),
+                  sideBarButton(constraints, "Home", Icons.home_rounded),
+                  sideBarButton(
+                      constraints, "Mis ordenes", Icons.assignment_turned_in),
+                  sideBarButton(
+                      constraints, "Ver perfil", Icons.account_circle),
+                  sideBarButton(constraints, "Editar perfil", Icons.mode_edit),
+                  sideBarButton(constraints, "Salir", Icons.directions),
                 ],
               ),
             )));
@@ -214,7 +217,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                         textAlign: TextAlign.center,
                         style: TextStyle(
                           fontFamily: "Itim",
-                          fontSize: 24.0,
+                          fontSize: constraints.maxHeight / 30.0,
                         ),
                       ),
                       FloatingActionButton.extended(
@@ -222,7 +225,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                         onPressed: () {},
                         label: Text(
                           "¡Referir!",
-                          style: TextStyle(fontSize: 24, fontFamily: "Itim"),
+                          style: TextStyle(
+                              fontSize: constraints.maxHeight / 30.0,
+                              fontFamily: "Itim"),
                         ),
                       ),
                     ],
@@ -249,7 +254,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   Widget productsView(BoxConstraints constraints, List<ProductModel> list) {
     return SizedBox(
       width: constraints.maxWidth / 6.0 * 4.8,
-      height: constraints.maxHeight / 6.0 * 2.75,
+      height: constraints.maxHeight / 6.0 * 2.7,
       child: Card(
         elevation: 10.0,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
@@ -287,8 +292,8 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                    width: 70.0,
-                    height: 70.0,
+                    height: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 3.0,
+                    width: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 3.0,
                     child: Image(
                       image: AssetImage("assets/images/" + image),
                     )),
@@ -297,18 +302,22 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   style: TextStyle(
                     color: Colors.black,
                     fontFamily: "Itim",
-                    fontSize: 20.0,
+                    fontSize: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 10.8,
                   ),
                 ),
-                FloatingActionButton(
-                  onPressed: () {
-                    setState(() {
-                      lista = list;
-                    });
-                  },
-                  mini: true,
-                  backgroundColor: Colors.orange,
-                  child: Icon(Icons.arrow_forward_ios_rounded),
+                SizedBox(
+                  height: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 8.0,
+                  width: (constraints.maxHeight / 6.0 * 1.9 - 20.0) / 8.0,
+                  child: FloatingActionButton(
+                    onPressed: () {
+                      setState(() {
+                        lista = list;
+                      });
+                    },
+                    mini: true,
+                    backgroundColor: Colors.orange,
+                    child: Icon(Icons.arrow_forward_ios_rounded),
+                  ),
                 )
               ],
             ),
@@ -348,7 +357,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     );
   }
 
-  Widget sideBarButton(name, IconData icon) {
+  Widget sideBarButton(BoxConstraints constraints, name, IconData icon) {
     return TextButton(
       onPressed: () {},
       child: Padding(
@@ -362,7 +371,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Itim",
-                  fontSize: 22.0,
+                  fontSize: constraints.maxWidth / 65.0,
                 )),
           ],
         ),
@@ -371,6 +380,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget productWidget(BoxConstraints constraints, name, image, price, stars) {
+    final formatter =
+        NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    double precio = double.parse(price);
     return Container(
       height: constraints.maxHeight / 6.0 * 1.9 - 20.0,
       width: constraints.maxHeight / 6.0 * 1.9 - 20.0,
@@ -385,8 +397,8 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(
-                    width: 140.0,
-                    height: 140.0,
+                    height: (constraints.maxHeight / 6.0 * 1.9 - 20.0) * 2 / 3,
+                    width: (constraints.maxHeight / 6.0 * 1.9 - 20.0) * 2 / 3,
                     child: Image(
                       image: NetworkImage(image),
                     )),
@@ -397,7 +409,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                     color: Colors.amber,
                   ),
                   itemCount: 5,
-                  itemSize: 30.0,
+                  itemSize: (constraints.maxHeight / 6.0 * 1.9 - 20.0) * 1 / 10,
                   direction: Axis.horizontal,
                 ),
                 Expanded(
@@ -414,7 +426,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "\$" + price,
+                      "\$${formatter.format(precio)}",
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Itim",

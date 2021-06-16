@@ -8,10 +8,15 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_storage/firebase_storage.dart' as fs;
 
 class ProductsProvider extends Bloc {
+  Map<ProductModel, int> products = {};
   ProductsProvider() : super(0);
 
   @override
   Stream mapEventToState(event) async* {}
+
+  Map<ProductModel, int> getProducts() {
+    return products;
+  }
 
   Future<bool> saveProduct(ProductModel productModel) async {
     final url = Uri.https(baseUri, "/api/products/create");
@@ -26,7 +31,8 @@ class ProductsProvider extends Bloc {
     return false;
   }
 
-  Future<List<String>> saveImages(List<Uint8List> _images, String productName) async {
+  Future<List<String>> saveImages(
+      List<Uint8List> _images, String productName) async {
     List<String> urls = [];
     String path = "$productName${DateTime.now().toIso8601String()}";
     fs.FirebaseStorage storage = fs.FirebaseStorage.instance;

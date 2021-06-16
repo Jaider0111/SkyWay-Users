@@ -4,6 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skyway_users/models/collections/product.dart';
+import 'package:skyway_users/providers/products_provider.dart';
 
 import '../appbar.dart';
 
@@ -19,7 +20,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
 
   bool _modify;
   ProductModel _productToModify;
-  int _indexToModify;
+
   int n1;
   int n2;
   int _total = 0;
@@ -34,7 +35,10 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     n1 = 0;
     n2 = 1;
     np = 0;
-    _productsList = {
+
+    _productsList = ProductsProvider().getProducts();
+
+    /*{
       new ProductModel(
           name: "Producto",
           description: "description",
@@ -95,93 +99,12 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     }
     for (var k in _productsList.keys) {
       np += _productsList[k];
-    }
+    }*/
   }
 
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
-    /*if (args.containsKey("listP")) {
-      _productsList = args["listP"];
-      for (var k in _productsList.keys) {
-        print("-----------");
-        print(k.price.toString);
-        print(_productsList[k].toString);
-        print("-----------");
-        _total += (k.price) * _productsList[k];
-      }
-      for (var k in _productsList.keys) {
-        np += _productsList[k];
-      }
-    } else {
-      _productsList = {
-        new ProductModel(
-            name: "Producto",
-            description: "description",
-            category: "category",
-            subcategory: "subcategory",
-            businessId: "businessId",
-            isCountable: false,
-            price: 10000,
-            isCustomizable: false,
-            images: null): 1,
-        new ProductModel(
-            name: "Producto2",
-            description: "description2",
-            category: "categor2y",
-            subcategory: "subcate2gory",
-            businessId: "businessId2",
-            isCountable: false,
-            price: 20000,
-            isCustomizable: false,
-            images: null): 2,
-        new ProductModel(
-            name: "Producto3",
-            description: "description3",
-            category: "categor3y",
-            subcategory: "subcate3gory",
-            businessId: "businessId3",
-            isCountable: false,
-            price: 30000,
-            isCustomizable: false,
-            images: null): 2,
-        new ProductModel(
-            name: "Producto4",
-            description: "description4",
-            category: "category4",
-            subcategory: "subcategory4",
-            businessId: "businessI4d",
-            isCountable: false,
-            price: 10000,
-            isCustomizable: false,
-            images: null): 2,
-        new ProductModel(
-            name: "Producto5",
-            description: "description5",
-            category: "category5",
-            subcategory: "subcategory5",
-            businessId: "businessId5",
-            isCountable: false,
-            price: 10000,
-            isCustomizable: false,
-            images: null): 4,
-      };
-      _total = 0;
-      ProductModel _tempProduct;
-      for (var k in _productsList.keys) {
-        _tempProduct = k;
-      }
-      for (var k in _productsList.keys) {
-        print("-----------");
-        print(k.price.toString);
-        print(_productsList[k].toString);
-        print("-----------");
-        _total += (k.price) * _productsList[k];
-      }
-      for (var k in _productsList.keys) {
-        np += _productsList[k];
-      }
-    }*/
     if (args.containsKey("customerId")) {
       _customerId = args["customerId"];
     } else {
@@ -434,7 +357,6 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     setState(() {
       _modify = true;
       _productToModify = product1;
-      _indexToModify = indexpm;
     });
   }
 
@@ -670,6 +592,10 @@ class ShoppingCartState extends State<ShoppingCartPage> {
       print(_productsList[k].toString);
       print("-----------");
       _total += (k.price) * _productsList[k];
+    }
+    np = 0;
+    for (var k in _productsList.keys) {
+      np += _productsList[k];
     }
   }
 

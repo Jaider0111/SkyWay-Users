@@ -53,6 +53,7 @@ class CheckoutState extends State<CheckoutPage> {
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
     if (args.containsKey("listP")) {
       _productsList = args["listP"];
+      _total = 0;
       for (var k in _productsList.keys) {
         print("-----------");
         print(k.price.toString);
@@ -354,6 +355,13 @@ class CheckoutState extends State<CheckoutPage> {
         child: Form(
             key: _formKeycc,
             child: ListView(padding: EdgeInsets.all(30.0), children: [
+              AutoSizeText(
+                'Ingresa los datos de tu tarjeta',
+                style: TextStyle(fontSize: 23.0),
+                minFontSize: 0.0,
+                maxLines: 2,
+                textAlign: TextAlign.center,
+              ),
               CustomInputText(
                 initialValue: "",
                 valueCallback: (val) => _cardNumber = val,
@@ -368,7 +376,7 @@ class CheckoutState extends State<CheckoutPage> {
               ),
               AutoSizeText(
                 'Fecha de vencimiento',
-                style: TextStyle(fontSize: 35.0),
+                style: TextStyle(fontSize: 15.0),
                 minFontSize: 0.0,
                 maxLines: 2,
                 textAlign: TextAlign.center,

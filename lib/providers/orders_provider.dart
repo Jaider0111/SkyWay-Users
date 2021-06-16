@@ -10,8 +10,8 @@ class OrdersProvider extends Bloc {
     @override
     Stream mapEventToState(event) async* {}
   
-    Future<List> getOrders(String businessId) async {
-      final url = Uri.http("localhost:8080", "api/orders/get", {"businessId": businessId});
+    Future<List> getOrders(String businessId, String consumerId) async {
+      final url = Uri.http("localhost:8080", "api/orders/get", {"businessId": businessId, "consumerId": consumerId,});
       final response = await http.get(
         url,
         headers: httpHeaders,

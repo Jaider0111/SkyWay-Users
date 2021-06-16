@@ -95,18 +95,6 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
         itemBuilder: (BuildContext context, int index) {
           return getOrderCard(ordersList[index]);
         });
-    /*
-    return DataTable(
-      columns: [
-        DataColumn(label: Text('Fecha y Hora')),
-        DataColumn(label: Text('Cliente')),
-        DataColumn(label: Text('Teléfono')),
-        DataColumn(label: Text('Productos')),
-        DataColumn(label: Text('Total')),
-      ],
-      rows:[for (OrderModel o in ordersList) getOrderRow(o)],
-    );
-     */
   }
 
   Widget getOrderProduct(MapEntry<String, int> p) {
@@ -144,7 +132,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
             if (_type == "Tienda")
               user = snapshot.requireData;
             else
-              business = snapshot.data;
+              business = snapshot.requireData;
             print(business);
             print(user);
             return Card(
@@ -170,24 +158,6 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
           } else
             return Text("Cargando orden ...");
         });
-    /*
-    DataRow(
-        cells: [DataCell(Text(o.date.toString())),
-    DataCell(Text((await getUserById(o.consumerId)).fullName())),
-    DataCell(Text((await getUserById(o.consumerId)).phone)),
-    DataCell(Expanded
-    (child: SingleChildScrollView
-    (child: Column
-    (mainAxisSize:MainAxisSize.min,
-    children:[for (var kp in o.products.keys) Text((await getProductById(kp)).name + " " + o.products[kp].toString())]
-    )
-    )
-    )
-    ),
-    DataCell(Text(o.total.toString())),
-    ]
-    )
-    */
   }
 
   void loadOrders(String businessId, String consumerId) async {

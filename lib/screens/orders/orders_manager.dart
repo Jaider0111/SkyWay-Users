@@ -123,8 +123,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   Widget getOrderCard(OrderModel o) {
     UserModel user;
     StoreModel business;
-    Future<dynamic> future =
-        (_type == "Tienda") ? getUserById(o.consumerId) : getBusinessById(o.businessId);
+    Future future = (_type == "Tienda") ? getUserById(o.consumerId) : getBusinessById(o.businessId);
     return FutureBuilder(
         future: future,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
@@ -163,6 +162,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   void loadOrders(String businessId, String consumerId) async {
     List orders =
         await BlocProvider.of<OrdersProvider>(this.context).getOrders(businessId, consumerId);
+    print(orders.length);
     setState(() {
       orders.forEach((o) {
         OrderModel order = new OrderModel.fromJson(o);
@@ -183,6 +183,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
 
   Future<StoreModel> getBusinessById(String id) async {
     StoreModel business = await BlocProvider.of<UsersProvider>(this.context).getBusinessById(id);
+    print(business);
     return business;
   }
 }

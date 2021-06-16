@@ -5,7 +5,6 @@ import 'package:skyway_users/models/collections/user.dart';
 import 'package:skyway_users/models/collections/store.dart';
 import 'package:skyway_users/core/utilities/http_info.dart';
 
-
 class UsersProvider extends Bloc {
   UsersProvider() : super(0);
 
@@ -27,6 +26,7 @@ class UsersProvider extends Bloc {
   }
 
   Future<StoreModel> getBusinessById(String id) async {
+    print(id);
     final url = Uri.http("localhost:8080", "api/stores/get", {"id": id});
     final response = await http.get(
       url,

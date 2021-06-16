@@ -11,19 +11,21 @@ class OrderModel {
   String consumerId;
   String businessId;
 
-  OrderModel( { @required this.status,
-                @required this.products,
-                @required this.total,
-                @required this.date,
-                @required this.consumerId,
-                @required this.businessId
-  } ) : super();
+  OrderModel(
+      {@required this.status,
+      @required this.products,
+      @required this.total,
+      @required this.date,
+      @required this.consumerId,
+      @required this.businessId})
+      : super();
 
   OrderModel.fromJson(dynamic json) {
     this.id = json["id"];
     this.status = json["status"];
     this.total = json["total"];
-    this.date = json["date"];
+    this.products = (json["products"] as Map).cast<String, int>();
+    this.date = DateTime.tryParse(json["date"]);
     this.consumerId = json["consumerId"];
     this.businessId = json["businessId"];
   }

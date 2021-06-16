@@ -39,8 +39,8 @@ class ProductModel {
     this.amount = json["amount"];
     this.price = json["price"];
     this.isCustomizable = json["isCustomizable"];
-    this.options = json["options"];
-    this.images = json["images"];
+    this.options = (json["options"] as Map)?.cast<String, List<String>>();
+    this.images = (json["images"] as List)?.cast<String>();
   }
 
   Map<String, dynamic> toJson() {

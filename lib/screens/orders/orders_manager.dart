@@ -20,7 +20,6 @@ class OrdersManagerPage extends StatefulWidget {
 }
 
 class _OrdersManagerPageState extends State<OrdersManagerPage> {
-
   bool ordersLoaded = false;
   List<OrderModel> ordersList = [];
 
@@ -31,7 +30,6 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
 
   @override
   Widget build(BuildContext context) {
-
     String _businessId;
     String _consumerId;
 
@@ -46,9 +44,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
     if (_type == "Tienda") {
       _businessId = _authProvider.shop.id;
       _consumerId = "";
-    }
-    else
-    {
+    } else {
       _businessId = "";
       _consumerId = _authProvider.user.id;
     }
@@ -61,13 +57,13 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
       body: Container(
         decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: [
-                Colors.deepOrange,
-                Colors.deepPurple,
-              ],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            )),
+          colors: [
+            Colors.deepOrange,
+            Colors.deepPurple,
+          ],
+          begin: Alignment.bottomRight,
+          end: Alignment.topLeft,
+        )),
         child: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
             return _columnView(constraints);
@@ -76,15 +72,14 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
       ),
     );
   }
+
   Future<Widget> _rowView(BoxConstraints constraints) async {
     return Row(
-      children: [
-        await ordersTable(constraints)
-      ],
+      children: [await ordersTable(constraints)],
     );
   }
 
-  Widget _columnView(BoxConstraints constraints)  {
+  Widget _columnView(BoxConstraints constraints) {
     return ListView(
       children: [
         ordersTable(constraints),
@@ -95,11 +90,11 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   Widget ordersTable(BoxConstraints constraints) {
     if (ordersList == null) return Container();
     return ListView.builder(
-      itemCount: ordersList.length,
-      itemBuilder: (BuildContext context, int index) {
-        return getOrderCard(ordersList[index]);
-      }
-    );
+        shrinkWrap: true,
+        itemCount: ordersList?.length,
+        itemBuilder: (BuildContext context, int index) {
+          return getOrderCard(ordersList[index]);
+        });
     /*
     return DataTable(
       columns: [
@@ -116,62 +111,65 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
 
   Widget getOrderProduct(MapEntry<String, int> p) {
     ProductModel product;
+    Future<ProductModel> future = getProductById(p.key);
     return FutureBuilder(
-      future: getProductById(p.key),
-      builder: (BuildContext context, AsyncSnapshot<ProductModel> snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          product = snapshot.data;
-          return Row(
-              children: [
-                Text(product.name),
-                SizedBox(width: 15),
-                Text("${product.price}"),
-                SizedBox(width: 15),
-                Text("${p.value}"),
-                SizedBox(width: 15),
-                Text("${product.price * p.value}"),
-              ]
-          );
-        }
-        else
-          return Text("Cargando producto ...");
-      }
-    );
+        future: future,
+        builder: (BuildContext context, AsyncSnapshot<ProductModel> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            product = snapshot.requireData;
+            print(product);
+            return Row(children: [
+              Text(product.name),
+              SizedBox(width: 15),
+              Text("${product.price}"),
+              SizedBox(width: 15),
+              Text("${p.value}"),
+              SizedBox(width: 15),
+              Text("${product.price * p.value}"),
+            ]);
+          } else
+            return Text("Cargando producto ...");
+        });
   }
 
   Widget getOrderCard(OrderModel o) {
     UserModel user;
     StoreModel business;
+    Future<dynamic> future =
+        (_type == "Tienda") ? getUserById(o.consumerId) : getBusinessById(o.businessId);
     return FutureBuilder(
-      future: (_type == "Tienda") ? getUserById(o.consumerId) : getBusinessById(o.businessId),
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          if (_type == "Tienda")
-            user = snapshot.data;
-          else
-            business = snapshot.data;
-          return Card(
-              child: Column(
-                children: [
-                  Text('Fecha y Hora: ${o.date.toString()}'),
-                  (_type == "Tienda") ? Text('Cliente: ${user.fullName()}') : Text('Vendedor: ${business.name}'),
-                  (_type == "Tienda") ? Text('Teléfono: ${user.phone}') : Text('Teléfono: ${business.phone}'),
-                  Text('Productos'),
-                  ListView.builder(
-                    itemCount: o.products.length,
+        future: future,
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (_type == "Tienda")
+              user = snapshot.requireData;
+            else
+              business = snapshot.data;
+            print(business);
+            print(user);
+            return Card(
+                child: Column(
+              children: [
+                Text('Fecha y Hora: ${o.date.toString()}'),
+                (_type == "Tienda")
+                    ? Text('Cliente: ${user.fullName()}')
+                    : Text('Vendedor: ${business.name}'),
+                (_type == "Tienda")
+                    ? Text('Teléfono: ${user.phone}')
+                    : Text('Teléfono: ${business.phone}'),
+                Text('Productos'),
+                ListView.builder(
+                    itemCount: o.products?.length,
                     shrinkWrap: true,
                     itemBuilder: (BuildContext context, int index) {
                       return getOrderProduct(o.products.entries.elementAt(index));
-                    }
-                  ),
-                  Text('Total: ${o.total}'),
-                ],
-              )
-          );
-        }
-        else return Text("Cargando orden ...");
-      }
-    );
+                    }),
+                Text('Total: ${o.total}'),
+              ],
+            ));
+          } else
+            return Text("Cargando orden ...");
+        });
     /*
     DataRow(
         cells: [DataCell(Text(o.date.toString())),
@@ -190,14 +188,16 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
     ]
     )
     */
-
   }
 
   void loadOrders(String businessId, String consumerId) async {
-    List orders = await BlocProvider.of<OrdersProvider>(this.context).getOrders(businessId, consumerId);
-    orders.forEach((o) {
-      OrderModel order = new OrderModel.fromJson(o);
-      ordersList.add(order);
+    List orders =
+        await BlocProvider.of<OrdersProvider>(this.context).getOrders(businessId, consumerId);
+    setState(() {
+      orders.forEach((o) {
+        OrderModel order = new OrderModel.fromJson(o);
+        ordersList.add(order);
+      });
     });
   }
 
@@ -212,9 +212,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   }
 
   Future<StoreModel> getBusinessById(String id) async {
-      StoreModel business = await BlocProvider.of<UsersProvider>(this.context).getBusinessById(id);
-      return business;
-      }
-
+    StoreModel business = await BlocProvider.of<UsersProvider>(this.context).getBusinessById(id);
+    return business;
+  }
 }
-

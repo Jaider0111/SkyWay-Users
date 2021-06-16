@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:intl/intl.dart';
 import 'package:skyway_users/models/collections/product.dart';
+import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 
@@ -21,9 +22,11 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   List<ProductModel> restaurantes = [];
   List<ProductModel> farmacia = [];
   List<ProductModel> otros = [];
+  AuthProvider _provider;
 
   @override
   Widget build(BuildContext context) {
+    _provider = BlocProvider.of<AuthProvider>(context);
     return Scaffold(
       appBar: appBar,
       body: Stack(children: [
@@ -86,13 +89,16 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                               fit: BoxFit.fill),
                         ),
                       )),
-                  sideBarButton(constraints, "Home", Icons.home_rounded),
+                  sideBarButton(constraints, "Home", Icons.home_rounded,
+                      "dashboard_for_buyers"),
+                  sideBarButton(constraints, "Mis ordenes",
+                      Icons.assignment_turned_in, null),
+                  sideBarButton(constraints, "Ver perfil", Icons.account_circle,
+                      "profile"),
                   sideBarButton(
-                      constraints, "Mis ordenes", Icons.assignment_turned_in),
+                      constraints, "Editar perfil", Icons.mode_edit, null),
                   sideBarButton(
-                      constraints, "Ver perfil", Icons.account_circle),
-                  sideBarButton(constraints, "Editar perfil", Icons.mode_edit),
-                  sideBarButton(constraints, "Salir", Icons.directions),
+                      constraints, "Salir", Icons.directions, "login"),
                 ],
               ),
             )));
@@ -351,9 +357,17 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     );
   }
 
-  Widget sideBarButton(BoxConstraints constraints, name, IconData icon) {
+  Widget sideBarButton(BoxConstraints constraints, name, IconData icon, route) {
     return TextButton(
-      onPressed: () {},
+      onPressed: () {
+        if (route == "login") {
+          _provider.logout();
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('login', (route) => false);
+        } else {
+          Navigator.of(context).pushNamed(route);
+        }
+      },
       child: Padding(
         padding: const EdgeInsets.only(left: 10.0),
         child: Row(
@@ -460,19 +474,10 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
         restaurantes.add(newProduct);
       } else if (newProduct.category == "Farmacia") {
         farmacia.add(newProduct);
-      } else if (newProduct.category == "Otros") {
+      } else if (newProduct.category == "Varios") {
         otros.add(newProduct);
       }
     });
-    print("DEBUG!");
-    print("Alimentos");
-    print(alimentos.length);
-    print("Restaurantes");
-    print(restaurantes.length);
-    print("Farmacia");
-    print(farmacia.length);
-    print("Otros");
-    print(otros.length);
   }
 
   randomGn(int a, int b) {

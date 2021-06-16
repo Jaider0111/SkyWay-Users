@@ -35,13 +35,16 @@ class CheckoutState extends State<CheckoutPage> {
   bool _creditCard;
   List<String> _opts = [];
   Map<String, List<String>> _options = Map();
+  String _customerId;
+  String _businessId;
 
-  List<ProductModel> _productsList;
-  int _total = 0;
+  Map<ProductModel, int> _productsList;
+  int _total;
 
   @override
   void initState() {
     _creditCard = false;
+    _total = 0;
     super.initState();
   }
 
@@ -50,11 +53,15 @@ class CheckoutState extends State<CheckoutPage> {
     Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
     if (args.containsKey("listP")) {
       _productsList = args["listP"];
-      for (int i = 0; i < _productsList.length; i++) {
-        _total += _productsList[i].price;
+      for (var k in _productsList.keys) {
+        print("-----------");
+        print(k.price.toString);
+        print(_productsList[k].toString);
+        print("-----------");
+        _total += (k.price) * _productsList[k];
       }
     } else {
-      _productsList = [
+      _productsList = {
         new ProductModel(
             name: "Producto",
             description: "description",
@@ -64,7 +71,7 @@ class CheckoutState extends State<CheckoutPage> {
             isCountable: false,
             price: 10000,
             isCustomizable: false,
-            images: null),
+            images: null): 1,
         new ProductModel(
             name: "Producto2",
             description: "description2",
@@ -74,7 +81,7 @@ class CheckoutState extends State<CheckoutPage> {
             isCountable: false,
             price: 20000,
             isCustomizable: false,
-            images: null),
+            images: null): 2,
         new ProductModel(
             name: "Producto3",
             description: "description3",
@@ -84,7 +91,7 @@ class CheckoutState extends State<CheckoutPage> {
             isCountable: false,
             price: 30000,
             isCustomizable: false,
-            images: null),
+            images: null): 2,
         new ProductModel(
             name: "Producto4",
             description: "description4",
@@ -94,7 +101,7 @@ class CheckoutState extends State<CheckoutPage> {
             isCountable: false,
             price: 10000,
             isCustomizable: false,
-            images: null),
+            images: null): 2,
         new ProductModel(
             name: "Producto5",
             description: "description5",
@@ -104,12 +111,30 @@ class CheckoutState extends State<CheckoutPage> {
             isCountable: false,
             price: 10000,
             isCustomizable: false,
-            images: null),
-      ];
+            images: null): 4,
+      };
       _total = 0;
-      for (int i = 0; i < _productsList.length; i++) {
-        _total += _productsList[i].price;
+      ProductModel _tempProduct;
+      for (var k in _productsList.keys) {
+        _tempProduct = k;
       }
+      for (var k in _productsList.keys) {
+        print("-----------");
+        print(k.price.toString);
+        print(_productsList[k].toString);
+        print("-----------");
+        _total += (k.price) * _productsList[k];
+      }
+    }
+    if (args.containsKey("customerId")) {
+      _customerId = args["customerId"];
+    } else {
+      _customerId = "clienteprueba1";
+    }
+    if (args.containsKey("businessId")) {
+      _businessId = args["businessId"];
+    } else {
+      _businessId = "negocioprueba1";
     }
     return Scaffold(
         appBar: appBar,
@@ -158,7 +183,7 @@ class CheckoutState extends State<CheckoutPage> {
     return DataForm(constraints);
   }
 
-  Widget productLine(ProductModel product) {
+  Widget productLine(ProductModel product, int cant) {
     return Card(
       child: Row(
         children: [
@@ -169,7 +194,10 @@ class CheckoutState extends State<CheckoutPage> {
           Expanded(child: SizedBox()),
           Text(product.category),
           Expanded(child: SizedBox()),
-          Text("\$" + product.price.toString()),
+          Text("Unidad: \$" + product.price.toString()),
+          Expanded(child: SizedBox()),
+          Text("Cantidad: " + cant.toString()),
+          Expanded(child: SizedBox()),
           SizedBox(
             width: 20.0,
           ),
@@ -178,7 +206,8 @@ class CheckoutState extends State<CheckoutPage> {
     );
   }
 
-  Widget productInList(List<ProductModel> list, BoxConstraints constraints) {
+  Widget productInList(
+      Map<ProductModel, int> list, BoxConstraints constraints) {
     return SizedBox(
         height: constraints.maxHeight - 240.0,
         width: ((constraints.maxWidth > 800.0)
@@ -188,7 +217,10 @@ class CheckoutState extends State<CheckoutPage> {
         child: ListView.builder(
           itemCount: list.length,
           itemBuilder: (BuildContext context, int index) {
-            return Container(height: 100.0, child: productLine(list[index]));
+            return Container(
+                height: 100.0,
+                child: productLine(list.keys.elementAt(index),
+                    list[list.keys.elementAt(index)]));
           },
         ));
   }
@@ -415,8 +447,11 @@ class CheckoutState extends State<CheckoutPage> {
                       month: null,
                       year: null,
                       pay: _pay,
-                      order: _productsList,
-                      price: _total);
+                      products: _productsList,
+                      price: _total,
+                      status: "open",
+                      customerId: _customerId,
+                      businessId: _businessId);
                 } else {
                   pedido = orderModel(
                       orderId: _address + _indication,
@@ -430,8 +465,11 @@ class CheckoutState extends State<CheckoutPage> {
                       month: _month,
                       year: _year,
                       pay: null,
-                      order: _productsList,
-                      price: _total);
+                      products: _productsList,
+                      price: _total,
+                      status: "open",
+                      customerId: _customerId,
+                      businessId: _businessId);
                 }
 
                 String savedOrder =

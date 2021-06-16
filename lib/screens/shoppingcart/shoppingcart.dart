@@ -15,7 +15,7 @@ class ShoppingCartPage extends StatefulWidget {
 }
 
 class ShoppingCartState extends State<ShoppingCartPage> {
-  List<ProductModel> _productsList;
+  Map<ProductModel, int> _productsList;
 
   bool _modify;
   ProductModel _productToModify;
@@ -23,6 +23,9 @@ class ShoppingCartState extends State<ShoppingCartPage> {
   int n1;
   int n2;
   int _total = 0;
+  int np;
+  String _customerId;
+  String _businessId;
 
   @override
   void initState() {
@@ -30,7 +33,8 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     super.initState();
     n1 = 0;
     n2 = 1;
-    _productsList = [
+    np = 0;
+    _productsList = {
       new ProductModel(
           name: "Producto",
           description: "description",
@@ -40,7 +44,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           isCountable: false,
           price: 10000,
           isCustomizable: false,
-          images: null),
+          images: null): 1,
       new ProductModel(
           name: "Producto2",
           description: "description2",
@@ -50,7 +54,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           isCountable: false,
           price: 20000,
           isCustomizable: false,
-          images: null),
+          images: null): 2,
       new ProductModel(
           name: "Producto3",
           description: "description3",
@@ -60,7 +64,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           isCountable: false,
           price: 30000,
           isCustomizable: false,
-          images: null),
+          images: null): 2,
       new ProductModel(
           name: "Producto4",
           description: "description4",
@@ -70,7 +74,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           isCountable: false,
           price: 10000,
           isCustomizable: false,
-          images: null),
+          images: null): 2,
       new ProductModel(
           name: "Producto5",
           description: "description5",
@@ -80,15 +84,114 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           isCountable: false,
           price: 10000,
           isCustomizable: false,
-          images: null),
-    ];
-    for (int i = 0; i < _productsList.length; i++) {
-      _total += _productsList[i].price;
+          images: null): 4,
+    };
+    for (var k in _productsList.keys) {
+      print("-----------");
+      print(k.price.toString);
+      print(_productsList[k].toString);
+      print("-----------");
+      _total += (k.price) * _productsList[k];
+    }
+    for (var k in _productsList.keys) {
+      np += _productsList[k];
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
+    /*if (args.containsKey("listP")) {
+      _productsList = args["listP"];
+      for (var k in _productsList.keys) {
+        print("-----------");
+        print(k.price.toString);
+        print(_productsList[k].toString);
+        print("-----------");
+        _total += (k.price) * _productsList[k];
+      }
+      for (var k in _productsList.keys) {
+        np += _productsList[k];
+      }
+    } else {
+      _productsList = {
+        new ProductModel(
+            name: "Producto",
+            description: "description",
+            category: "category",
+            subcategory: "subcategory",
+            businessId: "businessId",
+            isCountable: false,
+            price: 10000,
+            isCustomizable: false,
+            images: null): 1,
+        new ProductModel(
+            name: "Producto2",
+            description: "description2",
+            category: "categor2y",
+            subcategory: "subcate2gory",
+            businessId: "businessId2",
+            isCountable: false,
+            price: 20000,
+            isCustomizable: false,
+            images: null): 2,
+        new ProductModel(
+            name: "Producto3",
+            description: "description3",
+            category: "categor3y",
+            subcategory: "subcate3gory",
+            businessId: "businessId3",
+            isCountable: false,
+            price: 30000,
+            isCustomizable: false,
+            images: null): 2,
+        new ProductModel(
+            name: "Producto4",
+            description: "description4",
+            category: "category4",
+            subcategory: "subcategory4",
+            businessId: "businessI4d",
+            isCountable: false,
+            price: 10000,
+            isCustomizable: false,
+            images: null): 2,
+        new ProductModel(
+            name: "Producto5",
+            description: "description5",
+            category: "category5",
+            subcategory: "subcategory5",
+            businessId: "businessId5",
+            isCountable: false,
+            price: 10000,
+            isCustomizable: false,
+            images: null): 4,
+      };
+      _total = 0;
+      ProductModel _tempProduct;
+      for (var k in _productsList.keys) {
+        _tempProduct = k;
+      }
+      for (var k in _productsList.keys) {
+        print("-----------");
+        print(k.price.toString);
+        print(_productsList[k].toString);
+        print("-----------");
+        _total += (k.price) * _productsList[k];
+      }
+      for (var k in _productsList.keys) {
+        np += _productsList[k];
+      }
+    }*/
+    if (args.containsKey("customerId")) {
+      _customerId = args["customerId"];
+    } else {
+      _customerId = "clienteprueba1";
+    }
+    if (args.containsKey("businessId")) {
+      _businessId = args["businessId"];
+    } else {
+      _businessId = "negocioprueba1";
+    }
     return Scaffold(
         appBar: appBar,
         body: Container(
@@ -116,7 +219,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
   }
 
   Widget _rowView(
-      BoxConstraints constraints, List<ProductModel> _productsLista) {
+      BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
     if (_productsLista.length == 0)
       return Card(
         margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 50.0),
@@ -136,11 +239,13 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           Row(
             children: [
               Expanded(child: SizedBox()),
-              Card(child: productCard(constraints, _productsLista[n1], n1)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n1), n1)),
               if (_modify)
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
-                        ? constraints.maxHeight - 100.0
+                        ? constraints.maxHeight - 80.0
                         : min(constraints.maxWidth, constraints.maxHeight),
                     width: (constraints.maxWidth > 800.0)
                         ? constraints.maxWidth / 3
@@ -149,7 +254,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
               else
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
-                        ? constraints.maxHeight - 100.0
+                        ? constraints.maxHeight - 80.0
                         : min(constraints.maxWidth, constraints.maxHeight),
                     width: (constraints.maxWidth > 800.0)
                         ? constraints.maxWidth / 3
@@ -172,12 +277,16 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           Row(
             children: [
               Expanded(child: SizedBox()),
-              Card(child: productCard(constraints, _productsLista[n1], n1)),
-              Card(child: productCard(constraints, _productsLista[n2], n2)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n2), n2)),
               if (_modify)
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
-                        ? constraints.maxHeight - 100.0
+                        ? constraints.maxHeight - 80.0
                         : min(constraints.maxWidth, constraints.maxHeight),
                     width: (constraints.maxWidth > 800.0)
                         ? constraints.maxWidth / 3
@@ -186,7 +295,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
               else
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
-                        ? constraints.maxHeight - 100.0
+                        ? constraints.maxHeight - 80.0
                         : min(constraints.maxWidth, constraints.maxHeight),
                     width: (constraints.maxWidth > 800.0)
                         ? constraints.maxWidth / 3
@@ -213,8 +322,12 @@ class ShoppingCartState extends State<ShoppingCartPage> {
                 icon: Icon(Icons.chevron_left),
                 onPressed: () => backProduct(),
               ),
-              Card(child: productCard(constraints, _productsLista[n1], n1)),
-              Card(child: productCard(constraints, _productsLista[n2], n2)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n2), n2)),
               IconButton(
                 icon: Icon(Icons.chevron_right),
                 onPressed: () => nextProduct(),
@@ -222,7 +335,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
               if (_modify)
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
-                        ? constraints.maxHeight - 100.0
+                        ? constraints.maxHeight - 80.0
                         : min(constraints.maxWidth, constraints.maxHeight),
                     width: (constraints.maxWidth > 800.0)
                         ? constraints.maxWidth / 3
@@ -231,7 +344,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
               else
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
-                        ? constraints.maxHeight - 100.0
+                        ? constraints.maxHeight - 80.0
                         : min(constraints.maxWidth, constraints.maxHeight),
                     width: (constraints.maxWidth > 800.0)
                         ? constraints.maxWidth / 3
@@ -265,15 +378,15 @@ class ShoppingCartState extends State<ShoppingCartPage> {
   }
 
   Widget _columnView(
-      BoxConstraints constraints, List<ProductModel> _productsLista) {
-    return productCard(constraints, _productsLista[0], 0);
+      BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
+    return productCard(constraints, _productsLista.keys.elementAt(n1), 0);
   }
 
   Widget productCard(
       BoxConstraints constraints, ProductModel product, int indexp) {
     return SizedBox(
         height: (constraints.maxWidth > 800.0)
-            ? constraints.maxHeight / 2.8
+            ? constraints.maxHeight / 2.0
             : min(constraints.maxWidth, constraints.maxHeight),
         width: (constraints.maxWidth > 800.0)
             ? constraints.maxWidth / 4.5
@@ -289,11 +402,25 @@ class ShoppingCartState extends State<ShoppingCartPage> {
             ),
             Text(
               product.category,
-              style: TextStyle(fontSize: 40.0),
+              style: TextStyle(fontSize: 33.0),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Text(
+              "Precio unidad:",
+              style: TextStyle(fontSize: 20.0),
             ),
             Text(
               "\$" + product.price.toString(),
-              style: TextStyle(fontSize: 40.0),
+              style: TextStyle(fontSize: 35.0),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Text(
+              "Cant:" + _productsList[product].toString(),
+              style: TextStyle(fontSize: 25.0),
             ),
             IconButton(
               icon: Icon(Icons.settings),
@@ -330,7 +457,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           ),
           Text(
             "\$" + _total.toString(),
-            style: TextStyle(fontSize: 40.0),
+            style: TextStyle(fontSize: 36.0),
           ),
           SizedBox(
             height: 20.0,
@@ -343,13 +470,13 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           ),
           Text(
             "Numero de productos",
-            style: TextStyle(fontSize: 40.0),
+            style: TextStyle(fontSize: 32.0),
           ),
           SizedBox(
             height: 20.0,
           ),
           Text(
-            "5",
+            np.toString(),
             style: TextStyle(fontSize: 40.0),
           ),
           SizedBox(
@@ -395,96 +522,154 @@ class ShoppingCartState extends State<ShoppingCartPage> {
   }
 
   Widget bigProductCard(BoxConstraints constraints, ProductModel product) {
-    return Card(
-        color: Colors.white,
-        child: Column(
-          children: [
-            SizedBox(
-              height: 20.0,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              product.name,
-              style: TextStyle(fontSize: 40.0),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              product.description,
-              style: TextStyle(fontSize: 40.0),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              product.category,
-              style: TextStyle(fontSize: 40.0),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              product.subcategory,
-              style: TextStyle(fontSize: 40.0),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Text(
-              "\$" + product.price.toString(),
-              style: TextStyle(fontSize: 40.0),
-            ),
-            SizedBox(
-              height: 20.0,
-            ),
-            Center(
-              child: Row(children: [
-                SizedBox(
-                  width: 150.0,
-                ),
-                IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () => delete(_indexToModify),
-                ),
-                IconButton(
-                  icon: Icon(Icons.cancel),
-                  onPressed: () => cancel(),
-                ),
-                IconButton(
-                  icon: Icon(Icons.done_outline),
-                  onPressed: () => confirm(product, _indexToModify),
-                ),
-              ]),
-            )
-          ],
-        ));
+    return SizedBox(
+      child: Card(
+          color: Colors.white,
+          child: Column(
+            children: [
+              SizedBox(
+                height: 20.0,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                product.name,
+                style: TextStyle(fontSize: 40.0),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                product.description,
+                style: TextStyle(fontSize: 40.0),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                product.category,
+                style: TextStyle(fontSize: 40.0),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                product.subcategory,
+                style: TextStyle(fontSize: 40.0),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Text(
+                "\$" + product.price.toString(),
+                style: TextStyle(fontSize: 40.0),
+              ),
+              Center(
+                child: Row(children: [
+                  Expanded(child: SizedBox()),
+                  IconButton(
+                    icon: Icon(Icons.remove),
+                    onPressed: () => remove(product),
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  Text(
+                    _productsList[product].toString(),
+                    style: TextStyle(fontSize: 20.0),
+                  ),
+                  SizedBox(
+                    width: 10.0,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.add),
+                    onPressed: () => add(product),
+                  ),
+                  Expanded(child: SizedBox()),
+                ]),
+              ),
+              SizedBox(
+                height: 20.0,
+              ),
+              Center(
+                child: Row(children: [
+                  SizedBox(
+                    width: 150.0,
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () => delete(product),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.done),
+                    onPressed: () => cancel(),
+                  ),
+                ]),
+              )
+            ],
+          )),
+    );
   }
 
-  void delete(int indexd) {
+  void add(ProductModel productToAdd) {
+    setState(() {
+      _productsList[productToAdd]++;
+    });
+    _total = 0;
+    for (var k in _productsList.keys) {
+      print("-----------");
+      print(k.price.toString);
+      print(_productsList[k].toString);
+      print("-----------");
+      _total += (k.price) * _productsList[k];
+    }
+    np = 0;
+    for (var k in _productsList.keys) {
+      np += _productsList[k];
+    }
+  }
+
+  void remove(ProductModel productToRemove) {
+    setState(() {
+      if (_productsList[productToRemove] > 0)
+        _productsList[productToRemove]--;
+      else
+        delete(productToRemove);
+    });
+    _total = 0;
+    for (var k in _productsList.keys) {
+      print("-----------");
+      print(k.price.toString);
+      print(_productsList[k].toString);
+      print("-----------");
+      _total += (k.price) * _productsList[k];
+    }
+    np = 0;
+    for (var k in _productsList.keys) {
+      np += _productsList[k];
+    }
+  }
+
+  void delete(ProductModel productToDelete) {
     bool f = true;
-    List<ProductModel> temp = [];
+    Map<ProductModel, int> temp = {};
     setState(() {
       _modify = false;
-      for (int i = 0; i < _productsList.length; i++) {
-        if (i != indexd) {
-          print(i);
-          temp.add(_productsList[i]);
-        } else {
-          n1 = 0;
-          n2 = 1;
-        }
-      }
+      n1 = 0;
+      n2 = 1;
+      _productsList.remove(productToDelete);
     });
-    _productsList = temp;
     _total = 0;
-    for (int i = 0; i < _productsList.length; i++) {
-      _total += _productsList[i].price;
+    for (var k in _productsList.keys) {
+      print("-----------");
+      print(k.price.toString);
+      print(_productsList[k].toString);
+      print("-----------");
+      _total += (k.price) * _productsList[k];
     }
   }
 
@@ -492,16 +677,6 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     bool f = true;
     setState(() {
       _modify = false;
-    });
-    if (!f) return;
-  }
-
-  void confirm(ProductModel product1, int indexm) {
-    bool f = true;
-    setState(() {
-      _modify = false;
-      _productToModify = product1;
-      _productsList[indexm] = product1;
     });
     if (!f) return;
   }

@@ -13,8 +13,11 @@ class orderModel {
   int month;
   int year;
   int pay;
-  List<ProductModel> order;
+  Map<ProductModel, int> products;
   int price;
+  String status;
+  String customerId;
+  String businessId;
 
   orderModel(
       {@required this.orderId,
@@ -28,8 +31,11 @@ class orderModel {
       this.month,
       this.year,
       this.pay,
-      @required this.order,
-      @required this.price})
+      @required this.products,
+      @required this.price,
+      @required this.status,
+      @required this.customerId,
+      @required this.businessId})
       : super();
 
   orderModel.fromJson(dynamic json) {
@@ -44,8 +50,11 @@ class orderModel {
     this.month = json["month"];
     this.year = json["year"];
     this.pay = json["pay"];
-    this.order = json["order"];
+    this.products = json["products"];
     this.price = json["price"];
+    this.status = json["status"];
+    this.customerId = json["customerId"];
+    this.businessId = json["businessId"];
   }
 
   Map<String, dynamic> toJson() {
@@ -61,8 +70,11 @@ class orderModel {
       "month": month,
       "year": year,
       "pay": pay,
-      "order": order.toString(),
-      "price": price
+      "products": products.toString(),
+      "price": price,
+      "status": status,
+      "consumerId": customerId,
+      "businessId": businessId
     };
   }
 }

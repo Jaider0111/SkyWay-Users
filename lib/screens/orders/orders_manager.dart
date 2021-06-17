@@ -54,28 +54,14 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
     }
     return Scaffold(
       appBar: appBar,
-      body: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-          colors: [
-            Colors.deepOrange,
-            Colors.deepPurple,
-          ],
-          begin: Alignment.bottomRight,
-          end: Alignment.topLeft,
-        )),
-        child: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return _columnView(constraints);
-          },
-        ),
+      body: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return BackgroundWidget(
+            constraints: constraints,
+            child: _columnView(constraints),
+          );
+        },
       ),
-    );
-  }
-
-  Future<Widget> _rowView(BoxConstraints constraints) async {
-    return Row(
-      children: [await ordersTable(constraints)],
     );
   }
 
@@ -160,8 +146,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   }
 
   void loadOrders(String businessId, String consumerId) async {
-    List orders =
-        await BlocProvider.of<OrdersProvider>(this.context).getOrders(businessId, consumerId);
+    List orders = await _ordersProvider.getOrders(businessId, consumerId);
     print(orders.length);
     setState(() {
       orders.forEach((o) {
@@ -172,7 +157,7 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   }
 
   Future<ProductModel> getProductById(String id) async {
-    ProductModel product = await BlocProvider.of<ProductsProvider>(this.context).getProductById(id);
+    ProductModel product = await _productsProvider.getProductById(id);
     return product;
   }
 

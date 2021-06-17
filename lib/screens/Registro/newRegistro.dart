@@ -13,7 +13,6 @@ import 'package:skyway_users/models/collections/categories.dart';
 import 'package:skyway_users/models/collections/user.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
-import 'package:skyway_users/screens/Registro/perfil_view.dart';
 import 'package:skyway_users/screens/Registro/shop_schedule.dart';
 import 'package:skyway_users/screens/appbar.dart';
 import 'package:skyway_users/screens/images_view.dart';

@@ -14,7 +14,7 @@ class ProductsProvider extends Bloc {
   @override
   Stream mapEventToState(event) async* {}
 
-  Map<ProductModel, int> getProducts() {
+  Map<ProductModel, int> getProductsToBuy() {
     return _products;
   }
 
@@ -31,8 +31,7 @@ class ProductsProvider extends Bloc {
     return false;
   }
 
-  Future<List<String>> saveImages(
-      List<Uint8List> _images, String productName) async {
+  Future<List<String>> saveImages(List<Uint8List> _images, String productName) async {
     List<String> urls = [];
     String path = "$productName${DateTime.now().toIso8601String()}";
     fs.FirebaseStorage storage = fs.FirebaseStorage.instance;
@@ -56,7 +55,6 @@ class ProductsProvider extends Bloc {
     final url = Uri.https(baseUri, "api/products/name", {"regex": search});
     final response = await http.get(
       url,
-      //Uri.http("127.0.0.1:8080", "api/products/name", {"regex": search}),
       headers: httpHeaders,
     );
 
@@ -69,13 +67,16 @@ class ProductsProvider extends Bloc {
   }
 
   Future<List<String>> searchProductsByCatOrSubcat(String category, String subcategory) async {
-    //final url = Uri.https(baseUri, "api/products/category", {"category": category, "subcategory" : subcategory,});
-    final response = await http.get(
-      //url,
-      Uri.http("127.0.0.1:8080", "api/products/category", {
+    final url = Uri.https(
+      baseUri,
+      "api/products/category",
+      {
         "category": category,
         "subcategory": subcategory,
-      }),
+      },
+    );
+    final response = await http.get(
+      url,
       headers: httpHeaders,
     );
 
@@ -91,7 +92,6 @@ class ProductsProvider extends Bloc {
     final url = Uri.https(baseUri, "api/products", {"id": id});
     final response = await http.get(
       url,
-      //Uri.http("127.0.0.1:8080", "api/products", {"id": id}),
       headers: httpHeaders,
     );
     if (response.statusCode == 200) {
@@ -102,8 +102,6 @@ class ProductsProvider extends Bloc {
   }
 
   Future<List> getProducts() async {
-    //String url = "http://localhost:8080/api/getProducts";
-    //final response = await http.get(Uri.parse(url));
     final url = Uri.https(baseUri, "/api/getProducts");
     final response = await http.get(url);
     if (response.statusCode == 200) return json.decode(response.body);

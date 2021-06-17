@@ -30,21 +30,10 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     _provider = BlocProvider.of<AuthProvider>(context);
     return Scaffold(
       appBar: appBar,
-      body: Stack(children: [
-        Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.deepOrange,
-                Colors.deepPurple,
-              ],
-              begin: Alignment.bottomRight,
-              end: Alignment.topLeft,
-            ),
-          ),
-        ),
-        LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
-          return Container(
+      body: LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
+        return BackgroundWidget(
+          constraints: constraints,
+          child: Container(
             width: constraints.maxWidth,
             height: constraints.maxHeight,
             child: Card(
@@ -56,9 +45,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                     Expanded(child: bigPanel(constraints)),
                   ],
                 )),
-          );
-        }),
-      ]),
+          ),
+        );
+      }),
     );
   }
 
@@ -70,41 +59,6 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     final width = constraints.maxWidth / 6.0;
     final height = constraints.maxHeight;
     return NavBar(width: width, height: height);
-    return SizedBox(
-        width: 1536.0 / 6.0,
-        height: 736.0,
-        child: Card(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-            color: Colors.white70,
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  SizedBox(
-                      width: 1536.0 / 6.0 / 2.0 + 10.0,
-                      height: 1536.0 / 6.0 / 2.0 + 70.0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          image: DecorationImage(
-                              image: AssetImage("assets/images/logoapp.png"),
-                              fit: BoxFit.fill),
-                        ),
-                      )),
-                  sideBarButton(constraints, "Home", Icons.home_rounded,
-                      "dashboard_for_buyers"),
-                  sideBarButton(constraints, "Mis ordenes",
-                      Icons.assignment_turned_in, null),
-                  sideBarButton(constraints, "Ver perfil", Icons.account_circle,
-                      "profile"),
-                  sideBarButton(
-                      constraints, "Editar perfil", Icons.mode_edit, null),
-                  sideBarButton(
-                      constraints, "Salir", Icons.directions, "login"),
-                ],
-              ),
-            )));
   }
 
   Widget bigPanel(BoxConstraints constraints) {
@@ -193,8 +147,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: 736.0 / 6.0 * 1.9,
       child: Card(
         elevation: 10.0,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         color: Colors.white70,
         child: Container(
           margin: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -203,8 +156,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             physics: const BouncingScrollPhysics(),
             children: [
               categoryWidget(constraints, "Alimentos", "diet.png", alimentos),
-              categoryWidget(
-                  constraints, "Restaurantes", "cutlery.png", restaurantes),
+              categoryWidget(constraints, "Restaurantes", "cutlery.png", restaurantes),
               categoryWidget(constraints, "Farmacia", "medicine.png", farmacia),
               categoryWidget(constraints, "Otros", "settings.png", otros),
             ],
@@ -219,9 +171,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: 736.0 / 6.0 * 1.9,
       child: Card(
           elevation: 10.0,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
           color: Colors.white70,
           child: Padding(
             padding: const EdgeInsets.all(20.0),
@@ -247,8 +197,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                           onPressed: () {},
                           label: Text(
                             "¡Referir!",
-                            style: TextStyle(
-                                fontSize: 736.0 / 30.0, fontFamily: "Itim"),
+                            style: TextStyle(fontSize: 736.0 / 30.0, fontFamily: "Itim"),
                           ),
                         ),
                       ],
@@ -262,8 +211,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                       child: Container(
                         decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage("assets/images/stonks.jpg"),
-                              fit: BoxFit.fill),
+                              image: AssetImage("assets/images/stonks.jpg"), fit: BoxFit.fill),
                           borderRadius: BorderRadius.circular(30),
                         ),
                       )),
@@ -280,8 +228,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: 736.0 / 6.0 * 2.7,
       child: Card(
         elevation: 10.0,
-        shape:
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
         color: Colors.white70,
         child: Container(
           margin: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -373,14 +320,13 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       ),
     );
   }
-  
+
   Widget sideBarButton(BoxConstraints constraints, name, IconData icon, route) {
     return TextButton(
       onPressed: () {
         if (route == "login") {
           _provider.logout();
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil('login', (route) => false);
+          Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
         } else {
           Navigator.of(context).pushNamed(route);
         }
@@ -405,8 +351,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget productWidget(BoxConstraints constraints, name, image, price, stars) {
-    final formatter =
-        NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     double precio = double.parse(price);
     return Container(
       height: 736.0 / 6.0 * 1.9 - 20.0,

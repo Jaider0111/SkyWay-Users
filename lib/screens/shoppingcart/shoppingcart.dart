@@ -33,34 +33,26 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     n2 = 1;
     np = 0;
 
-    _productsList = ProductsProvider().getProducts();
+    _productsList = ProductsProvider().getProductsToBuy();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: appBar,
-        body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            colors: [
-              Colors.deepOrange,
-              Colors.deepPurple,
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topLeft,
-          )),
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Column(
+        body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return BackgroundWidget(
+              constraints: constraints,
+              child: Column(
                 children: [
                   (constraints.maxWidth > 800.0)
                       ? _rowView(constraints, _productsList)
                       : _columnView(constraints, _productsList),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+          },
         ));
   }
 

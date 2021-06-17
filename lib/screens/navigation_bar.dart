@@ -63,34 +63,27 @@ class NavBar extends StatelessWidget {
                     NavBarButton(
                       name: "Home",
                       icon: Icons.home_rounded,
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('dashboard_for_buyers');
-                      },
+                      route: "dashboard_for_buyers",
                     ),
                     NavBarButton(
                       name: "Mis ordenes",
                       icon: Icons.assignment_turned_in,
-                      onPressed: () {},
+                      route: 'orders',
                     ),
                     NavBarButton(
                       name: "Ver perfil",
                       icon: Icons.account_circle,
-                      onPressed: () {
-                        Navigator.of(context).pushNamed('profile');
-                      },
+                      route: "profile",
                     ),
                     NavBarButton(
                       name: "Editar perfil",
                       icon: Icons.mode_edit,
-                      onPressed: () {},
+                      route: null,
                     ),
                     NavBarButton(
                       name: "Salir",
                       icon: Icons.directions,
-                      onPressed: () {
-                        BlocProvider.of<AuthProvider>(context).logout();
-                        Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
-                      },
+                      route: "login",
                     ),
                   ],
                 ),
@@ -102,15 +95,22 @@ class NavBar extends StatelessWidget {
 class NavBarButton extends StatelessWidget {
   final String name;
   final IconData icon;
-  final void Function() onPressed;
+  final String route;
 
-  const NavBarButton({Key key, @required this.name, @required this.icon, @required this.onPressed})
+  const NavBarButton({Key key, @required this.name, @required this.icon, @required this.route})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: onPressed,
+      onPressed: () {
+        if (route == "login") {
+          BlocProvider.of<AuthProvider>(context).logout();
+          Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
+        } else {
+          Navigator.of(context).pushNamed(route);
+        }
+      },
       child: Padding(
         padding: const EdgeInsets.only(left: 10.0),
         child: Row(
@@ -122,7 +122,7 @@ class NavBarButton extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Itim",
-                  fontSize: 22.0,
+                  fontSize: 24.0,
                 )),
           ],
         ),

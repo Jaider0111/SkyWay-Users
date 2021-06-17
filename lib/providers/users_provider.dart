@@ -12,7 +12,7 @@ class UsersProvider extends Bloc {
   Stream mapEventToState(event) async* {}
 
   Future<UserModel> getUserById(String id) async {
-    final url = Uri.http("localhost:8080", "api/consumers/get", {"id": id});
+    final url = Uri.https(baseUri, "api/consumers/get", {"id": id});
     final response = await http.get(
       url,
       headers: httpHeaders,
@@ -27,7 +27,7 @@ class UsersProvider extends Bloc {
 
   Future<StoreModel> getBusinessById(String id) async {
     print(id);
-    final url = Uri.http("localhost:8080", "api/stores/get", {"id": id});
+    final url = Uri.https(baseUri, "api/stores/get", {"id": id});
     final response = await http.get(
       url,
       headers: httpHeaders,

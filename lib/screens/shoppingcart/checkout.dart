@@ -50,28 +50,20 @@ class CheckoutState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    _productsList = BlocProvider.of<ProductsProvider>(context).getProducts();
+    _productsList = BlocProvider.of<ProductsProvider>(context).getProductsToBuy();
     return Scaffold(
         appBar: appBar,
-        body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            colors: [
-              Colors.deepOrange,
-              Colors.deepPurple,
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topLeft,
-          )),
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Column(
+        body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return BackgroundWidget(
+              constraints: constraints,
+              child: Column(
                 children: [
                   (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+          },
         ));
   }
 
@@ -361,7 +353,7 @@ class CheckoutState extends State<CheckoutPage> {
                       products: _productsList.map((key, value) => MapEntry(key.id, value)),
                       total: _total,
                       status: "open",
-                      customerId: _customerId,
+                      consumerId: _customerId,
                       businessId: _businessId);
                 } else {
                   pedido = OrderModel(
@@ -380,7 +372,7 @@ class CheckoutState extends State<CheckoutPage> {
                       products: _productsList.map((key, value) => MapEntry(key.id, value)),
                       total: _total,
                       status: "open",
-                      customerId: _customerId,
+                      consumerId: _customerId,
                       businessId: _businessId);
                 }
 

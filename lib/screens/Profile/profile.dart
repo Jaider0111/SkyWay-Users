@@ -39,33 +39,18 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: appBar,
       body: LayoutBuilder(
-        builder: (context, constraints) {
-          return Container(
-              width: constraints.maxWidth,
-              height: constraints.maxHeight,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.deepOrange,
-                    Colors.deepPurple,
-                  ],
-                  begin: Alignment.bottomRight,
-                  end: Alignment.topLeft,
-                ),
-              ),
-              child: LayoutBuilder(
-                builder: (BuildContext context, BoxConstraints constraint) {
-                  return (constraints.maxWidth > 800.0)
-                      ? _rowView(constraints)
-                      : _columnView(constraints);
-                },
-              ));
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return BackgroundWidget(
+            constraints: constraints,
+            child:
+                (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
+          );
         },
       ),
     );
   }
 
-  _rowView(BoxConstraints constraints) {
+  Widget _rowView(BoxConstraints constraints) {
     return Container(
       margin: EdgeInsets.all(20),
       width: constraints.maxWidth - 30.0,
@@ -76,23 +61,23 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
       child: Row(
         children: [
-          side_bar(constraints),
-          profile_view(constraints),
+          sideBar(constraints),
+          profileView(constraints),
         ],
       ),
     );
   }
 
-  _columnView(BoxConstraints constraints) {
+  Widget _columnView(BoxConstraints constraints) {
     return ListView(
       children: [
         Text("kk"),
-        profile_view(constraints),
+        profileView(constraints),
       ],
     );
   }
 
-  Widget profile_view(BoxConstraints constraints) {
+  Widget profileView(BoxConstraints constraints) {
     return SizedBox(
         height: (constraints.maxWidth > 800.0)
             ? constraints.maxHeight
@@ -168,21 +153,21 @@ class _ProfilePageState extends State<ProfilePage> {
                     //your elements here
                   ],
                 ),
-                my_container(constraints, "Nombres: ${_user.name}"),
-                if (_type == "Usuario") my_container(constraints, "Apellidos:${_user.lastname} "),
-                my_container(constraints, "Identificación: ${_user.identification}"),
-                my_container(constraints, "Dirección: ${_user.address}"),
-                my_container(constraints, "Email: ${_user.email}"),
-                my_container(constraints, "Teléfono: ${_user.phone}"),
-                if (_type == "Tienda") my_container(constraints, "Horario: ${_user.schedule}"),
-                if (_type == "Tienda") my_container(constraints, "Categoría: ${_user.category}")
+                myContainer(constraints, "Nombres: ${_user.name}"),
+                if (_type == "Usuario") myContainer(constraints, "Apellidos:${_user.lastname} "),
+                myContainer(constraints, "Identificación: ${_user.identification}"),
+                myContainer(constraints, "Dirección: ${_user.address}"),
+                myContainer(constraints, "Email: ${_user.email}"),
+                myContainer(constraints, "Teléfono: ${_user.phone}"),
+                if (_type == "Tienda") myContainer(constraints, "Horario: ${_user.schedule}"),
+                if (_type == "Tienda") myContainer(constraints, "Categoría: ${_user.category}")
               ],
             ),
           ),
         ));
   }
 
-  Widget my_container(BoxConstraints constraints, String text) {
+  Widget myContainer(BoxConstraints constraints, String text) {
     return Container(
       padding: EdgeInsets.only(top: 20.0, left: 20.0),
       margin: EdgeInsets.only(bottom: 20, left: 20, top: 20),
@@ -203,7 +188,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget side_bar(BoxConstraints constraints) {
+  Widget sideBar(BoxConstraints constraints) {
     return NavBar(
       width: constraints.maxWidth / 6.0,
       height: constraints.maxHeight,

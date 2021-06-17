@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skyway_users/consts/themes.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
+import 'package:skyway_users/screens/navigation_bar.dart';
 import 'dart:math';
 import '../appbar.dart';
 import '../unauthorizedPage.dart';
@@ -96,9 +97,7 @@ class _ProfilePageState extends State<ProfilePage> {
         height: (constraints.maxWidth > 800.0)
             ? constraints.maxHeight
             : min(constraints.maxWidth, constraints.maxHeight),
-        width: (constraints.maxWidth > 800.0)
-            ? constraints.maxWidth / 1.3
-            : constraints.maxWidth,
+        width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 1.3 : constraints.maxWidth,
         child: Theme(
           data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
           child: Scrollbar(
@@ -129,19 +128,14 @@ class _ProfilePageState extends State<ProfilePage> {
                           children: [
                             Container(
                               padding: EdgeInsets.only(
-                                  left: (constraints.maxWidth <= 800)
-                                      ? 150.0
-                                      : 250.0,
-                                  top: (constraints.maxWidth <= 800)
-                                      ? 100.0
-                                      : 150.0),
+                                  left: (constraints.maxWidth <= 800) ? 150.0 : 250.0,
+                                  top: (constraints.maxWidth <= 800) ? 100.0 : 150.0),
                               child: Text(
                                 '${_user.name} ${(_type == "Usuario") ? _user.lastname : ""}\n ${_provider.status}',
                                 textAlign: TextAlign.start,
                                 style: TextStyle(
                                   fontFamily: "Itim",
-                                  fontSize:
-                                      (constraints.maxWidth <= 800) ? 20 : 35,
+                                  fontSize: (constraints.maxWidth <= 800) ? 20 : 35,
                                 ),
                               ),
                             ),
@@ -158,14 +152,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               CircleAvatar(
                                 backgroundColor: Colors.white,
-                                radius: (constraints.maxWidth <= 800)
-                                    ? 65.0
-                                    : 110.0,
-                                backgroundImage:
-                                    (_type == "Usuario" && _user.image != null)
-                                        ? NetworkImage(_user.image)
-                                        : AssetImage(
-                                            "assets/images/avatar_profile.png"),
+                                radius: (constraints.maxWidth <= 800) ? 65.0 : 110.0,
+                                backgroundImage: (_type == "Usuario" && _user.image != null)
+                                    ? NetworkImage(_user.image)
+                                    : AssetImage("assets/images/avatar_profile.png"),
                               ),
                             ],
                           ),
@@ -179,17 +169,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   ],
                 ),
                 my_container(constraints, "Nombres: ${_user.name}"),
-                if (_type == "Usuario")
-                  my_container(constraints, "Apellidos:${_user.lastname} "),
-                my_container(
-                    constraints, "Identificación: ${_user.identification}"),
+                if (_type == "Usuario") my_container(constraints, "Apellidos:${_user.lastname} "),
+                my_container(constraints, "Identificación: ${_user.identification}"),
                 my_container(constraints, "Dirección: ${_user.address}"),
                 my_container(constraints, "Email: ${_user.email}"),
                 my_container(constraints, "Teléfono: ${_user.phone}"),
-                if (_type == "Tienda")
-                  my_container(constraints, "Horario: ${_user.schedule}"),
-                if (_type == "Tienda")
-                  my_container(constraints, "Categoría: ${_user.category}")
+                if (_type == "Tienda") my_container(constraints, "Horario: ${_user.schedule}"),
+                if (_type == "Tienda") my_container(constraints, "Categoría: ${_user.category}")
               ],
             ),
           ),
@@ -201,9 +187,7 @@ class _ProfilePageState extends State<ProfilePage> {
       padding: EdgeInsets.only(top: 20.0, left: 20.0),
       margin: EdgeInsets.only(bottom: 20, left: 20, top: 20),
       height: constraints.maxHeight / 7,
-      width: (constraints.maxWidth > 800.0)
-          ? constraints.maxWidth / 4
-          : constraints.maxWidth,
+      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 4 : constraints.maxWidth,
       decoration: BoxDecoration(
         color: Colors.white70,
         borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -220,23 +204,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Widget side_bar(BoxConstraints constraints) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Container(
-            margin: EdgeInsets.all(20),
-            height: constraints.maxHeight - 80.0,
-            width: 200,
-            decoration: BoxDecoration(
-              color: Colors.white70,
-              borderRadius: BorderRadius.all(Radius.circular(20)),
-            ),
-            child: Align(
-              alignment: Alignment.topRight,
-            ))
-      ],
+    return NavBar(
+      width: constraints.maxWidth / 6.0,
+      height: constraints.maxHeight,
     );
   }
 }

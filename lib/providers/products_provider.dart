@@ -63,6 +63,25 @@ class ProductsProvider extends Bloc {
     return [];
   }
 
+  Future<List<String>> searchProductsByCatOrSubcat(String category, String subcategory) async {
+    //final url = Uri.https(baseUri, "api/products/category", {"category": category, "subcategory" : subcategory,});
+    final response = await http.get(
+      //url,
+      Uri.http("127.0.0.1:8080", "api/products/category", {
+        "category": category,
+        "subcategory": subcategory,
+      }),
+      headers: httpHeaders,
+    );
+
+    if (response.statusCode == 200) {
+      List ans = json.decode(response.body);
+      ans = ans.map((e) => e.toString()).toList();
+      return ans;
+    }
+    return [];
+  }
+
   Future<ProductModel> getProductById(String id) async {
     final url = Uri.https(baseUri, "api/products", {"id": id});
     final response = await http.get(

@@ -7,6 +7,7 @@ import 'package:skyway_users/models/collections/product.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
+import 'package:skyway_users/screens/navigation_bar.dart';
 
 class DashBoard2Page extends StatefulWidget {
   DashBoard2Page({Key key}) : super(key: key);
@@ -42,8 +43,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             ),
           ),
         ),
-        LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
+        LayoutBuilder(builder: (BuildContext context, BoxConstraints constraints) {
           return Container(
             width: constraints.maxWidth,
             height: constraints.maxHeight,
@@ -67,6 +67,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       loadProducts();
       load = true;
     }
+    final width = constraints.maxWidth / 6.0;
+    final height = constraints.maxHeight;
+    return NavBar(width: width, height: height);
     return SizedBox(
         width: 1536.0 / 6.0,
         height: 736.0,
@@ -141,8 +144,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: 736.0 / 6.0,
       child: Card(
           elevation: 10.0,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           color: Colors.white70,
           child: Padding(
             padding: const EdgeInsets.only(left: 20.0, right: 20.0),
@@ -153,6 +155,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                 Row(children: [
                   SizedBox(width: 10.0),
                   FloatingActionButton(
+                    heroTag: 'notification',
                     backgroundColor: Colors.white38,
                     onPressed: () {},
                     child: Image(
@@ -162,6 +165,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   ),
                   SizedBox(width: 10.0),
                   FloatingActionButton(
+                    heroTag: 'cart',
                     backgroundColor: Colors.white38,
                     onPressed: () {},
                     child: Image(
@@ -170,6 +174,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   ),
                   SizedBox(width: 10.0),
                   FloatingActionButton(
+                    heroTag: 'user',
                     backgroundColor: Colors.white38,
                     onPressed: () {},
                     child: Image(
@@ -214,6 +219,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: 736.0 / 6.0 * 1.9,
       child: Card(
           elevation: 10.0,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(30.0)),
           color: Colors.white70,
@@ -269,6 +275,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget productsView(BoxConstraints constraints, List<ProductModel> list) {
+    print(list.length);
     return SizedBox(
       height: 736.0 / 6.0 * 2.7,
       child: Card(
@@ -282,12 +289,8 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             scrollDirection: Axis.horizontal,
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
-              return productWidget(
-                  constraints,
-                  list[index].name,
-                  list[index].images[0],
-                  list[index].price.toString(),
-                  randomGn(3, 5));
+              return productWidget(constraints, list[index].name, list[index].images[0],
+                  list[index].price.toString(), randomGn(3, 5));
             },
           ),
         ),
@@ -295,8 +298,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     );
   }
 
-  Widget categoryWidget(
-      BoxConstraints constraints, name, image, List<ProductModel> list) {
+  Widget categoryWidget(BoxConstraints constraints, name, image, List<ProductModel> list) {
     return Container(
       height: 736.0 / 6.0 * 1.9 - 20.0,
       width: 736.0 / 6.0 * 1.9 - 20.0,
@@ -337,36 +339,41 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   Widget searchWidget(BoxConstraints constraints) {
-    return SizedBox(
-      width: 736.0 / 6.0 * 4.8 / 1.5,
-      child: Theme(
-        data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
-        child: Container(
-          decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: new BorderRadius.circular(30.0)),
-          child: Padding(
-            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
-            child: TextFormField(
-              style: TextStyle(fontSize: 20.0),
-              onChanged: (null),
-              decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  border: InputBorder.none,
-                  fillColor: Colors.grey,
-                  focusColor: Colors.grey,
-                  focusedBorder: null,
-                  labelText:
-                      "Ingresa el nombre del producto o restaurante que buscas ...",
-                  labelStyle: TextStyle(fontSize: 20.0),
-                  contentPadding: EdgeInsets.only(bottom: 15.0)),
+    return Hero(
+      tag: 'searchBar',
+      child: InkWell(
+        onTap: () => Navigator.of(context).pushNamed('search'),
+        child: SizedBox(
+          width: 736.0 / 6.0 * 4.8 / 1.5,
+          child: Theme(
+            data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
+            child: Container(
+              decoration:
+                  BoxDecoration(color: Colors.white, borderRadius: new BorderRadius.circular(30.0)),
+              child: Padding(
+                padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 5.0),
+                child: TextFormField(
+                  enabled: false,
+                  style: TextStyle(fontSize: 20.0),
+                  onChanged: (null),
+                  decoration: InputDecoration(
+                      icon: Icon(Icons.search),
+                      border: InputBorder.none,
+                      fillColor: Colors.grey,
+                      focusColor: Colors.grey,
+                      focusedBorder: null,
+                      labelText: "Ingresa el nombre del producto o restaurante que buscas ...",
+                      labelStyle: TextStyle(fontSize: 20.0),
+                      contentPadding: EdgeInsets.only(bottom: 15.0)),
+                ),
+              ),
             ),
           ),
         ),
       ),
     );
   }
-
+  
   Widget sideBarButton(BoxConstraints constraints, name, IconData icon, route) {
     return TextButton(
       onPressed: () {
@@ -405,8 +412,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       height: 736.0 / 6.0 * 1.9 - 20.0,
       width: 736.0 / 6.0 * 1.9 - 20.0,
       child: Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
           color: Colors.white,
           child: Center(
               child: Padding(
@@ -473,8 +479,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   }
 
   void loadProducts() async {
-    List products =
-        await BlocProvider.of<ProductsProvider>(this.context).getProducts();
+    List products = await BlocProvider.of<ProductsProvider>(this.context).getProducts();
     products.forEach((product) {
       ProductModel newProduct = new ProductModel.fromJson2(product);
       if (newProduct.category == "Alimentos") {
@@ -487,6 +492,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
       } else if (newProduct.category == "Varios") {
         otros.add(newProduct);
       }
+    });
+    setState(() {
+      lista = alimentos;
     });
   }
 

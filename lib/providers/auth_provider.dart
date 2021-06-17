@@ -74,5 +74,6 @@ class AuthProvider extends Bloc {
   Future<void> logout() async {
     this.user = null;
     this.shop = null;
+    this.status = null;
   }
 }

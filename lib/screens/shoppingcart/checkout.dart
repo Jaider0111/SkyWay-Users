@@ -7,9 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:skyway_users/models/collections/order.dart';
 import 'package:skyway_users/models/collections/product.dart';
-import 'package:skyway_users/models/collections/user.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
+import 'package:skyway_users/providers/products_provider.dart';
 
 import '../appbar.dart';
 
@@ -23,7 +23,7 @@ class CheckoutPage extends StatefulWidget {
 class CheckoutState extends State<CheckoutPage> {
   final _formKey = GlobalKey<FormState>();
   final _formKeycc = GlobalKey<FormState>();
-  String _Name;
+  String _name;
   String _address;
   String _indication;
   int _propina;
@@ -50,93 +50,7 @@ class CheckoutState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
-    if (args.containsKey("listP")) {
-      _productsList = args["listP"];
-      _total = 0;
-      for (var k in _productsList.keys) {
-        print("-----------");
-        print(k.price.toString);
-        print(_productsList[k].toString);
-        print("-----------");
-        _total += (k.price) * _productsList[k];
-      }
-    } else {
-      _productsList = {
-        new ProductModel(
-            name: "Producto",
-            description: "description",
-            category: "category",
-            subcategory: "subcategory",
-            businessId: "businessId",
-            isCountable: false,
-            price: 10000,
-            isCustomizable: false,
-            images: null): 1,
-        new ProductModel(
-            name: "Producto2",
-            description: "description2",
-            category: "categor2y",
-            subcategory: "subcate2gory",
-            businessId: "businessId2",
-            isCountable: false,
-            price: 20000,
-            isCustomizable: false,
-            images: null): 2,
-        new ProductModel(
-            name: "Producto3",
-            description: "description3",
-            category: "categor3y",
-            subcategory: "subcate3gory",
-            businessId: "businessId3",
-            isCountable: false,
-            price: 30000,
-            isCustomizable: false,
-            images: null): 2,
-        new ProductModel(
-            name: "Producto4",
-            description: "description4",
-            category: "category4",
-            subcategory: "subcategory4",
-            businessId: "businessI4d",
-            isCountable: false,
-            price: 10000,
-            isCustomizable: false,
-            images: null): 2,
-        new ProductModel(
-            name: "Producto5",
-            description: "description5",
-            category: "category5",
-            subcategory: "subcategory5",
-            businessId: "businessId5",
-            isCountable: false,
-            price: 10000,
-            isCustomizable: false,
-            images: null): 4,
-      };
-      _total = 0;
-      ProductModel _tempProduct;
-      for (var k in _productsList.keys) {
-        _tempProduct = k;
-      }
-      for (var k in _productsList.keys) {
-        print("-----------");
-        print(k.price.toString);
-        print(_productsList[k].toString);
-        print("-----------");
-        _total += (k.price) * _productsList[k];
-      }
-    }
-    if (args.containsKey("customerId")) {
-      _customerId = args["customerId"];
-    } else {
-      _customerId = "clienteprueba1";
-    }
-    if (args.containsKey("businessId")) {
-      _businessId = args["businessId"];
-    } else {
-      _businessId = "negocioprueba1";
-    }
+    _productsList = BlocProvider.of<ProductsProvider>(context).getProducts();
     return Scaffold(
         appBar: appBar,
         body: Container(
@@ -153,9 +67,7 @@ class CheckoutState extends State<CheckoutPage> {
             builder: (BuildContext context, BoxConstraints constraints) {
               return Column(
                 children: [
-                  (constraints.maxWidth > 800.0)
-                      ? _rowView(constraints)
-                      : _columnView(constraints),
+                  (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
                 ],
               );
             },
@@ -175,13 +87,13 @@ class CheckoutState extends State<CheckoutPage> {
           productInList(_productsList, constraints),
         ],
       ),
-      DataForm(constraints),
+      dataForm(constraints),
       Expanded(child: SizedBox()),
     ]);
   }
 
   Widget _columnView(BoxConstraints constraints) {
-    return DataForm(constraints);
+    return dataForm(constraints);
   }
 
   Widget productLine(ProductModel product, int cant) {
@@ -207,32 +119,28 @@ class CheckoutState extends State<CheckoutPage> {
     );
   }
 
-  Widget productInList(
-      Map<ProductModel, int> list, BoxConstraints constraints) {
+  Widget productInList(Map<ProductModel, int> list, BoxConstraints constraints) {
     return SizedBox(
         height: constraints.maxHeight - 240.0,
-        width: ((constraints.maxWidth > 800.0)
-                ? constraints.maxWidth / 2.0
-                : constraints.maxWidth) -
-            100.0,
+        width:
+            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
+                100.0,
         child: ListView.builder(
           itemCount: list.length,
           itemBuilder: (BuildContext context, int index) {
             return Container(
                 height: 100.0,
-                child: productLine(list.keys.elementAt(index),
-                    list[list.keys.elementAt(index)]));
+                child: productLine(list.keys.elementAt(index), list[list.keys.elementAt(index)]));
           },
         ));
   }
 
-  Widget DataForm(BoxConstraints constraints) {
+  Widget dataForm(BoxConstraints constraints) {
     return SizedBox(
         height: constraints.maxHeight - 100.0,
-        width: ((constraints.maxWidth > 800.0)
-                ? constraints.maxWidth / 2.0
-                : constraints.maxWidth) -
-            100.0,
+        width:
+            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
+                100.0,
         child: Form(
             key: _formKey,
             child: Scrollbar(
@@ -249,18 +157,16 @@ class CheckoutState extends State<CheckoutPage> {
                   ),
                   CustomInputText(
                       initialValue: "",
-                      valueCallback: (val) => _Name = val,
+                      valueCallback: (val) => _name = val,
                       label: "Quien recibirá el pedido?",
                       icon: Icons.people,
-                      validator: (val) =>
-                          (val.length > 0) ? null : "Debes llenar este campo"),
+                      validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
                   CustomInputText(
                       initialValue: "",
                       valueCallback: (val) => _address = val,
                       label: "Ingresa la dirección",
                       icon: Icons.house,
-                      validator: (val) =>
-                          (val.length > 0) ? null : "Debes llenar este campo"),
+                      validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
                   CustomInputText(
                       initialValue: "",
                       valueCallback: (val) => _indication = val,
@@ -295,15 +201,12 @@ class CheckoutState extends State<CheckoutPage> {
                       ? CustomInputText(
                           valueCallback: (val) => _pay = int.tryParse(val),
                           label: "Cantidad de efectivo con la que pagaras",
-                          validator: (val) => (int.tryParse(val ?? "0") > 0)
-                              ? null
-                              : "Ingresa una cantidad valida",
+                          validator: (val) =>
+                              (int.tryParse(val ?? "0") > 0) ? null : "Ingresa una cantidad valida",
                           initialValue: 0.toString(),
                           icon: Icons.money,
                           keyboardType: TextInputType.number,
-                          inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ])
+                          inputFormatters: [FilteringTextInputFormatter.digitsOnly])
                       : creditCard(constraints),
                   Center(
                       child: Row(
@@ -348,10 +251,9 @@ class CheckoutState extends State<CheckoutPage> {
   Widget creditCard(BoxConstraints constraints) {
     return SizedBox(
         height: constraints.maxHeight - 240.0,
-        width: ((constraints.maxWidth > 800.0)
-                ? constraints.maxWidth / 2.0
-                : constraints.maxWidth) -
-            100.0,
+        width:
+            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
+                100.0,
         child: Form(
             key: _formKeycc,
             child: ListView(padding: EdgeInsets.all(30.0), children: [
@@ -441,48 +343,49 @@ class CheckoutState extends State<CheckoutPage> {
                     );
                   },
                 );
-                orderModel pedido;
+                OrderModel pedido;
                 if (!_creditCard) {
-                  pedido = orderModel(
-                      orderId: _address + _indication,
-                      name: _Name,
+                  pedido = OrderModel(
+                      id: _address + _indication,
+                      name: _name,
                       address: _address,
                       floorApto: _indication,
                       bonus: _propina,
+                      date: DateTime.now(),
                       creditCard: _creditCard,
                       creditCardNumber: null,
                       cvv: null,
                       month: null,
                       year: null,
                       pay: _pay,
-                      products: _productsList,
-                      price: _total,
+                      products: _productsList.map((key, value) => MapEntry(key.id, value)),
+                      total: _total,
                       status: "open",
                       customerId: _customerId,
                       businessId: _businessId);
                 } else {
-                  pedido = orderModel(
-                      orderId: _address + _indication,
-                      name: _Name,
+                  pedido = OrderModel(
+                      id: _address + _indication,
+                      name: _name,
                       address: _address,
                       floorApto: _indication,
                       bonus: _propina,
+                      date: DateTime.now(),
                       creditCard: _creditCard,
                       creditCardNumber: _cardNumber,
                       cvv: _cvv,
                       month: _month,
                       year: _year,
                       pay: null,
-                      products: _productsList,
-                      price: _total,
+                      products: _productsList.map((key, value) => MapEntry(key.id, value)),
+                      total: _total,
                       status: "open",
                       customerId: _customerId,
                       businessId: _businessId);
                 }
 
                 String savedOrder =
-                    await BlocProvider.of<AuthProvider>(this.context)
-                        .saveOrder(pedido);
+                    await BlocProvider.of<AuthProvider>(this.context).saveOrder(pedido);
 
                 Navigator.of(this.context).pop();
                 if (savedOrder == "El pedido no se ha generado correctamente")

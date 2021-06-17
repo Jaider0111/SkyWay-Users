@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:skyway_users/models/collections/product.dart';
@@ -25,8 +24,6 @@ class ShoppingCartState extends State<ShoppingCartPage> {
   int n2;
   int _total = 0;
   int np;
-  String _customerId;
-  String _businessId;
 
   @override
   void initState() {
@@ -37,84 +34,10 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     np = 0;
 
     _productsList = ProductsProvider().getProducts();
-
-    /*{
-      new ProductModel(
-          name: "Producto",
-          description: "description",
-          category: "category",
-          subcategory: "subcategory",
-          businessId: "businessId",
-          isCountable: false,
-          price: 10000,
-          isCustomizable: false,
-          images: null): 1,
-      new ProductModel(
-          name: "Producto2",
-          description: "description2",
-          category: "categor2y",
-          subcategory: "subcate2gory",
-          businessId: "businessId2",
-          isCountable: false,
-          price: 20000,
-          isCustomizable: false,
-          images: null): 2,
-      new ProductModel(
-          name: "Producto3",
-          description: "description3",
-          category: "categor3y",
-          subcategory: "subcate3gory",
-          businessId: "businessId3",
-          isCountable: false,
-          price: 30000,
-          isCustomizable: false,
-          images: null): 2,
-      new ProductModel(
-          name: "Producto4",
-          description: "description4",
-          category: "category4",
-          subcategory: "subcategory4",
-          businessId: "businessI4d",
-          isCountable: false,
-          price: 10000,
-          isCustomizable: false,
-          images: null): 2,
-      new ProductModel(
-          name: "Producto5",
-          description: "description5",
-          category: "category5",
-          subcategory: "subcategory5",
-          businessId: "businessId5",
-          isCountable: false,
-          price: 10000,
-          isCustomizable: false,
-          images: null): 4,
-    };
-    for (var k in _productsList.keys) {
-      print("-----------");
-      print(k.price.toString);
-      print(_productsList[k].toString);
-      print("-----------");
-      _total += (k.price) * _productsList[k];
-    }
-    for (var k in _productsList.keys) {
-      np += _productsList[k];
-    }*/
   }
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
-    if (args.containsKey("customerId")) {
-      _customerId = args["customerId"];
-    } else {
-      _customerId = "clienteprueba1";
-    }
-    if (args.containsKey("businessId")) {
-      _businessId = args["businessId"];
-    } else {
-      _businessId = "negocioprueba1";
-    }
     return Scaffold(
         appBar: appBar,
         body: Container(
@@ -141,8 +64,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
         ));
   }
 
-  Widget _rowView(
-      BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
+  Widget _rowView(BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
     if (_productsLista.length == 0)
       return Card(
         margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 50.0),
@@ -162,9 +84,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           Row(
             children: [
               Expanded(child: SizedBox()),
-              Card(
-                  child: productCard(
-                      constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(child: productCard(constraints, _productsLista.keys.elementAt(n1), n1)),
               if (_modify)
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
@@ -200,12 +120,8 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           Row(
             children: [
               Expanded(child: SizedBox()),
-              Card(
-                  child: productCard(
-                      constraints, _productsLista.keys.elementAt(n1), n1)),
-              Card(
-                  child: productCard(
-                      constraints, _productsLista.keys.elementAt(n2), n2)),
+              Card(child: productCard(constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(child: productCard(constraints, _productsLista.keys.elementAt(n2), n2)),
               if (_modify)
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
@@ -245,12 +161,8 @@ class ShoppingCartState extends State<ShoppingCartPage> {
                 icon: Icon(Icons.chevron_left),
                 onPressed: () => backProduct(),
               ),
-              Card(
-                  child: productCard(
-                      constraints, _productsLista.keys.elementAt(n1), n1)),
-              Card(
-                  child: productCard(
-                      constraints, _productsLista.keys.elementAt(n2), n2)),
+              Card(child: productCard(constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(child: productCard(constraints, _productsLista.keys.elementAt(n2), n2)),
               IconButton(
                 icon: Icon(Icons.chevron_right),
                 onPressed: () => nextProduct(),
@@ -300,20 +212,16 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     }
   }
 
-  Widget _columnView(
-      BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
+  Widget _columnView(BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
     return productCard(constraints, _productsLista.keys.elementAt(n1), 0);
   }
 
-  Widget productCard(
-      BoxConstraints constraints, ProductModel product, int indexp) {
+  Widget productCard(BoxConstraints constraints, ProductModel product, int indexp) {
     return SizedBox(
         height: (constraints.maxWidth > 800.0)
             ? constraints.maxHeight / 2.0
             : min(constraints.maxWidth, constraints.maxHeight),
-        width: (constraints.maxWidth > 800.0)
-            ? constraints.maxWidth / 4.5
-            : constraints.maxWidth,
+        width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 4.5 : constraints.maxWidth,
         child: Column(
           children: [
             SizedBox(

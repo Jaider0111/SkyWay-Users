@@ -63,7 +63,7 @@ class AuthProvider extends Bloc {
     return null;
   }
 
-  Future<String> saveOrder(orderModel oModel) async {
+  Future<String> saveOrder(OrderModel oModel) async {
     final url = Uri.https(baseUri, "checkout");
     print(oModel.toJson());
     final response = await http.post(

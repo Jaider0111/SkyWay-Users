@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:skyway_users/models/collections/product.dart';
 
-class orderModel {
-  String orderId;
+class OrderModel {
+  String id;
   String name;
   String address;
   String floorApto;
@@ -13,18 +12,20 @@ class orderModel {
   int month;
   int year;
   int pay;
-  Map<ProductModel, int> products;
-  int price;
+  Map<String, int> products;
+  int total;
   String status;
   String customerId;
   String businessId;
+  DateTime date;
 
-  orderModel(
-      {@required this.orderId,
+  OrderModel(
+      {@required this.id,
       @required this.name,
       @required this.address,
       @required this.floorApto,
       @required this.bonus,
+      @required this.date,
       @required this.creditCard,
       this.creditCardNumber,
       this.cvv,
@@ -32,14 +33,14 @@ class orderModel {
       this.year,
       this.pay,
       @required this.products,
-      @required this.price,
+      @required this.total,
       @required this.status,
       @required this.customerId,
       @required this.businessId})
       : super();
 
-  orderModel.fromJson(dynamic json) {
-    this.orderId = json["orderId"];
+  OrderModel.fromJson(dynamic json) {
+    this.id = json["orderId"];
     this.name = json["name"];
     this.address = json["address"];
     this.floorApto = json["floorApto"];
@@ -51,15 +52,16 @@ class orderModel {
     this.year = json["year"];
     this.pay = json["pay"];
     this.products = json["products"];
-    this.price = json["price"];
+    this.total = json["total"];
     this.status = json["status"];
     this.customerId = json["customerId"];
     this.businessId = json["businessId"];
+    this.date = DateTime.tryParse(json["date"]);
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (this.orderId != null) "orderId": this.orderId,
+      if (this.id != null) "orderId": this.id,
       "name": name,
       "address": address,
       "floorApto": floorApto,
@@ -71,10 +73,11 @@ class orderModel {
       "year": year,
       "pay": pay,
       "products": products.toString(),
-      "price": price,
+      "total": total,
       "status": status,
       "consumerId": customerId,
-      "businessId": businessId
+      "businessId": businessId,
+      "date": date.toIso8601String(),
     };
   }
 }

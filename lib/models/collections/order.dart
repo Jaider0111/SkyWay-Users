@@ -15,7 +15,7 @@ class OrderModel {
   Map<String, int> products;
   int total;
   String status;
-  String customerId;
+  String consumerId;
   String businessId;
   DateTime date;
 
@@ -35,12 +35,12 @@ class OrderModel {
       @required this.products,
       @required this.total,
       @required this.status,
-      @required this.customerId,
+      @required this.consumerId,
       @required this.businessId})
       : super();
 
   OrderModel.fromJson(dynamic json) {
-    this.id = json["orderId"];
+    this.id = json["id"];
     this.name = json["name"];
     this.address = json["address"];
     this.floorApto = json["floorApto"];
@@ -51,17 +51,17 @@ class OrderModel {
     this.month = json["month"];
     this.year = json["year"];
     this.pay = json["pay"];
-    this.products = json["products"];
+    this.products = (json["products"] as Map).cast<String, int>();
+    this.date = DateTime.tryParse(json["date"]);
     this.total = json["total"];
     this.status = json["status"];
-    this.customerId = json["customerId"];
     this.businessId = json["businessId"];
-    this.date = DateTime.tryParse(json["date"]);
+    this.consumerId = json["consumerId"];
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (this.id != null) "orderId": this.id,
+      if (this.id != null) "id": this.id,
       "name": name,
       "address": address,
       "floorApto": floorApto,
@@ -75,7 +75,7 @@ class OrderModel {
       "products": products.toString(),
       "total": total,
       "status": status,
-      "consumerId": customerId,
+      "consumerId": this.consumerId,
       "businessId": businessId,
       "date": date.toIso8601String(),
     };

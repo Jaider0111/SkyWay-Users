@@ -20,6 +20,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Widget build(BuildContext context) {
     _provider = BlocProvider.of<AuthProvider>(context);
     _type = _provider.status;
+
     if (_type != "Usuario" && _type != "Tienda") {
       return UnauthorizedPage(info: "Por favor inicia sesión en la aplicación");
     }
@@ -27,18 +28,10 @@ class _DashBoardPageState extends State<DashBoardPage> {
     return Scaffold(
       appBar: appBar,
       body: LayoutBuilder(
+        //builder -> para que sea responsivo
         builder: (context, constraints) {
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepOrange,
-                  Colors.deepPurple,
-                ],
-                begin: Alignment.bottomRight,
-                end: Alignment.topLeft,
-              ),
-            ),
+          return BackgroundWidget(
+            constraints: constraints,
             child: Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -53,13 +46,37 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         });
                       },
                       child: Text("Agregar Producto"),
+                      style: ElevatedButton.styleFrom(
+                        alignment: Alignment.bottomRight,
+                      ),
                     ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('orders');
+                    },
+                    child: Text("Ordenes"),
+                  ),
                   ElevatedButton(
                     onPressed: () {
                       _provider.logout();
                       Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
                     },
                     child: Text("Cerrar sesión"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('search');
+                    },
+                    child: Text("Busqueda"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('profile');
+                    },
+                    child: Text("Mi perfil"),
+                    style: ElevatedButton.styleFrom(
+                      alignment: Alignment.bottomRight,
+                    ),
                   ),
                 ],
               ),

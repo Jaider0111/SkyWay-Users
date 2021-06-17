@@ -11,6 +11,10 @@ class UserModel {
   String image;
   String phone;
 
+  String fullName() {
+    return this.name + " " + this.lastname;
+  }
+
   UserModel({
     @required this.name,
     @required this.lastname,
@@ -22,16 +26,18 @@ class UserModel {
     this.image,
   }) : super();
 
-  UserModel.fromJson(Map<String, dynamic> map) {
-    this.id = map["id"];
-    this.email = map["email"];
-    this.password = map["password"];
-    this.name = map["first_name"];
-    this.lastname = map["last_name"];
-    this.address = map["address"];
-    this.phone = map["phone"];
-    this.identification = map["identification"];
-    this.image = map["image"];
+
+
+  UserModel.fromJson(dynamic json) {
+    this.id = json["id"];
+    this.email = json["email"];
+    this.password = json["password"];
+    this.name = json["first_name"];
+    this.lastname = json["last_name"];
+    this.address = json["address"];
+    this.phone = json["phone"];
+    this.identification = json["identification"];
+    this.image = json["image"];
   }
 
   Map<String, dynamic> toJson() {

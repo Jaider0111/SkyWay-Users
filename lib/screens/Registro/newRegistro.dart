@@ -1,9 +1,11 @@
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:skyway_users/models/collections/store.dart';
@@ -12,7 +14,9 @@ import 'package:skyway_users/models/collections/user.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/screens/Registro/perfil_view.dart';
+import 'package:skyway_users/screens/Registro/shop_schedule.dart';
 import 'package:skyway_users/screens/appbar.dart';
+import 'package:skyway_users/screens/images_view.dart';
 
 class RegistroPage extends StatefulWidget {
   RegistroPage({Key key}) : super(key: key);
@@ -23,183 +27,51 @@ class RegistroPage extends StatefulWidget {
 
 class RegistroState extends State<RegistroPage> {
   final _formKey = GlobalKey<FormState>();
-  final _formKey2 = GlobalKey<FormState>();
   List<Uint8List> _perfil = [];
-  String _Nombre;
-  String _Apellidos;
-  String _Doc;
-  String _Correo;
-  String _Tel;
-  String _dir;
-  String _Password;
-  String _CPassword;
-  bool _Vendedor;
-  String _NombreTienda;
-  String _NIT;
-  String _Passwordt;
-  String _CPasswordt;
+  String _name;
+  String _lastname;
+  String _identification;
+  String _email;
+  String _phone;
+  String _address;
+  String _password;
+  String _cPassword;
   List _hora;
-  String _correot;
-  String _telt;
-  String _direcciont;
-  String _Categoria;
+  String _category;
   bool _type;
-  List<String> _opts = [];
-  Map<String, List<String>> _options = Map();
+  final TextStyle errorStyle = TextStyle(color: Colors.red);
 
   @override
   void initState() {
-    _Vendedor = false;
     _type = false;
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
         appBar: appBar,
-        body: Container(
-          decoration: BoxDecoration(
-              gradient: LinearGradient(
-            colors: [
-              Colors.deepOrange,
-              Colors.deepPurple,
-            ],
-            begin: Alignment.bottomRight,
-            end: Alignment.topLeft,
-          )),
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              return Column(
+        body: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return BackgroundWidget(
+              constraints: constraints,
+              child: Row(
                 children: [
-                  (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
+                  registerType(constraints),
+                  if (constraints.maxWidth > 800.0)
+                    SizedBox(
+                      height: constraints.maxHeight,
+                      width: constraints.maxWidth / 2,
+                      child: Image.asset(
+                        "assets/images/login_background.png",
+                        fit: BoxFit.contain,
+                      ),
+                    ),
                 ],
-              );
-            },
-          ),
+              ),
+            );
+          },
         ));
-  }
-
-  Widget _rowView(BoxConstraints constraints) {
-    return Row(
-      children: [
-        registerType(constraints),
-        SizedBox(
-          height: constraints.maxHeight,
-          width: constraints.maxWidth / 2,
-          child: Image.asset(
-            "assets/images/login_background.png",
-            fit: BoxFit.contain,
-          ),
-        )
-      ],
-    );
-  }
-
-  Widget _columnView(BoxConstraints constraints) {
-    return registerType(constraints);
-  }
-
-  Widget tiendaForm(BoxConstraints constraints) {
-    return SizedBox(
-        height: constraints.maxHeight - 240.0,
-        width:
-            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
-                100.0,
-        child: Form(
-            key: _formKey2,
-            child: ListView(padding: EdgeInsets.all(30.0), children: [
-              AutoSizeText(
-                'Registra tu tienda',
-                style: TextStyle(fontSize: 35.0),
-                minFontSize: 0.0,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-              ),
-              CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _NombreTienda = val,
-                  label: "Como se llama tu tienda?",
-                  icon: Icons.shopping_cart,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-              CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _NIT = val,
-                  label: "Ingresa tu NIT",
-                  icon: Icons.shop,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-              DropdownButtonFormField<String>(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (val) => (val != null) ? null : "Selecciona una categoria",
-                value: _Categoria,
-                style: Theme.of(context).textTheme.bodyText1,
-                elevation: 10,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Icons.category),
-                  labelText: "Categoria",
-                ),
-                items: categories
-                    .map((e) => DropdownMenuItem<String>(
-                          child: Text(e),
-                          value: e,
-                        ))
-                    .toList(),
-                onChanged: (val) {
-                  setState(() {
-                    _Categoria = val;
-                  });
-                },
-              ),
-              CustomInputText(
-                initialValue: "",
-                valueCallback: (val) => _correot = val,
-                label: "Ingresa tu correo",
-                icon: Icons.mail,
-                validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
-              ),
-              CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _telt = val,
-                  label: "Ingresa tu numero telefonico",
-                  icon: Icons.phone,
-                  keyboardType: TextInputType.number,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-              CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _direcciont = val,
-                  label: "Ingresa tu direccion",
-                  icon: Icons.location_city,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-              CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _Passwordt = val,
-                  label: "Ingresa tu contraseña",
-                  icon: Icons.lock,
-                  showText: false,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-              CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _CPasswordt = val,
-                  label: "Confirma tu contraseña",
-                  icon: Icons.lock,
-                  showText: false,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-              Center(
-                child: ElevatedButton(
-                  onPressed: registt,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.add_to_photos_rounded),
-                      SizedBox(width: 5.0),
-                      Text("Regista tu tienda"),
-                    ],
-                  ),
-                ),
-              ),
-            ])));
   }
 
   Widget registerType(BoxConstraints constraints) {
@@ -230,115 +102,174 @@ class RegistroState extends State<RegistroPage> {
               title: Text("¿Eres vendedor?"),
             ),
           ),
-          (_type) ? tiendaForm(constraints) : userForm(constraints),
+          registForm(constraints),
         ],
       ),
     );
   }
 
-  Widget userForm(BoxConstraints constraints) {
+  Widget registForm(BoxConstraints constraints) {
     return SizedBox(
-        height: constraints.maxHeight - 240.0,
-        width:
-            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
-                100.0,
-        child: Form(
-            key: _formKey,
-            child: ListView(
-              padding: EdgeInsets.all(30.0),
-              children: [
-                AutoSizeText(
-                  'Registrate',
-                  style: TextStyle(fontSize: 35.0),
-                  minFontSize: 0.0,
-                  maxLines: 2,
-                  textAlign: TextAlign.center,
+      height: constraints.maxHeight - 240.0,
+      width: ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
+          100.0,
+      child: Form(
+        key: _formKey,
+        child: ListView(
+          padding: EdgeInsets.all(30.0),
+          children: [
+            AutoSizeText(
+              (_type) ? 'Registra tu tienda' : 'Registrate',
+              style: TextStyle(fontSize: 35.0),
+              minFontSize: 0.0,
+              maxLines: 2,
+              textAlign: TextAlign.center,
+            ),
+            ImagesView(
+              title: (_type) ? "Agrega una foto de tu tienda" : "Agrega una foto de perfil",
+              isWeb: kIsWeb,
+              updateImages: (imgs) => _perfil = imgs,
+              height: ((constraints.maxWidth > 800.0)
+                      ? constraints.maxHeight
+                      : min(constraints.maxWidth, constraints.maxHeight)) /
+                  2.0,
+              width: ((constraints.maxWidth > 800.0)
+                      ? constraints.maxWidth / 4.0
+                      : constraints.maxWidth) /
+                  2.0,
+              multiImage: false,
+            ),
+            SizedBox(height: 40.0),
+            CustomInputText(
+              errorStyle: errorStyle,
+              initialValue: "",
+              valueCallback: (val) => _name = val,
+              label: (_type) ? "¿Como se llama tu tienda?" : 'Ingresa tu nombre',
+              icon: (_type) ? Icons.shopping_cart : Icons.badge,
+              validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
+            ),
+            if (!_type)
+              CustomInputText(
+                errorStyle: errorStyle,
+                initialValue: "",
+                valueCallback: (val) => _lastname = val,
+                label: 'Ingresa tus apellidos',
+                icon: Icons.badge,
+                validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
+              ),
+            CustomInputText(
+              errorStyle: errorStyle,
+              initialValue: "0",
+              autovalidateMode: AutovalidateMode.disabled,
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              valueCallback: (val) => _identification = val,
+              label: (_type) ? "Ingresa tu NIT" : "Ingresa tu documento",
+              icon: (_type) ? Icons.perm_identity : Icons.shop,
+              validator: (val) =>
+                  (int.tryParse(val) > 0) ? null : "Este campo debe ser diferente de 0",
+            ),
+            if (_type)
+              DropdownButtonFormField<String>(
+                autovalidateMode: AutovalidateMode.onUserInteraction,
+                validator: (val) => (val != null) ? null : "Selecciona una categoria",
+                value: _category,
+                style: Theme.of(context).textTheme.bodyText1,
+                elevation: 10,
+                decoration: InputDecoration(
+                  prefixIcon: Icon(Icons.category),
+                  labelText: "Categoria",
+                  errorStyle: errorStyle,
                 ),
-                PerfilView(
-                  updateImages: (imgs) => _perfil = imgs,
-                  isWeb: kIsWeb,
-                  constraints: constraints,
+                items: categories
+                    .map((e) => DropdownMenuItem<String>(
+                          child: Text(e),
+                          value: e,
+                        ))
+                    .toList(),
+                onChanged: (val) {
+                  setState(() {
+                    _category = val;
+                  });
+                },
+              ),
+            if (_type)
+              ShopSchedule(
+                constraints: constraints,
+                onChange: (val) {
+                  _hora = val;
+                },
+              ),
+            CustomInputText(
+              errorStyle: errorStyle,
+              initialValue: "",
+              valueCallback: (val) => _email = val,
+              label: "Ingresa tu correo",
+              icon: Icons.mail,
+              validator: (val) => (val.contains(RegExp(r'^[\w\.\*-_\+]+@[a-z]+(\.[a-z]+)+$')))
+                  ? null
+                  : "Ingresa un correo valido",
+            ),
+            CustomInputText(
+              errorStyle: errorStyle,
+              initialValue: "0",
+              keyboardType: TextInputType.number,
+              autovalidateMode: AutovalidateMode.disabled,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              valueCallback: (val) => _phone = val,
+              label: "Ingresa tu numero telefonico",
+              icon: Icons.phone,
+              validator: (val) =>
+                  (int.tryParse(val) > 0) ? null : "Este campo debe ser diferente de 0",
+            ),
+            CustomInputText(
+                errorStyle: errorStyle,
+                initialValue: "",
+                valueCallback: (val) => _address = val,
+                label: "Ingresa tu direccion",
+                icon: Icons.location_city,
+                validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
+            CustomInputText(
+                errorStyle: errorStyle,
+                autovalidateMode: AutovalidateMode.always,
+                initialValue: "",
+                valueCallback: (val) => _password = val,
+                label: "Ingresa tu contraseña",
+                icon: Icons.lock,
+                showText: false,
+                validator: (val) =>
+                    (val.length >= 8) ? null : "La contraseña debe contener minimo 8 caracteres"),
+            CustomInputText(
+                errorStyle: errorStyle,
+                autovalidateMode: AutovalidateMode.always,
+                initialValue: "",
+                valueCallback: (val) => _cPassword = val,
+                label: "Confirma tu contraseña",
+                icon: Icons.lock,
+                showText: false,
+                validator: (val) => (val == _password) ? null : "Las contraseñas no coinciden"),
+            Center(
+              child: ElevatedButton(
+                onPressed: regist,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.add_to_photos_rounded),
+                    SizedBox(width: 5.0),
+                    Text((_type) ? "Regista tu tienda" : "Registate"),
+                  ],
                 ),
-                SizedBox(height: 40.0),
-                CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _Nombre = val,
-                  label: 'Ingresa tu nombre',
-                  icon: Icons.badge,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
-                ),
-                CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _Apellidos = val,
-                  label: 'Ingresa tus apellidos',
-                  icon: Icons.badge,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
-                ),
-                CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _Doc = val,
-                  label: "Ingresa tu documento",
-                  icon: Icons.perm_identity,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
-                ),
-                CustomInputText(
-                  initialValue: "",
-                  valueCallback: (val) => _Correo = val,
-                  label: "Ingresa tu correo",
-                  icon: Icons.mail,
-                  validator: (val) => (val.length > 0) ? null : "Debes llenar este campo",
-                ),
-                CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _Tel = val,
-                    label: "Ingresa tu numero telefonico",
-                    icon: Icons.phone,
-                    keyboardType: TextInputType.number,
-                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-                CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _dir = val,
-                    label: "Ingresa tu direccion",
-                    icon: Icons.location_city,
-                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-                CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _Password = val,
-                    label: "Ingresa tu contraseña",
-                    icon: Icons.lock,
-                    showText: false,
-                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-                CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _CPassword = val,
-                    label: "Confirma tu contraseña",
-                    icon: Icons.lock,
-                    showText: false,
-                    validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: regist,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.add_to_photos_rounded),
-                        SizedBox(width: 5.0),
-                        Text("Registate"),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            )));
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   void regist() async {
     bool valid = validate();
-
-    _opts.forEach((element) {
-      if (!_options.containsKey(element)) _options[element] = [];
-    });
     if (!valid) return;
 
     await showDialog(
@@ -380,114 +311,44 @@ class RegistroState extends State<RegistroPage> {
                 );
                 final image = (_perfil.length > 0)
                     ? await BlocProvider.of<AuthProvider>(this.context)
-                        .saveImage(_perfil[0], "$_Nombre$_Apellidos")
+                        .saveImage(_perfil[0], (_type) ? "$_name" : "$_name$_lastname")
                     : null;
+                dynamic user;
+                if (_type) {
+                  user = StoreModel(
+                    phone: _phone,
+                    identification: _identification,
+                    password: _password,
+                    schedule: _hora,
+                    name: _name,
+                    address: _address,
+                    category: _category,
+                    email: _email,
+                    image: image,
+                  );
+                } else {
+                  user = UserModel(
+                    name: _name,
+                    lastname: _lastname,
+                    identification: _identification,
+                    email: _email,
+                    phone: _phone,
+                    password: _password,
+                    address: _address,
+                    image: image,
+                  );
+                }
 
-                UserModel persona = UserModel(
-                  name: _Nombre,
-                  lastname: _Apellidos,
-                  identification: _Doc,
-                  email: _Correo,
-                  phone: _Tel,
-                  password: _Password,
-                  address: _dir,
-                  image: image,
-                );
-
-                String savep =
-                    await BlocProvider.of<AuthProvider>(this.context).savePersona(persona);
+                String save = (_type)
+                    ? await BlocProvider.of<AuthProvider>(this.context).saveStore(user)
+                    : await BlocProvider.of<AuthProvider>(this.context).savePersona(user);
 
                 Navigator.of(this.context).pop();
-                if (savep == "La identificacion ya se encuentra registrado")
+                if (save == "La identificacion ya se encuentra registrado")
                   messenger("La identificación ya se encuentra registrada", 3);
-                else if (savep == "El correo ya se encuentra registrado")
+                else if (save == "El correo ya se encuentra registrado")
                   messenger("El correo ya se encuentra registrado", 3);
-                else if (savep != null) {
-                  messenger("Datos guardados", 2);
-                  Navigator.of(this.context).pushNamedAndRemoveUntil('login', (_) => false);
-                } else
-                  messenger("Error al enviar datos", 2);
-              },
-              child: Row(
-                children: [
-                  Icon(Icons.navigate_next),
-                  SizedBox(width: 10),
-                  Text("Continuar"),
-                ],
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void registt() async {
-    bool valid2 = validatet();
-    _opts.forEach((element) {
-      if (!_options.containsKey(element)) _options[element] = [];
-    });
-
-    if (!valid2) return;
-
-    await showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Column(
-            children: [
-              Text("Estas a un paso"),
-            ],
-          ),
-          content: Text("Pulsa continuar para registrate"),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Row(
-                children: [
-                  Icon(Icons.cancel),
-                  SizedBox(width: 10),
-                  Text("Cancelar"),
-                ],
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return SimpleDialog(
-                      children: [
-                        SpinKitPouringHourglass(
-                          color: Colors.deepOrange,
-                          size: 150,
-                        ),
-                      ],
-                    );
-                  },
-                );
-                /* final images = await BlocProvider.of<registro_Provider>(this.context)
-                    .saveImages(_images, _name);*/
-
-                StoreModel tienda = StoreModel(
-                    phone: _telt,
-                    identification: _NIT,
-                    password: _Passwordt,
-                    schedule: ["8:00-12:00", "12:00-15:00"],
-                    name: _NombreTienda,
-                    address: _direcciont,
-                    category: _Categoria,
-                    email: _correot);
-
-                String saves = await BlocProvider.of<AuthProvider>(this.context).saveStore(tienda);
-
-                Navigator.of(this.context).pop();
-                if (saves == "La identificacion ya se encuentra registrado")
-                  messenger("La identificacion ya se encuentra registrada", 3);
-                else if (saves == "El correo ya se encuentra registrado")
-                  messenger("El correo ya se encuentra registrado", 3);
-                else if (saves != null) {
+                else if (save != null) {
                   messenger("Datos guardados", 2);
                   Navigator.of(this.context).pushNamedAndRemoveUntil('login', (_) => false);
                 } else
@@ -509,17 +370,8 @@ class RegistroState extends State<RegistroPage> {
 
   bool validate() {
     bool valid = _formKey.currentState.validate();
-    if (_Password != _CPassword) {
-      messenger("Las constraseñas para el usuario no coinciden", 3);
-      return false;
-    }
-    return valid;
-  }
-
-  bool validatet() {
-    bool valid = _formKey2.currentState.validate();
-    if (_Passwordt != _CPasswordt) {
-      messenger("Las constraseñas para la tienda no coinciden", 3);
+    if (_password != _cPassword) {
+      messenger("Las constraseñas no coinciden", 3);
       return false;
     }
     return valid;

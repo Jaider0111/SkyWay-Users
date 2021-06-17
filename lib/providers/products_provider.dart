@@ -89,7 +89,6 @@ class ProductsProvider extends Bloc {
       //Uri.http("127.0.0.1:8080", "api/products", {"id": id}),
       headers: httpHeaders,
     );
-
     if (response.statusCode == 200) {
       ProductModel ans = ProductModel.fromJson(json.decode(response.body));
       return ans;

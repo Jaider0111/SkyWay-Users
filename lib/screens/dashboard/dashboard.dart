@@ -52,6 +52,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     ),
                   ElevatedButton(
                     onPressed: () {
+                      Navigator.of(context).pushNamed('orders');
+                    },
+                    child: Text("Ordenes"),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
                       _provider.logout();
                       Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
                     },

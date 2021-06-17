@@ -48,7 +48,7 @@ class _MyAppState extends State<MyApp> {
           return MaterialApp(
             title: 'SkyWay',
             routes: routes,
-            initialRoute: 'login',
+            initialRoute: 'checkout',
             theme: defaultTheme,
             debugShowCheckedModeBanner: false,
           );

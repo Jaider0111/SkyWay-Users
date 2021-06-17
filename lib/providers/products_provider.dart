@@ -8,10 +8,15 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_storage/firebase_storage.dart' as fs;
 
 class ProductsProvider extends Bloc {
+  Map<ProductModel, int> _products = {};
   ProductsProvider() : super(0);
 
   @override
   Stream mapEventToState(event) async* {}
+
+  Map<ProductModel, int> getProducts() {
+    return _products;
+  }
 
   Future<bool> saveProduct(ProductModel productModel) async {
     final url = Uri.https(baseUri, "/api/products/create");

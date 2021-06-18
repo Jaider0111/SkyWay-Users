@@ -13,11 +13,13 @@ final week = const [
 class ShopSchedule extends StatefulWidget {
   final BoxConstraints constraints;
   final void Function(List<String>) onChange;
+  final List<String> data;
 
   const ShopSchedule({
     Key key,
     @required this.constraints,
     @required this.onChange,
+    this.data,
   }) : super(key: key);
 
   @override
@@ -25,8 +27,14 @@ class ShopSchedule extends StatefulWidget {
 }
 
 class _ShopScheduleState extends State<ShopSchedule> {
-  int count = 1;
-  List<String> schedules = [""];
+  int count;
+  List<String> schedules;
+  @override
+  void initState() {
+    schedules = widget.data ?? [""];
+    count = schedules.length;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +56,10 @@ class _ShopScheduleState extends State<ShopSchedule> {
               color: Colors.white70,
               elevation: 24.0,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
                 child: ScheduleItem(
+                  data: (schedules[index] == "") ? null : schedules[index],
                   constraints: widget.constraints,
                   onChange: (val) {
                     schedules[index] = val;
@@ -86,11 +96,13 @@ class _ShopScheduleState extends State<ShopSchedule> {
 class ScheduleItem extends StatefulWidget {
   final BoxConstraints constraints;
   final void Function(String) onChange;
+  final String data;
 
   const ScheduleItem({
     Key key,
     @required this.constraints,
     @required this.onChange,
+    this.data,
   }) : super(key: key);
 
   @override
@@ -98,12 +110,32 @@ class ScheduleItem extends StatefulWidget {
 }
 
 class _ScheduleItemState extends State<ScheduleItem> {
-  String first = week[0];
-  String second = week[0];
+  String first;
+  String second;
   String time1;
   String time2;
   String schedule;
   BoxConstraints constraints;
+
+  @override
+  void initState() {
+    if (widget.data != null) {
+      List<String> times = widget.data.split(" ");
+      List<String> days = times[0].split("-");
+      first = days[0];
+      second = days[1];
+      days = times[1].split("-");
+      time1 = days[0];
+      time2 = days[1];
+      print(week.contains(first));
+      print("$first $second $time1 $time2");
+      schedule = widget.data;
+    } else {
+      first = week[0];
+      second = week[0];
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -146,6 +178,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
             Icon(Icons.access_time),
             SizedBox(width: 10.0),
             HourPicker(
+              hour: time1,
               onChange: (val) {
                 setState(() {
                   time1 = val;
@@ -155,6 +188,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
             ),
             Icon(Icons.remove),
             HourPicker(
+              hour: time2,
               onChange: (val) {
                 setState(() {
                   time2 = val;
@@ -220,7 +254,8 @@ class _DaySelectorState extends State<DaySelector> {
       width: 125.0,
       child: DropdownButtonFormField<String>(
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (val) => (val != null) ? null : "Selecciona un dia de la semana",
+        validator: (val) =>
+            (val != null) ? null : "Selecciona un dia de la semana",
         value: day,
         style: Theme.of(context).textTheme.bodyText1,
         elevation: 10,
@@ -249,10 +284,12 @@ class _DaySelectorState extends State<DaySelector> {
 
 class HourPicker extends StatefulWidget {
   final void Function(String) onChange;
+  final String hour;
 
   HourPicker({
     Key key,
     @required this.onChange,
+    this.hour,
   }) : super(key: key);
 
   @override
@@ -264,8 +301,8 @@ class _HourPickerState extends State<HourPicker> {
 
   @override
   void initState() {
+    _timeController.text = widget.hour ?? "08:00 AM";
     super.initState();
-    _timeController.text = "08:00 AM";
   }
 
   @override
@@ -287,16 +324,24 @@ class _HourPickerState extends State<HourPicker> {
   }
 
   void pickTime() async {
+    final String hour = _timeController.text;
+    if (hour.substring(6) == "PM") {
+      hour.replaceRange(
+          0, 2, "${(int.tryParse(hour.substring(0, 2)) + 12) % 24}");
+    }
     final time = await showTimePicker(
       context: context,
-      initialTime: TimeOfDay(hour: 8, minute: 0),
+      initialTime: TimeOfDay(
+        hour: int.tryParse(hour.substring(0, 2)),
+        minute: int.tryParse(hour.substring(3, 5)),
+      ),
     );
     if (time != null) {
       final hour = "${(time.hourOfPeriod > 9) ? "" : "0"}${time.hourOfPeriod}";
       final minutes = "${(time.minute > 9) ? "" : "0"}${time.minute}";
       final period = "${(time.period.index == 0) ? "AM" : "PM"}";
       setState(() {
-        final timeFormat = "$hour:$minutes $period";
+        final timeFormat = "$hour:$minutes$period";
         _timeController.text = timeFormat;
         widget.onChange(timeFormat);
       });

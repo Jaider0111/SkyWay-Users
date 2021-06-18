@@ -121,7 +121,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                   FloatingActionButton(
                     heroTag: 'cart',
                     backgroundColor: Colors.white38,
-                    onPressed: () {},
+                    onPressed: () {
+                      Navigator.of(context).pushNamed('checkout');
+                    },
                     child: Image(
                       image: AssetImage("assets/images/shopping-cart.png"),
                     ),
@@ -236,8 +238,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             scrollDirection: Axis.horizontal,
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
-              return productWidget(constraints, list[index].name, list[index].images[0],
-                  list[index].price.toString(), randomGn(3, 5));
+              return DashboardProductWidget(
+                product: list[index],
+              );
             },
           ),
         ),
@@ -350,9 +353,54 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
     );
   }
 
-  Widget productWidget(BoxConstraints constraints, name, image, price, stars) {
+  void loadProducts() async {
+    List products = await BlocProvider.of<ProductsProvider>(this.context).getProducts();
+    products.forEach((product) {
+      ProductModel newProduct = new ProductModel.fromJson(product);
+      if (newProduct.category == "Alimentos") {
+        alimentos.add(newProduct);
+        alimentos.toSet();
+      } else if (newProduct.category == "Restaurantes") {
+        restaurantes.add(newProduct);
+      } else if (newProduct.category == "Farmacia") {
+        farmacia.add(newProduct);
+      } else if (newProduct.category == "Varios") {
+        otros.add(newProduct);
+      }
+    });
+    setState(() {
+      lista = alimentos;
+    });
+  }
+
+  randomGn(int a, int b) {
+    var rng = new Random();
+    return ((b - a) * rng.nextDouble() + a);
+  }
+}
+
+class DashboardProductWidget extends StatefulWidget {
+  const DashboardProductWidget({
+    Key key,
+    @required this.product,
+  }) : super(key: key);
+
+  final ProductModel product;
+
+  @override
+  _DashboardProductWidgetState createState() => _DashboardProductWidgetState();
+}
+
+class _DashboardProductWidgetState extends State<DashboardProductWidget> {
+  ProductsProvider _productProvider;
+  bool isInCart;
+
+  @override
+  Widget build(BuildContext context) {
+    _productProvider = BlocProvider.of<ProductsProvider>(context);
+    isInCart = _productProvider.isInCart(widget.product.id);
     final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
-    double precio = double.parse(price);
+    double precio = widget.product.price.toDouble();
     return Container(
       height: 736.0 / 6.0 * 1.9 - 20.0,
       width: 736.0 / 6.0 * 1.9 - 20.0,
@@ -366,13 +414,14 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 SizedBox(
-                    height: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
-                    width: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
-                    child: Image(
-                      image: NetworkImage(image),
-                    )),
+                  height: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
+                  width: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
+                  child: Image(
+                    image: NetworkImage(widget.product.images[0]),
+                  ),
+                ),
                 RatingBarIndicator(
-                  rating: stars,
+                  rating: widget.product.stars,
                   itemBuilder: (context, index) => Icon(
                     Icons.star,
                     color: Colors.amber,
@@ -384,7 +433,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                 Expanded(
                   child: Center(
                     child: Text(
-                      name,
+                      widget.product.name,
                       style: TextStyle(
                         color: Colors.black,
                         fontFamily: "Itim",
@@ -409,10 +458,17 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
                       height: 25.0,
                       width: 25.0,
                       child: FloatingActionButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {
+                            if (isInCart)
+                              _productProvider.removeOfCart(widget.product.id);
+                            else
+                              _productProvider.addToCart(widget.product, 1);
+                          });
+                        },
                         mini: true,
-                        backgroundColor: Colors.green,
-                        child: Icon(Icons.add),
+                        backgroundColor: (isInCart) ? Colors.red : Colors.green,
+                        child: Icon((isInCart) ? Icons.remove : Icons.add),
                       ),
                     ),
                   ],
@@ -421,30 +477,5 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             ),
           ))),
     );
-  }
-
-  void loadProducts() async {
-    List products = await BlocProvider.of<ProductsProvider>(this.context).getProducts();
-    products.forEach((product) {
-      ProductModel newProduct = new ProductModel.fromJson2(product);
-      if (newProduct.category == "Alimentos") {
-        alimentos.add(newProduct);
-        alimentos.toSet();
-      } else if (newProduct.category == "Restaurantes") {
-        restaurantes.add(newProduct);
-      } else if (newProduct.category == "Farmacia") {
-        farmacia.add(newProduct);
-      } else if (newProduct.category == "Varios") {
-        otros.add(newProduct);
-      }
-    });
-    setState(() {
-      lista = alimentos;
-    });
-  }
-
-  randomGn(int a, int b) {
-    var rng = new Random();
-    return ((b - a) * rng.nextDouble() + a);
   }
 }

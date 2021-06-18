@@ -60,7 +60,7 @@ class ProductModel {
 
   Map<String, dynamic> toJson() {
     return {
-      if (this.id != null) "id": this.id,
+      "id": this.id,
       "name": this.name,
       "description": this.description,
       "category": this.category,

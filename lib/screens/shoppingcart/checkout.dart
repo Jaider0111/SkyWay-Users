@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -5,11 +7,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:intl/intl.dart';
 import 'package:skyway_users/models/collections/order.dart';
 import 'package:skyway_users/models/collections/product.dart';
 import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
+import 'package:skyway_users/screens/navigation_bar.dart';
 
 import '../appbar.dart';
 
@@ -40,6 +44,7 @@ class CheckoutState extends State<CheckoutPage> {
 
   Map<ProductModel, int> _productsList;
   int _total;
+  BoxConstraints _constraints;
 
   @override
   void initState() {
@@ -55,33 +60,43 @@ class CheckoutState extends State<CheckoutPage> {
         appBar: appBar,
         body: LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
+            _constraints = constraints;
             return BackgroundWidget(
               constraints: constraints,
-              child: Column(
-                children: [
+              child:
                   (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
-                ],
-              ),
             );
           },
         ));
   }
 
   Widget _rowView(BoxConstraints constraints) {
-    return Row(children: [
-      Expanded(child: SizedBox()),
-      Column(
-        children: [
-          Text(
-            "PRODUCTOS A COMPRAR",
-            style: TextStyle(fontSize: 20.0),
+    final width = constraints.maxWidth / 6.0;
+    final height = constraints.maxHeight;
+    return Card(
+      child: Row(children: [
+        NavBar(width: width, height: height),
+        Expanded(
+          child: Card(
+            color: Colors.white60,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                children: [
+                  Text(
+                    "PRODUCTOS A COMPRAR",
+                    style: TextStyle(fontSize: 25.0),
+                  ),
+                  SizedBox(height: 10.0),
+                  Expanded(child: productInList(_productsList, constraints)),
+                ],
+              ),
+            ),
           ),
-          productInList(_productsList, constraints),
-        ],
-      ),
-      dataForm(constraints),
-      Expanded(child: SizedBox()),
-    ]);
+        ),
+        Expanded(child: dataForm(constraints)),
+      ]),
+    );
   }
 
   Widget _columnView(BoxConstraints constraints) {
@@ -89,155 +104,205 @@ class CheckoutState extends State<CheckoutPage> {
   }
 
   Widget productLine(ProductModel product, int cant) {
+    final constraints = _constraints;
+    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    final controller = TextEditingController(
+      text: cant.toString(),
+    );
+    final children = [
+      FadeInImage.assetNetwork(
+        placeholder: "assets/images/loader.gif",
+        image: product.images[0],
+        width: min(200, constraints.maxWidth),
+        height: min(200, constraints.maxWidth),
+        fit: BoxFit.fitWidth,
+      ),
+      SizedBox(
+        width: 20.0,
+        height: 20.0,
+      ),
+      Expanded(
+        child: SizedBox(
+          height: min(200, constraints.maxWidth),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(product.name),
+              Expanded(child: SizedBox()),
+              Text(product.category),
+              Expanded(child: SizedBox()),
+              Text("Precio unidad: \$" + formatter.format(product.price)),
+              Expanded(child: SizedBox()),
+              Row(
+                children: [
+                  Text("Cantidad: " /*+ */),
+                  Expanded(child: SizedBox()),
+                  SizedBox(
+                    width: 90.0,
+                    child: TextField(
+                      controller: controller,
+                      decoration: InputDecoration(
+                        prefixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
+                        suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    ];
     return Card(
-      child: Row(
-        children: [
-          SizedBox(
-            width: 20.0,
-          ),
-          Text(product.name),
-          Expanded(child: SizedBox()),
-          Text(product.category),
-          Expanded(child: SizedBox()),
-          Text("Unidad: \$" + product.price.toString()),
-          Expanded(child: SizedBox()),
-          Text("Cantidad: " + cant.toString()),
-          Expanded(child: SizedBox()),
-          SizedBox(
-            width: 20.0,
-          ),
-        ],
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: (constraints.maxWidth >= 600)
+            ? Row(
+                children: children,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              )
+            : Column(children: children),
       ),
     );
   }
 
   Widget productInList(Map<ProductModel, int> list, BoxConstraints constraints) {
-    return SizedBox(
-        height: constraints.maxHeight - 240.0,
-        width:
-            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
-                100.0,
-        child: ListView.builder(
-          itemCount: list.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-                height: 100.0,
-                child: productLine(list.keys.elementAt(index), list[list.keys.elementAt(index)]));
-          },
-        ));
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: list.length,
+      itemBuilder: (BuildContext context, int index) {
+        return productLine(list.keys.elementAt(index), list[list.keys.elementAt(index)]);
+      },
+    );
   }
 
   Widget dataForm(BoxConstraints constraints) {
-    return SizedBox(
-        height: constraints.maxHeight - 100.0,
-        width:
-            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
-                100.0,
-        child: Form(
-            key: _formKey,
-            child: Scrollbar(
+    return Card(
+      color: Colors.white70,
+      child: Column(
+        children: [
+          Expanded(
+            child: Form(
+              key: _formKey,
+              child: Scrollbar(
                 isAlwaysShown: true,
                 radius: Radius.elliptical(30.0, 30.0),
                 thickness: 15.0,
-                child: ListView(padding: EdgeInsets.all(20.0), children: [
-                  AutoSizeText(
-                    'Confirma tu pedido',
-                    style: TextStyle(fontSize: 35.0),
-                    minFontSize: 0.0,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                  ),
-                  CustomInputText(
-                      initialValue: "",
-                      valueCallback: (val) => _name = val,
-                      label: "Quien recibirá el pedido?",
-                      icon: Icons.people,
-                      validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-                  CustomInputText(
-                      initialValue: "",
-                      valueCallback: (val) => _address = val,
-                      label: "Ingresa la dirección",
-                      icon: Icons.house,
-                      validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
-                  CustomInputText(
-                      initialValue: "",
-                      valueCallback: (val) => _indication = val,
-                      label: "Piso/Apto:",
-                      icon: Icons.location_city),
-                  CustomInputText(
-                    initialValue: "",
-                    valueCallback: (val) => _propina = int.tryParse(val),
-                    label: "Propina:",
-                    icon: Icons.attach_money,
-                  ),
-                  AutoSizeText(
-                    'Total: \$' + _total.toString(),
-                    style: TextStyle(fontSize: 35.0),
-                    minFontSize: 0.0,
-                    maxLines: 2,
-                    textAlign: TextAlign.center,
-                  ),
-                  SwitchListTile(
-                    value: _creditCard,
-                    title: AutoSizeText(
-                      "Pago con tarjeta",
-                      style: Theme.of(context).textTheme.bodyText1,
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.all(20.0),
+                  children: [
+                    AutoSizeText(
+                      'Confirma tu pedido',
+                      style: TextStyle(fontSize: 35.0),
+                      minFontSize: 0.0,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
                     ),
-                    onChanged: (val) {
-                      setState(() {
-                        _creditCard = val;
-                      });
-                    },
-                  ),
-                  (!_creditCard)
-                      ? CustomInputText(
-                          valueCallback: (val) => _pay = int.tryParse(val),
-                          label: "Cantidad de efectivo con la que pagaras",
-                          validator: (val) =>
-                              (int.tryParse(val ?? "0") > 0) ? null : "Ingresa una cantidad valida",
-                          initialValue: 0.toString(),
-                          icon: Icons.money,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [FilteringTextInputFormatter.digitsOnly])
-                      : creditCard(constraints),
-                  Center(
-                      child: Row(
-                    children: [
-                      SizedBox(
-                        width: 80.0,
+                    CustomInputText(
+                        initialValue: "",
+                        valueCallback: (val) => _name = val,
+                        label: "Quien recibirá el pedido?",
+                        icon: Icons.people,
+                        validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
+                    CustomInputText(
+                        initialValue: "",
+                        valueCallback: (val) => _address = val,
+                        label: "Ingresa la dirección",
+                        icon: Icons.house,
+                        validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
+                    CustomInputText(
+                        initialValue: "",
+                        valueCallback: (val) => _indication = val,
+                        label: "Piso/Apto:",
+                        icon: Icons.location_city),
+                    CustomInputText(
+                      initialValue: "",
+                      valueCallback: (val) => _propina = int.tryParse(val),
+                      label: "Propina:",
+                      icon: Icons.attach_money,
+                    ),
+                    AutoSizeText(
+                      'Total: \$' + _total.toString(),
+                      style: TextStyle(fontSize: 35.0),
+                      minFontSize: 0.0,
+                      maxLines: 2,
+                      textAlign: TextAlign.center,
+                    ),
+                    SwitchListTile(
+                      value: _creditCard,
+                      title: AutoSizeText(
+                        "Pago con tarjeta",
+                        style: Theme.of(context).textTheme.bodyText1,
                       ),
-                      ElevatedButton(
-                        onPressed: doOrder,
+                      onChanged: (val) {
+                        setState(() {
+                          _creditCard = val;
+                        });
+                      },
+                    ),
+                    (!_creditCard)
+                        ? CustomInputText(
+                            valueCallback: (val) => _pay = int.tryParse(val),
+                            label: "Cantidad de efectivo con la que pagaras",
+                            validator: (val) => (int.tryParse(val ?? "0") > 0)
+                                ? null
+                                : "Ingresa una cantidad valida",
+                            initialValue: 0.toString(),
+                            icon: Icons.money,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly])
+                        : creditCard(constraints),
+                    Center(
                         child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.done),
-                            SizedBox(width: 5.0),
-                            Text("Hacer pedido"),
-                          ],
+                      children: [
+                        SizedBox(
+                          width: 80.0,
                         ),
-                      ),
-                      SizedBox(
-                        width: 20.0,
-                      ),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.of(context).pushNamed('shoppingCart');
-                        },
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.shopping_cart),
-                            SizedBox(width: 5.0),
-                            Text("Volver al carrito"),
-                          ],
+                        ElevatedButton(
+                          onPressed: doOrder,
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.done),
+                              SizedBox(width: 5.0),
+                              Text("Hacer pedido"),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
-                  )),
-                ]))));
+                        SizedBox(
+                          width: 20.0,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed('shoppingCart');
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.shopping_cart),
+                              SizedBox(width: 5.0),
+                              Text("Volver al carrito"),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget creditCard(BoxConstraints constraints) {

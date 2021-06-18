@@ -18,6 +18,22 @@ class ProductsProvider extends Bloc {
     return _products;
   }
 
+  bool isInCart(String id) {
+    return _products.keys.firstWhere(
+          (element) => element.id == id,
+          orElse: () => null,
+        ) !=
+        null;
+  }
+
+  void removeOfCart(String id) {
+    _products.removeWhere((key, value) => key.id == id);
+  }
+
+  void addToCart(ProductModel productModel, int amount) {
+    _products[productModel] = amount;
+  }
+
   Future<bool> saveProduct(ProductModel productModel) async {
     final url = Uri.https(baseUri, "/api/products/create");
     print(productModel.toJson());

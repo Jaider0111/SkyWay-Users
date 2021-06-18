@@ -14,12 +14,14 @@ class ShopSchedule extends StatefulWidget {
   final BoxConstraints constraints;
   final void Function(List<String>) onChange;
   final List<String> data;
+  final bool enable;
 
   const ShopSchedule({
     Key key,
     @required this.constraints,
     @required this.onChange,
     this.data,
+    this.enable = true,
   }) : super(key: key);
 
   @override
@@ -42,23 +44,26 @@ class _ShopScheduleState extends State<ShopSchedule> {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        SizedBox(height: 30.0),
         Text(
           "Horario de atención",
-          style: TextStyle(fontSize: 17.0),
+          style: TextStyle(
+            fontSize: 20.0,
+          ),
         ),
+        SizedBox(height: 20.0),
         ListView.builder(
           shrinkWrap: true,
           itemCount: count,
           itemBuilder: (context, index) {
             return Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
               margin: EdgeInsets.only(bottom: 15.0),
-              color: Colors.white70,
+              color: Colors.white,
               elevation: 24.0,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
                 child: ScheduleItem(
+                  enable: widget.enable,
                   data: (schedules[index] == "") ? null : schedules[index],
                   constraints: widget.constraints,
                   onChange: (val) {
@@ -70,24 +75,25 @@ class _ShopScheduleState extends State<ShopSchedule> {
             );
           },
         ),
-        Center(
-          child: ElevatedButton(
-            onPressed: () {
-              setState(() {
-                count++;
-                schedules.add("");
-              });
-            },
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.add),
-                SizedBox(width: 10.0),
-                Text("Agregar horario"),
-              ],
+        if (widget.enable)
+          Center(
+            child: ElevatedButton(
+              onPressed: () {
+                setState(() {
+                  count++;
+                  schedules.add("");
+                });
+              },
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add),
+                  SizedBox(width: 10.0),
+                  Text("Agregar horario"),
+                ],
+              ),
             ),
           ),
-        ),
       ],
     );
   }
@@ -97,12 +103,14 @@ class ScheduleItem extends StatefulWidget {
   final BoxConstraints constraints;
   final void Function(String) onChange;
   final String data;
+  final bool enable;
 
   const ScheduleItem({
     Key key,
     @required this.constraints,
     @required this.onChange,
     this.data,
+    @required this.enable,
   }) : super(key: key);
 
   @override
@@ -127,8 +135,6 @@ class _ScheduleItemState extends State<ScheduleItem> {
       days = times[1].split("-");
       time1 = days[0];
       time2 = days[1];
-      print(week.contains(first));
-      print("$first $second $time1 $time2");
       schedule = widget.data;
     } else {
       first = week[0];
@@ -145,6 +151,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           DaySelector(
+            enable: widget.enable,
             label: "De:",
             start: first,
             onChange: (val) {
@@ -155,6 +162,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
             },
           ),
           DaySelector(
+            enable: widget.enable,
             label: "A:",
             start: second,
             onChange: (val) {
@@ -178,6 +186,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
             Icon(Icons.access_time),
             SizedBox(width: 10.0),
             HourPicker(
+              enable: widget.enable,
               hour: time1,
               onChange: (val) {
                 setState(() {
@@ -188,6 +197,7 @@ class _ScheduleItemState extends State<ScheduleItem> {
             ),
             Icon(Icons.remove),
             HourPicker(
+              enable: widget.enable,
               hour: time2,
               onChange: (val) {
                 setState(() {
@@ -232,11 +242,13 @@ class DaySelector extends StatefulWidget {
   final String start;
   final String label;
   final void Function(String) onChange;
+  final bool enable;
 
   DaySelector({
     Key key,
     @required this.label,
     this.start,
+    @required this.enable,
     @required this.onChange,
   }) : super(key: key);
 
@@ -254,8 +266,7 @@ class _DaySelectorState extends State<DaySelector> {
       width: 125.0,
       child: DropdownButtonFormField<String>(
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (val) =>
-            (val != null) ? null : "Selecciona un dia de la semana",
+        validator: (val) => (val != null) ? null : "Selecciona un dia de la semana",
         value: day,
         style: Theme.of(context).textTheme.bodyText1,
         elevation: 10,
@@ -265,12 +276,19 @@ class _DaySelectorState extends State<DaySelector> {
           errorStyle: TextStyle(color: Colors.red),
           enabledBorder: InputBorder.none,
         ),
-        items: week
-            .map((e) => DropdownMenuItem<String>(
-                  child: Text(e),
-                  value: e,
-                ))
-            .toList(),
+        items: (widget.enable)
+            ? week
+                .map((e) => DropdownMenuItem<String>(
+                      child: Text(e),
+                      value: e,
+                    ))
+                .toList()
+            : [
+                DropdownMenuItem<String>(
+                  child: Text(day),
+                  value: day,
+                )
+              ],
         onChanged: (val) {
           setState(() {
             day = val;
@@ -285,11 +303,13 @@ class _DaySelectorState extends State<DaySelector> {
 class HourPicker extends StatefulWidget {
   final void Function(String) onChange;
   final String hour;
+  final bool enable;
 
   HourPicker({
     Key key,
     @required this.onChange,
     this.hour,
+    @required this.enable,
   }) : super(key: key);
 
   @override
@@ -301,7 +321,7 @@ class _HourPickerState extends State<HourPicker> {
 
   @override
   void initState() {
-    _timeController.text = widget.hour ?? "08:00 AM";
+    _timeController.text = widget.hour ?? "08:00AM";
     super.initState();
   }
 
@@ -310,7 +330,7 @@ class _HourPickerState extends State<HourPicker> {
     return SizedBox(
       width: 70.0,
       child: InkWell(
-        onTap: pickTime,
+        onTap: (widget.enable) ? pickTime : null,
         child: TextField(
           textAlign: TextAlign.center,
           enabled: false,
@@ -324,11 +344,11 @@ class _HourPickerState extends State<HourPicker> {
   }
 
   void pickTime() async {
-    final String hour = _timeController.text;
-    if (hour.substring(6) == "PM") {
-      hour.replaceRange(
-          0, 2, "${(int.tryParse(hour.substring(0, 2)) + 12) % 24}");
+    String hour = _timeController.text;
+    if (hour.substring(5) == "PM") {
+      hour = hour.replaceRange(0, 2, "${(int.tryParse(hour.substring(0, 2)) + 12) % 24}");
     }
+    print(hour);
     final time = await showTimePicker(
       context: context,
       initialTime: TimeOfDay(

@@ -11,6 +11,7 @@ import 'package:skyway_users/models/collections/order.dart';
 import 'package:skyway_users/models/collections/product.dart';
 import 'package:skyway_users/models/collections/user.dart';
 import 'package:skyway_users/models/collections/store.dart';
+import 'package:intl/intl.dart';
 
 class OrdersManagerPage extends StatefulWidget {
   OrdersManagerPage({Key key}) : super(key: key);
@@ -27,6 +28,8 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   OrdersProvider _ordersProvider;
   ProductsProvider _productsProvider;
   String _type;
+
+  final fCcy = new NumberFormat.simpleCurrency();
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +71,17 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   Widget _columnView(BoxConstraints constraints) {
     return ListView(
       children: [
+        Padding(
+          padding: EdgeInsets.fromLTRB(16.0, 16.0, 0, 16.0),
+          child: Text(
+              'Mis Órdenes',
+              style:  TextStyle(
+                color: Colors.white,
+                fontSize: 50,
+                fontWeight: FontWeight.bold,
+              )
+          ),
+        ),
         ordersTable(constraints),
       ],
     );
@@ -93,13 +107,25 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
             product = snapshot.requireData;
             print(product);
             return Row(children: [
-              Text(product.name),
               SizedBox(width: 15),
-              Text("${product.price}"),
+              Text(
+                  product.name,
+                  style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                  ),
+              ),
               SizedBox(width: 15),
-              Text("${p.value}"),
+              Text("${fCcy.format(product.price)}"),
               SizedBox(width: 15),
-              Text("${product.price * p.value}"),
+              Text("x${p.value}"),
+              SizedBox(width: 15),
+              Text(
+                  "${fCcy.format(product.price * p.value)}",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.deepOrange,
+                  )
+              ),
             ]);
           } else
             return Text("Cargando producto ...");
@@ -120,26 +146,116 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
               business = snapshot.requireData;
             print(business);
             print(user);
-            return Card(
-                child: Column(
-              children: [
-                Text('Fecha y Hora: ${o.date.toString()}'),
-                (_type == "Tienda")
-                    ? Text('Cliente: ${user.fullName()}')
-                    : Text('Vendedor: ${business.name}'),
-                (_type == "Tienda")
-                    ? Text('Teléfono: ${user.phone}')
-                    : Text('Teléfono: ${business.phone}'),
-                Text('Productos'),
-                ListView.builder(
-                    itemCount: o.products?.length,
-                    shrinkWrap: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return getOrderProduct(o.products.entries.elementAt(index));
-                    }),
-                Text('Total: ${o.total}'),
-              ],
-            ));
+            return Container(
+              width: 100,
+              child: Card(
+                  color: Color.fromARGB(255, 254, 225, 111),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10.0)
+                  ),
+                  child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Column(
+                        children: [
+                          Row(
+                            children:[
+                              Text(
+                                  'Fecha y Hora:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.deepPurple,
+                                  )
+                              ),
+                              SizedBox(width: 15),
+                              Text(
+                                  '${o.date.toString()}'
+                              ),
+                            ],
+                          ),
+                          Row(
+                              children:[
+                                (_type == "Tienda")
+                                    ? Text(
+                                    'Cliente:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.deepPurple,
+                                    )
+                                )
+                                    : Text(
+                                    'Vendedor:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.deepPurple,
+                                    )
+                                ),
+                                SizedBox(width: 15),
+                                (_type == "Tienda")
+                                    ? Text('${user.fullName()}')
+                                    : Text('${business.name}'),
+                              ]
+                          ),
+                          Row(
+                              children:[
+                                Text(
+                                    'Teléfono:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.deepPurple,
+                                    )
+                                ),
+
+                                SizedBox(width: 15),
+                                (_type == "Tienda")
+                                    ? Text('${user.phone}')
+                                    : Text('${business.phone}'),
+                              ]
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                  'Productos:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.deepPurple,
+                                  )
+                              ),
+                            ],
+                          ),
+                          ListView.builder(
+                              itemCount: o.products?.length,
+                              shrinkWrap: true,
+                              itemBuilder: (BuildContext context, int index) {
+                                return getOrderProduct(o.products.entries.elementAt(index));
+                              }),
+                          Row(
+                            children:[
+                              Text(
+                                  'Total:',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontStyle: FontStyle.italic,
+                                    color: Colors.deepPurple,
+                                  )
+                              ),
+                              SizedBox(width: 15),
+                              Text(
+                                  '${fCcy.format(o.total)}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.teal,
+                                  )
+                              ),
+                            ],
+                          ),
+                        ],
+                      ))));
+
           } else
             return Text("Cargando orden ...");
         });

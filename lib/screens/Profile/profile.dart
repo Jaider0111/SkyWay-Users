@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:skyway_users/consts/themes.dart';
+import 'package:skyway_users/models/collections/categories.dart';
+import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/screens/Registro/shop_schedule.dart';
 import 'package:skyway_users/screens/navigation_bar.dart';
@@ -27,6 +31,16 @@ class _ProfilePageState extends State<ProfilePage> {
   AuthProvider _provider;
   dynamic _user;
   bool _edit;
+  bool _changePassword;
+  String _password;
+  String _cPassword;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _changePassword = false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +63,9 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (BuildContext context, BoxConstraints constraints) {
           return BackgroundWidget(
             constraints: constraints,
-            child:
-                (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
+            child: (constraints.maxWidth > 800.0)
+                ? _rowView(constraints)
+                : _columnView(constraints),
           );
         },
       ),
@@ -78,7 +93,6 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget _columnView(BoxConstraints constraints) {
     return ListView(
       children: [
-        Text("kk"),
         profileView(constraints),
       ],
     );
@@ -89,7 +103,9 @@ class _ProfilePageState extends State<ProfilePage> {
         height: (constraints.maxWidth > 800.0)
             ? constraints.maxHeight
             : min(constraints.maxWidth, constraints.maxHeight),
-        width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 1.3 : constraints.maxWidth,
+        width: (constraints.maxWidth > 800.0)
+            ? constraints.maxWidth / 1.3
+            : constraints.maxWidth,
         child: Theme(
           data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
           child: Scrollbar(
@@ -97,6 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
             radius: Radius.elliptical(30.0, 50.0),
             thickness: 15.0,
             child: Form(
+              key: _formKey,
               autovalidateMode: AutovalidateMode.onUserInteraction,
               child: ListView(
                 padding: const EdgeInsets.all(8),
@@ -122,14 +139,19 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Container(
                                 padding: EdgeInsets.only(
-                                    left: (constraints.maxWidth <= 800) ? 150.0 : 250.0,
-                                    top: (constraints.maxWidth <= 800) ? 100.0 : 150.0),
+                                    left: (constraints.maxWidth <= 800)
+                                        ? 150.0
+                                        : 250.0,
+                                    top: (constraints.maxWidth <= 800)
+                                        ? 100.0
+                                        : 150.0),
                                 child: Text(
                                   '${_user.name} ${(_type == "Usuario") ? _user.lastname : ""}\n ${_provider.status}',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: "Itim",
-                                    fontSize: (constraints.maxWidth <= 800) ? 20 : 35,
+                                    fontSize:
+                                        (constraints.maxWidth <= 800) ? 20 : 35,
                                   ),
                                 ),
                               ),
@@ -146,10 +168,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 CircleAvatar(
                                   backgroundColor: Colors.white,
-                                  radius: (constraints.maxWidth <= 800) ? 65.0 : 110.0,
-                                  backgroundImage: (_type == "Usuario" && _user.image != null)
+                                  radius: (constraints.maxWidth <= 800)
+                                      ? 65.0
+                                      : 110.0,
+                                  backgroundImage: (_type == "Usuario" &&
+                                          _user.image != null)
                                       ? NetworkImage(_user.image)
-                                      : AssetImage("assets/images/avatar_profile.png"),
+                                      : AssetImage(
+                                          "assets/images/avatar_profile.png"),
                                 ),
                               ],
                             ),
@@ -168,7 +194,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.name}",
                     edit: _edit,
                     onChange: (val) => _user.name = val,
-                    validator: (val) => (val.length >= 3) ? null : "Ingrese nombre valido",
+                    validator: (val) =>
+                        (val.length >= 3) ? null : "Ingrese nombre valido",
                   ),
                   if (_type == "Usuario")
                     MyContainer(
@@ -177,7 +204,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       text: "${_user.lastname} ",
                       edit: _edit,
                       onChange: (val) => _user.lastname = val,
-                      validator: (val) => (val.length >= 3) ? null : "Ingrese apellido valido",
+                      validator: (val) =>
+                          (val.length >= 3) ? null : "Ingrese apellido valido",
                     ),
                   MyContainer(
                     constraints: constraints,
@@ -185,7 +213,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.identification}",
                     edit: _edit,
                     onChange: (val) => _user.identification = val,
-                    validator: (val) => (val.length >= 8) ? null : "Ingrese identificación valida",
+                    validator: (val) => (val.length >= 8)
+                        ? null
+                        : "Ingrese identificación valida",
                   ),
                   MyContainer(
                     constraints: constraints,
@@ -193,15 +223,18 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.address ?? "-"}",
                     edit: _edit,
                     onChange: (val) => _user.address = val,
-                    validator: (val) => null,
+                    validator: (val) => (val.length > 5)
+                        ? null
+                        : "Ingresa una dirección válida",
                   ),
                   MyContainer(
                     constraints: constraints,
                     fieldName: "Email:",
                     text: "${_user.email}",
                     edit: _edit,
-                    onChange: (val) => _user.identification = val,
-                    validator: (val) => (val.contains(RegExp(r'^[\w\.\*-_\+]+@[a-z]+(\.[a-z]+)+$')))
+                    onChange: (val) => _user.email = val,
+                    validator: (val) => (val.contains(
+                            RegExp(r'^[\w\.\*-_\+]+@[a-z]+(\.[a-z]+)+$')))
                         ? null
                         : "Ingresa un correo correcto",
                   ),
@@ -211,20 +244,13 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.phone ?? "-"}",
                     edit: _edit,
                     onChange: (val) => _user.phone = val,
-                    validator: (val) =>
-                        (val.length >= 10) ? null : "Ingrese número de teléfono valido",
+                    validator: (val) => (val.length >= 10)
+                        ? null
+                        : "Ingrese número de teléfono valido",
                   ),
                   if (_type == "Tienda")
-                    Container(
-                      margin: EdgeInsets.all(20),
-                      padding: EdgeInsets.all(20),
-                      width: (constraints.maxWidth > 800.0)
-                          ? constraints.maxWidth / 4
-                          : constraints.maxWidth,
-                      decoration: BoxDecoration(
-                        color: Colors.white70,
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
-                      ),
+                    myContainer_V2(
+                      constraints: constraints,
                       child: ShopSchedule(
                         enable: _edit,
                         data: _user.schedule.cast<String>(),
@@ -234,15 +260,100 @@ class _ProfilePageState extends State<ProfilePage> {
                         },
                       ),
                     ),
-                  if (_type == "Tienda")
+                  if (_type == "Tienda" && _edit)
+                    myContainer_V2(
+                      constraints: constraints,
+                      child: DropdownButtonFormField<String>(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        validator: (val) =>
+                            (val != null) ? null : "Selecciona una categoria",
+                        value: _user.category,
+                        style: Theme.of(context).textTheme.bodyText1,
+                        elevation: 10,
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.category),
+                          labelText: "Categoria",
+                        ),
+                        items: categories
+                            .map((e) => DropdownMenuItem<String>(
+                                  child: Text(e),
+                                  value: e,
+                                ))
+                            .toList(),
+                        onChanged: (val) {
+                          setState(() {
+                            _user.category = val;
+                          });
+                        },
+                      ),
+                    ),
+                  if (_type == "Tienda" && !_edit)
                     MyContainer(
                       constraints: constraints,
                       fieldName: "Categoría:",
                       text: "${_user.category}",
                       edit: _edit,
                       onChange: (val) => _user.category = val,
-                      validator: (val) => (val.length >= 10) ? null : "Ingrese categoría valida",
-                    )
+                      validator: null,
+                    ),
+                  //Contraseña
+                  if (_edit)
+                    Container(
+                      padding: EdgeInsets.symmetric(horizontal: 10.0),
+                      width: 300.0,
+                      child: SwitchListTile(
+                        value: _changePassword,
+                        onChanged: (val) {
+                          setState(() {
+                            _changePassword = val;
+                          });
+                        },
+                        title: Text("¿Deseas cambiar tu contraseña?"),
+                      ),
+                    ),
+                  if (_changePassword) ...[
+                    myContainer_V2(
+                      child: CustomInputText(
+                          autovalidateMode: AutovalidateMode.always,
+                          initialValue: "",
+                          valueCallback: (val) => _password = val,
+                          label: "Ingresa tu contraseña",
+                          icon: Icons.lock,
+                          showText: false,
+                          validator: (val) => (val.length >= 8)
+                              ? null
+                              : "La contraseña debe contener minimo 8 caracteres"),
+                      constraints: constraints,
+                    ),
+                    myContainer_V2(
+                      child: CustomInputText(
+                          autovalidateMode: AutovalidateMode.always,
+                          initialValue: "",
+                          valueCallback: (val) => _user.password = val,
+                          label: "Confirma tu contraseña",
+                          icon: Icons.lock,
+                          showText: false,
+                          validator: (val) => (val == _password)
+                              ? null
+                              : "Las contraseñas no coinciden"),
+                      constraints: constraints,
+                    ),
+                  ],
+                  if (_edit)
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: updateProfile,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.update),
+                            SizedBox(width: 5.0),
+                            Text("Actualiza tu perfil"),
+                          ],
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -254,6 +365,80 @@ class _ProfilePageState extends State<ProfilePage> {
     return NavBar(
       width: constraints.maxWidth / 6.0,
       height: constraints.maxHeight,
+    );
+  }
+
+  Future<void> updateProfile() async {
+    bool valid = _formKey.currentState.validate();
+    if (!valid) return;
+    await showDialog(
+      context: this.context,
+      builder: (context) {
+        return AlertDialog(
+          title: Column(
+            children: [
+              Text("Estás a un paso"),
+            ],
+          ),
+          content: Text("Pulsa continuar para actualizar tu perfil"),
+          actions: [
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Row(
+                children: [
+                  Icon(Icons.cancel),
+                  SizedBox(width: 10),
+                  Text("Cancelar"),
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return SimpleDialog(
+                      children: [
+                        SpinKitPouringHourglass(
+                          color: Colors.deepOrange,
+                          size: 150,
+                        ),
+                      ],
+                    );
+                  },
+                );
+                /* final image = (_perfil.length > 0)
+                    ? await BlocProvider.of<AuthProvider>(this.context)
+                        .saveImage(_perfil[0], (_type) ? "$_name" : "$_name$_lastname")
+                    : null;
+                    */
+                String save = (_type == "Tienda")
+                    ? await BlocProvider.of<AuthProvider>(this.context)
+                        .updateStore(_user)
+                    : await BlocProvider.of<AuthProvider>(this.context)
+                        .updatePersona(_user);
+
+                Navigator.of(this.context).pop();
+                if (save == "Actualización exitosa") {
+                  messenger(save, 3, this.context);
+                  Navigator.of(this.context).popAndPushNamed('profile');
+                } else if (save == "Actualización erronea")
+                  messenger(save, 3, this.context);
+                else
+                  messenger("Error al enviar datos", 2, this.context);
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.navigate_next),
+                  SizedBox(width: 10),
+                  Text("Continuar"),
+                ],
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -281,7 +466,9 @@ class MyContainer extends StatelessWidget {
     final controller = TextEditingController(text: text);
     return Container(
       margin: EdgeInsets.all(20),
-      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 4 : constraints.maxWidth,
+      width: (constraints.maxWidth > 800.0)
+          ? constraints.maxWidth / 4
+          : constraints.maxWidth,
       decoration: BoxDecoration(
         color: Colors.white70,
         borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -291,17 +478,16 @@ class MyContainer extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
-                color: Colors.white,
-                border: Border.all(
-                  width: 1.0,
-                  color: Colors.black,
-                )),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20)),
+              color: Colors.white60,
+            ),
             child: Text(
               fieldName,
               textAlign: TextAlign.start,
               style: TextStyle(
+                color: Colors.deepPurple,
                 fontFamily: "Itim",
                 fontSize: (constraints.maxWidth <= 800) ? 20.0 : 30.0,
               ),
@@ -328,6 +514,29 @@ class MyContainer extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class myContainer_V2 extends StatelessWidget {
+  const myContainer_V2(
+      {Key key, @required this.child, @required this.constraints})
+      : super(key: key);
+  final Widget child;
+  final BoxConstraints constraints;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(20),
+      padding: EdgeInsets.all(20),
+      width: (constraints.maxWidth > 800.0)
+          ? constraints.maxWidth / 4
+          : constraints.maxWidth,
+      decoration: BoxDecoration(
+        color: Colors.white70,
+        borderRadius: BorderRadius.all(Radius.circular(20)),
+      ),
+      child: child,
     );
   }
 }

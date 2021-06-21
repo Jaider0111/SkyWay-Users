@@ -45,9 +45,10 @@ class _ShopScheduleState extends State<ShopSchedule> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          "Horario de atención",
+          "Horario de atención:",
           style: TextStyle(
-            fontSize: 20.0,
+            fontSize: 25.0,
+            fontFamily: "Itim",
           ),
         ),
         SizedBox(height: 20.0),
@@ -56,12 +57,14 @@ class _ShopScheduleState extends State<ShopSchedule> {
           itemCount: count,
           itemBuilder: (context, index) {
             return Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(40.0)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40.0)),
               margin: EdgeInsets.only(bottom: 15.0),
               color: Colors.white,
               elevation: 24.0,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
                 child: ScheduleItem(
                   enable: widget.enable,
                   data: (schedules[index] == "") ? null : schedules[index],
@@ -266,7 +269,8 @@ class _DaySelectorState extends State<DaySelector> {
       width: 125.0,
       child: DropdownButtonFormField<String>(
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        validator: (val) => (val != null) ? null : "Selecciona un dia de la semana",
+        validator: (val) =>
+            (val != null) ? null : "Selecciona un dia de la semana",
         value: day,
         style: Theme.of(context).textTheme.bodyText1,
         elevation: 10,
@@ -346,7 +350,8 @@ class _HourPickerState extends State<HourPicker> {
   void pickTime() async {
     String hour = _timeController.text;
     if (hour.substring(5) == "PM") {
-      hour = hour.replaceRange(0, 2, "${(int.tryParse(hour.substring(0, 2)) + 12) % 24}");
+      hour = hour.replaceRange(
+          0, 2, "${(int.tryParse(hour.substring(0, 2)) + 12) % 24}");
     }
     print(hour);
     final time = await showTimePicker(

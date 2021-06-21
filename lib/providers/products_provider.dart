@@ -34,6 +34,21 @@ class ProductsProvider extends Bloc {
     _products[productModel] = amount;
   }
 
+  void addOneToProduct(String product) {
+    ProductModel p =
+        _products.keys.firstWhere((element) => element.id == product, orElse: () => null);
+    if (p.isCountable) {
+      if (p.amount < _products[p]) return;
+    }
+    _products[p]++;
+  }
+
+  void deleteOneToProduct(String product) {
+    ProductModel p =
+        _products.keys.firstWhere((element) => element.id == product, orElse: () => null);
+    _products[p]--;
+  }
+
   Future<bool> saveProduct(ProductModel productModel) async {
     final url = Uri.https(baseUri, "/api/products/create");
     print(productModel.toJson());
@@ -89,6 +104,27 @@ class ProductsProvider extends Bloc {
       {
         "category": category,
         "subcategory": subcategory,
+      },
+    );
+    final response = await http.get(
+      url,
+      headers: httpHeaders,
+    );
+
+    if (response.statusCode == 200) {
+      List ans = json.decode(response.body);
+      ans = ans.map((e) => e.toString()).toList();
+      return ans;
+    }
+    return [];
+  }
+
+  Future<List<String>> searchProductsByBusinessId(String businessId) async {
+    final url = Uri.https(
+      baseUri,
+      "api/products/businessId",
+      {
+        "businessId": businessId,
       },
     );
     final response = await http.get(

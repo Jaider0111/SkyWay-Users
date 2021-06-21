@@ -66,7 +66,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
         height: 736.0,
         child: Column(
           children: [
-            header(constraints),
+            header(constraints,
+                image:
+                    (_provider.status == 'Tienda') ? _provider.shop.image : _provider.user.image),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.only(right: 10.0, bottom: 20.0),
@@ -93,7 +95,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
         ));
   }
 
-  Widget header(BoxConstraints constraints) {
+  Widget header(BoxConstraints constraints, {String image}) {
     return SizedBox(
       height: 736.0 / 6.0,
       child: Card(
@@ -106,38 +108,7 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(child: searchWidget(constraints)),
-                Row(children: [
-                  SizedBox(width: 10.0),
-                  FloatingActionButton(
-                    heroTag: 'notification',
-                    backgroundColor: Colors.white38,
-                    onPressed: () {},
-                    child: Image(
-                      width: 40.0,
-                      image: AssetImage("assets/images/bell2.png"),
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-                  FloatingActionButton(
-                    heroTag: 'cart',
-                    backgroundColor: Colors.white38,
-                    onPressed: () {
-                      Navigator.of(context).pushNamed('checkout');
-                    },
-                    child: Image(
-                      image: AssetImage("assets/images/shopping-cart.png"),
-                    ),
-                  ),
-                  SizedBox(width: 10.0),
-                  FloatingActionButton(
-                    heroTag: 'user',
-                    backgroundColor: Colors.white38,
-                    onPressed: () {},
-                    child: Image(
-                      image: AssetImage("assets/images/user.png"),
-                    ),
-                  ),
-                ]),
+                HeaderButtons(image: image),
               ],
             ),
           )),
@@ -376,6 +347,56 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
   randomGn(int a, int b) {
     var rng = new Random();
     return ((b - a) * rng.nextDouble() + a);
+  }
+}
+
+class HeaderButtons extends StatelessWidget {
+  const HeaderButtons({
+    Key key,
+    @required this.image,
+  }) : super(key: key);
+
+  final String image;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      SizedBox(width: 10.0),
+      FloatingActionButton(
+        heroTag: 'notification',
+        backgroundColor: Colors.white38,
+        onPressed: () {},
+        child: Image(
+          width: 40.0,
+          image: AssetImage("assets/images/bell2.png"),
+        ),
+      ),
+      SizedBox(width: 10.0),
+      FloatingActionButton(
+        heroTag: 'cart',
+        backgroundColor: Colors.white38,
+        onPressed: () {
+          Navigator.of(context).pushNamed('checkout');
+        },
+        child: Image(
+          image: AssetImage("assets/images/shopping-cart.png"),
+        ),
+      ),
+      SizedBox(width: 10.0),
+      FloatingActionButton(
+        heroTag: 'user',
+        backgroundColor: Colors.white38,
+        onPressed: () {
+          Navigator.of(context).pushNamed('profile');
+        },
+        child: CircleAvatar(
+          backgroundImage: (image != null)
+              ? NetworkImage(image)
+              : AssetImage("assets/images/avatar_profile.png"),
+          radius: 30.0,
+        ),
+      ),
+    ]);
   }
 }
 

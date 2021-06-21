@@ -14,8 +14,9 @@ import 'package:skyway_users/models/widgets/custom_input_form.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/navigation_bar.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 
-import '../appbar.dart';
+import 'package:skyway_users/screens/appbar.dart';
 
 class CheckoutPage extends StatefulWidget {
   CheckoutPage({Key key}) : super(key: key);
@@ -311,52 +312,64 @@ class CheckoutState extends State<CheckoutPage> {
         width:
             ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
                 100.0,
-        child: Form(
-            key: _formKeycc,
-            child: ListView(padding: EdgeInsets.all(30.0), children: [
-              AutoSizeText(
-                'Ingresa los datos de tu tarjeta',
-                style: TextStyle(fontSize: 23.0),
-                minFontSize: 0.0,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-              ),
-              CustomInputText(
-                initialValue: "",
-                valueCallback: (val) => _cardNumber = val,
-                label: "Numero de tarjeta",
-                icon: Icons.credit_card,
-              ),
-              CustomInputText(
-                initialValue: "",
-                valueCallback: (val) => _cvv = int.tryParse(val),
-                label: "Codigo de seguridad",
-                icon: Icons.lock,
-              ),
-              AutoSizeText(
-                'Fecha de vencimiento',
-                style: TextStyle(fontSize: 15.0),
-                minFontSize: 0.0,
-                maxLines: 2,
-                textAlign: TextAlign.center,
-              ),
-              CustomInputText(
-                initialValue: "",
-                valueCallback: (val) => _month = int.tryParse(val),
-                label: "Mes",
-                icon: Icons.date_range,
-              ),
-              CustomInputText(
-                initialValue: "",
-                valueCallback: (val) => _year = int.tryParse(val),
-                label: "Año",
-                icon: Icons.date_range,
-              ),
-            ])));
+        child: ListView(padding: EdgeInsets.all(30.0), children: [
+          AutoSizeText(
+            'Ingresa los datos de tu tarjeta',
+            style: TextStyle(fontSize: 23.0),
+            minFontSize: 0.0,
+            maxLines: 2,
+            textAlign: TextAlign.center,
+          ),
+          CustomInputText(
+            inputFormatters: [CreditCardNumberInputFormatter()],
+            keyboardType: TextInputType.number,
+            initialValue: "",
+            valueCallback: (val) => _cardNumber = val,
+            label: "Numero de tarjeta",
+            icon: Icons.credit_card,
+            validator: (val) =>
+                (val.length < 16 || val.length > 22) ? "Ingresa un numero de tarjeta valido" : null,
+          ),
+          CustomInputText(
+            inputFormatters: [CreditCardCvcInputFormatter()],
+            keyboardType: TextInputType.number,
+            initialValue: "",
+            valueCallback: (val) => _cvv = int.tryParse(val),
+            label: "Codigo de seguridad",
+            icon: Icons.lock,
+            validator: (val) => (val.length < 3) ? "Ingresa un CVC valido" : null,
+          ),
+          CustomInputText(
+            inputFormatters: [CreditCardExpirationDateFormatter()],
+            keyboardType: TextInputType.number,
+            initialValue: "",
+            valueCallback: (val) {
+              if (val.length == 5) {
+                _month = int.tryParse(val.substring(0, 2));
+                _year = int.tryParse(val.substring(3, 5));
+              }
+            },
+            label: "Fecha de vencimiento",
+            icon: Icons.date_range,
+            validator: (val) {
+              if (val.length == 5) {
+                final month = int.tryParse(val.substring(0, 2));
+                final year = int.tryParse(val.substring(3, 5));
+                final cyear = int.tryParse(DateTime.now().year.toString().substring(2, 4));
+                if (month < 1 || month > 12)
+                  return "Ingresa un mes valido";
+                else if (year < cyear) return "Ingresa un año valido";
+                return null;
+              } else
+                return "Ingresa una fecha valida";
+            },
+          ),
+        ]));
   }
 
   void doOrder() async {
     bool valid = validate();
+    if (!valid) return;
 
     _opts.forEach((element) {
       if (!_options.containsKey(element)) _options[element] = [];
@@ -468,13 +481,18 @@ class CheckoutState extends State<CheckoutPage> {
 
   bool validate() {
     bool valid = _formKey.currentState.validate();
-    if (!_creditCard) {
+    print("$valid-1");
+    if (!_creditCard && valid) {
+      print("$valid-2");
       if (_pay < _total) {
         messenger("Debes ingresar un valor valido", 3);
+        print("$valid-3");
         return false;
       }
+      print("$valid-4");
       return valid;
     }
+    print("$valid-5");
     return valid;
   }
 

@@ -58,11 +58,7 @@ class _AddProductPageState extends State<AddProductPage> {
     if (_type != "Tienda") {
       return UnauthorizedPage(info: "Ingresa con tu cuenta de vendedor");
     }
-    Map<String, dynamic> args = ModalRoute.of(context).settings.arguments ?? {};
-    if (args.containsKey("businessId"))
-      _businessId = args["businessId"];
-    else
-      _businessId = "negocioDePrueba";
+    _businessId = _authProvider.shop.id;
     return Scaffold(
       appBar: appBar,
       body: LayoutBuilder(

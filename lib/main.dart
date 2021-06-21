@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/providers/orders_provider.dart';
+import 'package:skyway_users/providers/store_provider.dart';
 import 'package:skyway_users/providers/users_provider.dart';
 import 'consts/routes.dart';
 import 'consts/themes.dart';
@@ -24,6 +25,9 @@ void main() {
       ),
       BlocProvider<UsersProvider>(
         create: (_) => UsersProvider(),
+      ),
+      BlocProvider<StoreProvider>(
+        create: (_) => StoreProvider(),
       ),
     ],
     child: MyApp(),

@@ -50,7 +50,7 @@ class CustomInputText extends StatelessWidget {
           initialValue: initialValue,
           obscureText: !showText,
           decoration: InputDecoration(
-            errorStyle: errorStyle,
+            errorStyle: errorStyle ?? TextStyle(color: Colors.red),
             labelText: label,
             prefixIcon: Icon(icon),
           ),

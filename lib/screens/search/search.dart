@@ -8,10 +8,14 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:skyway_users/consts/themes.dart';
 import 'package:skyway_users/models/collections/categories.dart';
 import 'package:skyway_users/models/collections/product.dart';
+import 'package:skyway_users/models/collections/store.dart';
+import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
+import 'package:skyway_users/providers/store_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:intl/intl.dart';
+import 'package:skyway_users/screens/dashboard/dashboardBuyers.dart';
 import 'package:skyway_users/screens/navigation_bar.dart';
 
 void main(List<String> args) {
@@ -43,15 +47,18 @@ class _SearchPageState extends State<SearchPage> {
 
   String category = 'Alimentos';
   ProductsProvider _productsProvider;
+  StoreProvider _storeProvider;
   String search;
   bool isSearching = false;
   List<String> resultIds;
   List<ProductModel> products;
   Future future;
+  List<String> stores;
 
   @override
   Widget build(BuildContext context) {
     _productsProvider = BlocProvider.of<ProductsProvider>(context);
+    _storeProvider = BlocProvider.of<StoreProvider>(context);
     return Scaffold(
       appBar: appBar,
       body: LayoutBuilder(
@@ -83,16 +90,50 @@ class _SearchPageState extends State<SearchPage> {
                                 Expanded(
                                   child: Column(
                                     children: [
-                                      SearchBar(
-                                        onTap: (val) {
-                                          setState(() {
-                                            search = val;
-                                            isSearching = true;
-                                            resultIds = null;
-                                            makeSearch();
-                                          });
-                                        },
-                                        onChange: (val) {},
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Expanded(
+                                            child: SearchBar(
+                                              onTap: (val) {
+                                                setState(() {
+                                                  search = val;
+                                                  isSearching = true;
+                                                  resultIds = null;
+                                                  makeSearch();
+                                                });
+                                              },
+                                              onChange: (val) {},
+                                            ),
+                                          ),
+                                          if (isSearching) ...[
+                                            SizedBox(width: 20.0),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                setState(() {
+                                                  search = null;
+                                                  isSearching = false;
+                                                  products = null;
+                                                });
+                                              },
+                                              child: Text("Volver"),
+                                              style: ElevatedButton.styleFrom(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal: 50.0,
+                                                  vertical: 28.0,
+                                                ),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(20.0),
+                                                    bottomRight: Radius.circular(20.0),
+                                                    topRight: Radius.circular(40.0),
+                                                    bottomLeft: Radius.circular(40.0),
+                                                  ),
+                                                ),
+                                              ),
+                                            )
+                                          ],
+                                        ],
                                       ),
                                       SizedBox(height: 20.0),
                                       if (!isSearching)
@@ -114,6 +155,28 @@ class _SearchPageState extends State<SearchPage> {
                                                   makeSearch(cat: val);
                                                 },
                                               ),
+                                              SizedBox(height: 10.0),
+                                              FutureBuilder<List<String>>(
+                                                  future: _storeProvider
+                                                      .searchStoresByCategory(category),
+                                                  builder: (context, snapshot) {
+                                                    if (snapshot.connectionState !=
+                                                        ConnectionState.done)
+                                                      return SpinKitCircle(
+                                                        color: Colors.deepPurple,
+                                                        size: 80.0,
+                                                      );
+                                                    stores = snapshot.requireData;
+                                                    return ShopListViewer(
+                                                      shops: stores,
+                                                      category: category,
+                                                      onTab: (val) {
+                                                        isSearching = true;
+                                                        resultIds = null;
+                                                        makeSearch(shop: val);
+                                                      },
+                                                    );
+                                                  }),
                                               SizedBox(height: 10.0),
                                               SubcategoryListViewer(
                                                 category: category,
@@ -162,8 +225,10 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  void makeSearch({String cat = '', String subcat = ''}) async {
-    if (cat == '' && subcat == '')
+  void makeSearch({String cat = '', String subcat = '', String shop = ''}) async {
+    if (shop != '') {
+      resultIds = await _productsProvider.searchProductsByBusinessId(shop);
+    } else if (cat == '' && subcat == '')
       resultIds = await _productsProvider.searchProducts(search);
     else
       resultIds = await _productsProvider.searchProductsByCatOrSubcat(cat, subcat);
@@ -183,6 +248,7 @@ class TopBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AuthProvider _authProvider = BlocProvider.of<AuthProvider>(context);
     return Row(
       mainAxisSize: MainAxisSize.max,
       children: [
@@ -194,33 +260,10 @@ class TopBar extends StatelessWidget {
         SizedBox(width: 15.0),
         Text("Calle 45 #16-84"),
         Expanded(child: SizedBox()),
-        FloatingActionButton(
-          heroTag: 'notification',
-          backgroundColor: Colors.white38,
-          onPressed: () {},
-          child: Image(
-            width: 40.0,
-            image: AssetImage("assets/images/bell2.png"),
-          ),
-        ),
-        SizedBox(width: 10.0),
-        FloatingActionButton(
-          heroTag: 'cart',
-          backgroundColor: Colors.white38,
-          onPressed: () {},
-          child: Image(
-            image: AssetImage("assets/images/shopping-cart.png"),
-          ),
-        ),
-        SizedBox(width: 10.0),
-        FloatingActionButton(
-          heroTag: 'user',
-          backgroundColor: Colors.white38,
-          onPressed: () {},
-          child: Image(
-            image: AssetImage("assets/images/user.png"),
-          ),
-        ),
+        HeaderButtons(
+            image: (_authProvider.status == 'Tienda')
+                ? _authProvider.shop.image
+                : _authProvider.user.image),
       ],
     );
   }
@@ -277,7 +320,13 @@ class _SearchProductViewState extends State<SearchProductView> {
     favorite = false;
   }
 
+  ProductsProvider _productProvider;
+  bool isInCart;
+
+  @override
   Widget build(BuildContext context) {
+    _productProvider = BlocProvider.of<ProductsProvider>(context);
+    isInCart = _productProvider.isInCart(widget.product.id);
     final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     final children = [
       FadeInImage.assetNetwork(
@@ -347,11 +396,18 @@ class _SearchProductViewState extends State<SearchProductView> {
                 height: 50.0,
                 width: 50.0,
                 child: FloatingActionButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    setState(() {
+                      if (isInCart)
+                        _productProvider.removeOfCart(widget.product.id);
+                      else
+                        _productProvider.addToCart(widget.product, 1);
+                    });
+                  },
                   mini: true,
-                  backgroundColor: Colors.green,
+                  backgroundColor: (isInCart) ? Colors.red : Colors.green,
                   child: Icon(
-                    Icons.add,
+                    (isInCart) ? Icons.remove : Icons.add,
                     size: 35.0,
                   ),
                 ),
@@ -588,6 +644,94 @@ class SubcategoryListViewer extends StatelessWidget {
                       ),
                     ),
                   );
+                },
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class ShopListViewer extends StatelessWidget {
+  const ShopListViewer({
+    Key key,
+    @required this.category,
+    @required this.onTab,
+    @required this.shops,
+  }) : super(key: key);
+
+  final String category;
+  final void Function(String) onTab;
+  final List<String> shops;
+
+  @override
+  Widget build(BuildContext context) {
+    StoreProvider _storeProvider = BlocProvider.of<StoreProvider>(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text("Tiendas"),
+        SizedBox(
+          height: 250.0,
+          child: Card(
+            elevation: 10,
+            color: Colors.white54,
+            margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: shops.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return FutureBuilder<StoreModel>(
+                      future: _storeProvider.getStoreById(shops[index]),
+                      builder: (context, snapshot) {
+                        StoreModel store;
+                        if (snapshot.connectionState == ConnectionState.done) {
+                          store = snapshot.requireData;
+                          return SizedBox(
+                            height: 200.0,
+                            width: 195.0,
+                            child: Card(
+                              elevation: 18,
+                              color: Colors.white60,
+                              child: InkWell(
+                                onTap: () {
+                                  onTab(store.id);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      SizedBox(
+                                        width: 70.0,
+                                        height: 70.0,
+                                        child: Image(
+                                          image: (store.image != null)
+                                              ? NetworkImage(store.image)
+                                              : AssetImage("assets/images/avatar_profile.png"),
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Text(store.name),
+                                      Text(store.address),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return SpinKitDoubleBounce(
+                          color: Colors.deepPurple,
+                          size: 80.0,
+                        );
+                      });
                 },
               ),
             ),

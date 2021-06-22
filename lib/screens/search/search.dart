@@ -14,7 +14,7 @@ import 'package:skyway_users/screens/appbar.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:intl/intl.dart';
 import 'package:skyway_users/screens/navigation_bar.dart';
-import 'package:auto_size_text/auto_size_text.dart';
+import 'package:skyway_users/screens/productView/product_view.dart';
 
 void main(List<String> args) {
   runApp(MaterialApp(
@@ -64,9 +64,7 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                NavBar(
-                    width: constraints.maxWidth / 6.0,
-                    height: constraints.maxHeight),
+                NavBar(width: constraints.maxWidth / 6.0, height: constraints.maxHeight),
                 Expanded(
                   child: Card(
                     color: Colors.white24,
@@ -75,8 +73,7 @@ class _SearchPageState extends State<SearchPage> {
                       child: Column(
                         children: [
                           Card(
-                            margin: EdgeInsets.symmetric(
-                                horizontal: 0.0, vertical: 10.0),
+                            margin: EdgeInsets.symmetric(horizontal: 0.0, vertical: 10.0),
                             child: Padding(
                               padding: const EdgeInsets.all(5.0),
                               child: TopBar(),
@@ -103,8 +100,7 @@ class _SearchPageState extends State<SearchPage> {
                                       if (!isSearching)
                                         Expanded(
                                           child: ListView(
-                                            padding:
-                                                EdgeInsets.only(right: 20.0),
+                                            padding: EdgeInsets.only(right: 20.0),
                                             shrinkWrap: true,
                                             children: [
                                               CategoryListViewer(
@@ -126,9 +122,7 @@ class _SearchPageState extends State<SearchPage> {
                                                 onTab: (val) {
                                                   isSearching = true;
                                                   resultIds = null;
-                                                  makeSearch(
-                                                      cat: category,
-                                                      subcat: val);
+                                                  makeSearch(cat: category, subcat: val);
                                                 },
                                               ),
                                             ],
@@ -138,8 +132,7 @@ class _SearchPageState extends State<SearchPage> {
                                         Expanded(
                                           child: (resultIds != null)
                                               ? SearchResults(
-                                                  resultIds: resultIds,
-                                                  products: products)
+                                                  resultIds: resultIds, products: products)
                                               : SpinKitWave(
                                                   size: 100.0,
                                                   itemCount: 3,
@@ -149,11 +142,9 @@ class _SearchPageState extends State<SearchPage> {
                                     ],
                                   ),
                                 ),
-                                if (constraints.maxWidth >= 800.0 &&
-                                    !isSearching)
+                                if (constraints.maxWidth >= 800.0 && !isSearching)
                                   SizedBox(width: 10.0),
-                                if (constraints.maxWidth >= 800.0 &&
-                                    !isSearching)
+                                if (constraints.maxWidth >= 800.0 && !isSearching)
                                   Expanded(
                                     child: SearchSwiper(images: images),
                                   ),
@@ -177,8 +168,7 @@ class _SearchPageState extends State<SearchPage> {
     if (cat == '' && subcat == '')
       resultIds = await _productsProvider.searchProducts(search);
     else
-      resultIds =
-          await _productsProvider.searchProductsByCatOrSubcat(cat, subcat);
+      resultIds = await _productsProvider.searchProductsByCatOrSubcat(cat, subcat);
     products = List.filled(resultIds.length, null);
     setState(() {});
     for (var i = 0; i < resultIds.length; i++) {
@@ -290,8 +280,7 @@ class _SearchProductViewState extends State<SearchProductView> {
   }
 
   Widget build(BuildContext context) {
-    final formatter =
-        NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     final children = [
       FadeInImage.assetNetwork(
         placeholder: "assets/images/loader.gif",
@@ -388,29 +377,7 @@ class _SearchProductViewState extends State<SearchProductView> {
           ),
         ),
         onTap: () {
-          Scaffold.of(context).showSnackBar(
-            SnackBar(
-              content: Container(
-                padding: const EdgeInsets.all(15.0),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15),
-                    color: Colors.grey[300]),
-                child: Card(
-                  margin: const EdgeInsets.all(15.0),
-                  child: (widget.constraints.width >= 600)
-                      ? Row(
-                          children:
-                              ProductView(widget.product, widget.constraints),
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        )
-                      : Column(
-                          children:
-                              ProductView(widget.product, widget.constraints)),
-                ),
-              ),
-            ),
-          );
+          showProduct(context, widget.product);
         });
   }
 }
@@ -451,9 +418,8 @@ class SearchBar extends StatelessWidget {
                 autofocus: true,
                 onChanged: (val) => search = val,
                 autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (val) => (val != null && val != '')
-                    ? null
-                    : "Ingresa el contenido de la busqueda",
+                validator: (val) =>
+                    (val != null && val != '') ? null : "Ingresa el contenido de la busqueda",
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: "¿Que deseas buscar?",
@@ -527,12 +493,9 @@ class CategoryListViewer extends StatelessWidget {
                     width: 180.0,
                     child: Card(
                       elevation: (category == categories[index]) ? 24.0 : 6.0,
-                      shadowColor: (category == categories[index])
-                          ? Colors.deepOrange[400]
-                          : Colors.black87,
-                      color: (category == categories[index])
-                          ? Colors.white
-                          : Colors.white70,
+                      shadowColor:
+                          (category == categories[index]) ? Colors.deepOrange[400] : Colors.black87,
+                      color: (category == categories[index]) ? Colors.white : Colors.white70,
                       child: InkWell(
                         onTap: () {
                           if (category == categories[index])
@@ -549,8 +512,8 @@ class CategoryListViewer extends StatelessWidget {
                                   width: 70.0,
                                   height: 70.0,
                                   child: Image(
-                                    image: AssetImage("assets/images/" +
-                                        catImages[categories[index]]),
+                                    image:
+                                        AssetImage("assets/images/" + catImages[categories[index]]),
                                   )),
                               SizedBox(
                                 height: 10.0,
@@ -619,8 +582,7 @@ class SubcategoryListViewer extends StatelessWidget {
                                   width: 70.0,
                                   height: 70.0,
                                   child: Image(
-                                    image: NetworkImage(catImages[
-                                        subcategories[category][index]]),
+                                    image: NetworkImage(catImages[subcategories[category][index]]),
                                   )),
                               SizedBox(
                                 height: 10.0,
@@ -666,164 +628,4 @@ class SearchSwiper extends StatelessWidget {
       },
     );
   }
-}
-
-dynamic ProductView(ProductModel product, Size constraints) {
-  final formatter =
-      NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
-  Map<String, List<String>> mapa = product.options;
-  return [
-    FadeInImage.assetNetwork(
-      placeholder: "assets/images/loader.gif",
-      image: product.images[0],
-      width: min(300, constraints.width),
-      height: min(300, constraints.width),
-      fit: BoxFit.fitWidth,
-    ),
-    SizedBox(
-      width: 20.0,
-      height: 20.0,
-    ),
-    Expanded(
-      child: SizedBox(
-        height: min(300, constraints.width),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: [
-              AutoSizeText(
-                product.name,
-                maxLines: 10,
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Itim",
-                  fontSize: 40.0,
-                ),
-              ),
-              SizedBox(
-                width: 30.0,
-              ),
-              RatingBarIndicator(
-                rating: product.stars,
-                itemBuilder: (context, index) => Icon(
-                  Icons.star,
-                  color: Colors.amber,
-                ),
-                itemCount: 5,
-                itemSize: 50.0,
-                direction: Axis.horizontal,
-              ),
-            ]),
-            Text(
-              "\$${formatter.format(product.price)}",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.0,
-              ),
-            ),
-            SizedBox(
-              width: 10.0,
-            ),
-            Text(
-              "Descripcion",
-              style: TextStyle(
-                color: Colors.black,
-                fontFamily: "Itim",
-                fontSize: 30.0,
-              ),
-            ),
-            SizedBox(
-              width: 10.0,
-            ),
-            const Divider(
-              height: 20,
-              thickness: 5,
-              indent: 20,
-              endIndent: 20,
-            ),
-            Row(children: [
-              SizedBox(
-                width: 30.0,
-              ),
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                    left: 8,
-                  ),
-                  child: Text(
-                    product.description,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 10,
-                    style: TextStyle(
-                      color: Colors.black,
-                    ),
-                  ),
-                ),
-              ),
-            ]),
-            if (product.isCustomizable)
-              Text(
-                "Caracteristicas",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontFamily: "Itim",
-                  fontSize: 30.0,
-                ),
-              ),
-            SizedBox(
-              width: 10.0,
-            ),
-            if (product.isCustomizable)
-              const Divider(
-                height: 20,
-                thickness: 5,
-                indent: 20,
-                endIndent: 20,
-              ),
-            if (product.isCustomizable)
-              for (var key in mapa.keys)
-                Column(children: [
-                  Row(children: [
-                    SizedBox(
-                      width: 50.0,
-                    ),
-                    Text(
-                      key,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.0,
-                      ),
-                    ),
-                  ]),
-                  const Divider(
-                    height: 20,
-                    thickness: 3,
-                    indent: 20,
-                    endIndent: 20,
-                  ),
-                  Column(children: [
-                    for (var texts in mapa[key])
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 100.0,
-                          ),
-                          Text(
-                            texts,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 15.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                  ]),
-                ]),
-          ],
-        ),
-      ),
-    ),
-  ];
 }

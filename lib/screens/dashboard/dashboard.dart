@@ -42,7 +42,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
             child: Card(
               child: Row(
                 children: [
-                  NavBar(width: constraints.maxWidth / 6.0, height: constraints.maxHeight),
+                  NavBar(
+                      width: constraints.maxWidth / 6.0,
+                      height: constraints.maxHeight),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,8 +52,14 @@ class _DashBoardPageState extends State<DashBoardPage> {
                       children: [
                         Center(
                           child: Text(
-                            'Mis Productos',
-                            style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
+                            "Mis productos",
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: "Itim",
+                              fontSize:
+                                  (constraints.maxWidth <= 800) ? 35.0 : 45.0,
+                            ),
                           ),
                         ),
                         SizedBox(
@@ -62,16 +70,39 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: Text("¿Deseas agregar un nuevo producto a tu tienda?")),
+                                child: Text(
+                                  "¿Deseas agregar un nuevo producto?",
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    color: Colors.deepPurple,
+                                    fontFamily: "Itim",
+                                    fontSize: (constraints.maxWidth <= 800)
+                                        ? 20.0
+                                        : 30.0,
+                                  ),
+                                ),
+                              ),
                               SizedBox(width: 20.0),
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.of(context).pushNamed('addProduct', arguments: {
+                                  Navigator.of(context)
+                                      .pushNamed('addProduct', arguments: {
                                     "businessId": _provider.shop.id,
                                   });
                                 },
-                                child: Text("Agregar Producto"),
+                                child: Text(
+                                  "Agregar Producto",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontFamily: "Itim",
+                                    fontSize: (constraints.maxWidth <= 800)
+                                        ? 20.0
+                                        : 30.0,
+                                  ),
+                                ),
                                 style: ElevatedButton.styleFrom(
+                                  elevation: 20.0,
                                   alignment: Alignment.bottomRight,
                                 ),
                               ),
@@ -80,12 +111,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         ),
                         Expanded(
                           child: FutureBuilder<List<String>>(
-                            future: _productsProvider.searchProductsByBusinessId(_store.id),
+                            future: _productsProvider
+                                .searchProductsByBusinessId(_store.id),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.done) {
-                                final List<String> products = snapshot.requireData;
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                final List<String> products =
+                                    snapshot.requireData;
                                 return GridView.builder(
-                                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                  gridDelegate:
+                                      SliverGridDelegateWithMaxCrossAxisExtent(
                                     maxCrossAxisExtent: 215.0,
                                     mainAxisExtent: 300.0,
                                   ),
@@ -93,9 +128,11 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     return FutureBuilder<ProductModel>(
-                                      future: _productsProvider.getProductById(products[index]),
+                                      future: _productsProvider
+                                          .getProductById(products[index]),
                                       builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.done) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
                                           return DashboardProductWidget(
                                             onChange: () {
                                               setState(() {});

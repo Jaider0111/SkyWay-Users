@@ -71,19 +71,23 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   Widget _columnView(BoxConstraints constraints) {
     return Row(
       children: [
-        NavBar(width: constraints.maxWidth / 6.0, height: constraints.maxHeight),
+        NavBar(
+            width: constraints.maxWidth / 6.0, height: constraints.maxHeight),
         Expanded(
           child: Column(
             children: [
               Center(
                 child: Padding(
                   padding: EdgeInsets.fromLTRB(16.0, 16.0, 0, 16.0),
-                  child: Text('Mis Órdenes',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 50,
-                        fontWeight: FontWeight.bold,
-                      )),
+                  child: Text(
+                    "Mis Órdenes",
+                    textAlign: TextAlign.start,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontFamily: "Itim",
+                      fontSize: (constraints.maxWidth <= 800) ? 35.0 : 45.0,
+                    ),
+                  ),
                 ),
               ),
               Expanded(child: ordersTable(constraints)),
@@ -129,12 +133,14 @@ class _OrdersManagerPageState extends State<OrdersManagerPage> {
   }
 
   Future<UserModel> getUserById(String id, BuildContext context) async {
-    UserModel user = await BlocProvider.of<UsersProvider>(context).getUserById(id);
+    UserModel user =
+        await BlocProvider.of<UsersProvider>(context).getUserById(id);
     return user;
   }
 
   Future<StoreModel> getBusinessById(String id, BuildContext context) async {
-    StoreModel business = await BlocProvider.of<UsersProvider>(context).getBusinessById(id);
+    StoreModel business =
+        await BlocProvider.of<UsersProvider>(context).getBusinessById(id);
     print(business);
     return business;
   }
@@ -308,7 +314,8 @@ class _OrderViewState extends State<OrderView> {
                     return Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        OrdersProductsView(p: o.products.entries.elementAt(index)),
+                        OrdersProductsView(
+                            p: o.products.entries.elementAt(index)),
                         SizedBox(height: 5.0),
                       ],
                     );
@@ -364,7 +371,9 @@ class _OrderViewState extends State<OrderView> {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon((seeMore) ? Icons.arrow_upward : Icons.arrow_downward),
+                        Icon((seeMore)
+                            ? Icons.arrow_upward
+                            : Icons.arrow_downward),
                         SizedBox(width: 10.0),
                         Text((seeMore) ? "Ver Menos" : "Ver Mas"),
                       ],
@@ -381,7 +390,8 @@ class _OrderViewState extends State<OrderView> {
                             return AlertDialog(
                               title: Column(
                                 children: [
-                                  Text("¿Deseas continuar con la actualizacion de estado?"),
+                                  Text(
+                                      "¿Deseas continuar con la actualizacion de estado?"),
                                 ],
                               ),
                               content: Text(
@@ -416,14 +426,19 @@ class _OrderViewState extends State<OrderView> {
                                     );
 
                                     bool save =
-                                        await BlocProvider.of<OrdersProvider>(context).update(o);
+                                        await BlocProvider.of<OrdersProvider>(
+                                                context)
+                                            .update(o);
 
                                     Navigator.of(this.context).pop();
                                     if (save)
                                       messenger(
-                                          "Se actualizo la orden correctamente", 3, this.context);
+                                          "Se actualizo la orden correctamente",
+                                          3,
+                                          this.context);
                                     else {
-                                      messenger("Error al cancelar la orden", 2, this.context);
+                                      messenger("Error al cancelar la orden", 2,
+                                          this.context);
                                       o.status = actual;
                                     }
                                   },
@@ -497,14 +512,19 @@ class _OrderViewState extends State<OrderView> {
                                     );
 
                                     bool save =
-                                        await BlocProvider.of<OrdersProvider>(context).update(o);
+                                        await BlocProvider.of<OrdersProvider>(
+                                                context)
+                                            .update(o);
 
                                     Navigator.of(this.context).pop();
                                     if (save)
                                       messenger(
-                                          "Se cancelo la orden correctamente", 3, this.context);
+                                          "Se cancelo la orden correctamente",
+                                          3,
+                                          this.context);
                                     else {
-                                      messenger("Error al cancelar la orden", 2, this.context);
+                                      messenger("Error al cancelar la orden", 2,
+                                          this.context);
                                       o.status = actual;
                                     }
                                   },
@@ -614,7 +634,8 @@ class OrdersProductsView extends StatelessWidget {
   }
 
   Future<ProductModel> getProductById(String id, BuildContext context) async {
-    final ProductsProvider _productsProvider = BlocProvider.of<ProductsProvider>(context);
+    final ProductsProvider _productsProvider =
+        BlocProvider.of<ProductsProvider>(context);
     ProductModel product = await _productsProvider.getProductById(id);
     return product;
   }

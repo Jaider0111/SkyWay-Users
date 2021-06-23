@@ -192,13 +192,17 @@ class RegistroState extends State<RegistroPage> {
                   });
                 },
               ),
-            if (_type)
+            if (_type) ...[
+              SizedBox(
+                height: 20.0,
+              ),
               ShopSchedule(
                 constraints: constraints,
                 onChange: (val) {
                   _hora = val;
                 },
               ),
+            ],
             CustomInputText(
               errorStyle: errorStyle,
               initialValue: "",

@@ -78,7 +78,7 @@ class NavBar extends StatelessWidget {
                     NavBarButton(
                       name: "Editar perfil",
                       icon: Icons.mode_edit,
-                      route: null,
+                      route: 'profile',
                     ),
                     NavBarButton(
                       name: "Salir",
@@ -108,7 +108,9 @@ class NavBarButton extends StatelessWidget {
           BlocProvider.of<AuthProvider>(context).logout();
           Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
         } else {
-          Navigator.of(context).pushNamed(route);
+          Navigator.of(context).pushNamed(route, arguments: {
+            if (name == "Editar perfil") 'edit': true,
+          });
         }
       },
       child: Padding(

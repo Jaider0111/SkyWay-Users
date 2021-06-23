@@ -63,6 +63,49 @@ class AuthProvider extends Bloc {
     return null;
   }
 
+  Future<String> updatePersona(UserModel pModel) async {
+    //final url = Uri.https(baseUri, "api/users/update");
+    final url = Uri.http("127.0.0.1:8080", "api/users/update");
+    print(url.toString());
+    final response = await http.put(
+      url,
+      body: json.encode(pModel.toJson()),
+      headers: httpHeaders,
+    );
+    print(response.body);
+    if (response.statusCode == 200) {
+      UserModel ans = UserModel.fromJson(json.decode(response.body));
+      if (ans.id != null) {
+        user = ans;
+        return "Actualización exitosa";
+      } else {
+        return "Actualización erronea";
+      }
+    }
+    return null;
+  }
+
+  Future<String> updateStore(StoreModel tModel) async {
+    //final url = Uri.https(baseUri, "api/stores/update");
+    final url = Uri.http("127.0.0.1:8080", "api/stores/update");
+    final response = await http.put(
+      url,
+      body: json.encode(tModel.toJson()),
+      headers: httpHeaders,
+    );
+
+    if (response.statusCode == 200) {
+      StoreModel ans = StoreModel.fromJson(json.decode(response.body));
+      if (ans.id != null) {
+        shop = ans;
+        return "Actualización exitosa";
+      } else {
+        return "Actualización erronea";
+      }
+    }
+    return null;
+  }
+
   Future<String> saveOrder(OrderModel oModel) async {
     final url = Uri.https(baseUri, "checkout");
     print(oModel.toJson());

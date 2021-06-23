@@ -115,6 +115,7 @@ class RegistroState extends State<RegistroPage> {
       child: Form(
         key: _formKey,
         child: ListView(
+          shrinkWrap: true,
           padding: EdgeInsets.all(30.0),
           children: [
             AutoSizeText(

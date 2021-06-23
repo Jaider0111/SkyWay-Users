@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:intl/intl.dart';
 import 'package:skyway_users/screens/dashboard/dashboardBuyers.dart';
 import 'package:skyway_users/screens/navigation_bar.dart';
+import 'package:skyway_users/screens/productView/product_view.dart';
 
 void main(List<String> args) {
   runApp(MaterialApp(
@@ -417,18 +419,22 @@ class _SearchProductViewState extends State<SearchProductView> {
         ),
       ),
     ];
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(15.0),
-        child: (widget.constraints.width >= 600)
-            ? Row(
-                children: children,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              )
-            : Column(children: children),
-      ),
-    );
+    return InkWell(
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: (widget.constraints.width >= 600)
+                ? Row(
+                    children: children,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  )
+                : Column(children: children),
+          ),
+        ),
+        onTap: () {
+          showProduct(context, widget.product);
+        });
   }
 }
 

@@ -5,7 +5,9 @@ import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:skyway_users/providers/products_provider.dart';
 
 class ImagesView extends StatefulWidget {
   final String title;
@@ -14,6 +16,7 @@ class ImagesView extends StatefulWidget {
   final double width;
   final bool isWeb;
   final void Function(List<Uint8List>) updateImages;
+  final List<String> initialImages;
 
   ImagesView({
     Key key,
@@ -22,6 +25,7 @@ class ImagesView extends StatefulWidget {
     @required this.height,
     @required this.width,
     @required this.multiImage,
+    this.initialImages,
     this.title,
   }) : super(key: key);
 
@@ -49,6 +53,7 @@ class _ImagesViewState extends State<ImagesView> {
 
   @override
   void initState() {
+    if (widget.initialImages != null) loadImages();
     _imagePageController.addListener(_imageScrollLisener);
     super.initState();
   }
@@ -218,5 +223,13 @@ class _ImagesViewState extends State<ImagesView> {
       _imagePageController.jumpToPage(_currentImage.floor() - 1);
       widget.updateImages(images);
     });
+  }
+
+  void loadImages() async {
+    final provider = BlocProvider.of<ProductsProvider>(this.context);
+    for (var item in widget.initialImages) {
+      images.add(await provider.getImage(item));
+    }
+    setState(() {});
   }
 }

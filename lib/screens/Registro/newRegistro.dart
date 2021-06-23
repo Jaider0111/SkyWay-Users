@@ -219,7 +219,12 @@ class RegistroState extends State<RegistroPage> {
               keyboardType: TextInputType.number,
               autovalidateMode: AutovalidateMode.disabled,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-              valueCallback: (val) => _phone = val,
+              valueCallback: (val) {
+                _phone = val;
+                print(_perfil != null);
+                print(_phone);
+                print(_email);
+              },
               label: "Ingresa tu numero telefonico",
               icon: Icons.phone,
               validator: (val) =>

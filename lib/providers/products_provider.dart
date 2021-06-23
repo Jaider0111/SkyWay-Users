@@ -18,6 +18,22 @@ class ProductsProvider extends Bloc {
     return _products;
   }
 
+  int getAmountof(String id) {
+    final product = _products.keys.firstWhere(
+      (element) => element.id == id,
+      orElse: () => null,
+    );
+    return (product == null) ? 0 : _products[product];
+  }
+
+  void setAmountof(String id, int amount) {
+    final product = _products.keys.firstWhere(
+      (element) => element.id == id,
+      orElse: () => null,
+    );
+    _products[product] = amount;
+  }
+
   bool isInCart(String id) {
     return _products.keys.firstWhere(
           (element) => element.id == id,
@@ -88,7 +104,6 @@ class ProductsProvider extends Bloc {
       url,
       headers: httpHeaders,
     );
-
     if (response.statusCode == 200) {
       List ans = json.decode(response.body);
       ans = ans.map((e) => e.toString()).toList();
@@ -110,7 +125,6 @@ class ProductsProvider extends Bloc {
       url,
       headers: httpHeaders,
     );
-
     if (response.statusCode == 200) {
       List ans = json.decode(response.body);
       ans = ans.map((e) => e.toString()).toList();
@@ -131,7 +145,6 @@ class ProductsProvider extends Bloc {
       url,
       headers: httpHeaders,
     );
-
     if (response.statusCode == 200) {
       List ans = json.decode(response.body);
       ans = ans.map((e) => e.toString()).toList();
@@ -141,13 +154,16 @@ class ProductsProvider extends Bloc {
   }
 
   Future<ProductModel> getProductById(String id) async {
-    final url = Uri.https(baseUri, "api/products", {"id": id});
+    final url = Uri.https(baseUri, "api/products/id", {"id": id});
+
     final response = await http.get(
       url,
       headers: httpHeaders,
     );
+    print(response.body);
     if (response.statusCode == 200) {
-      ProductModel ans = ProductModel.fromJson(json.decode(response.body));
+      final jso = json.decode(response.body);
+      ProductModel ans = ProductModel.fromJson(jso);
       return ans;
     }
     return null;
@@ -157,6 +173,39 @@ class ProductsProvider extends Bloc {
     final url = Uri.https(baseUri, "/api/getProducts");
     final response = await http.get(url);
     if (response.statusCode == 200) return json.decode(response.body);
+    return null;
+  }
+
+  Future<String> delete(String id) async {
+    final url = Uri.https(baseUri, "api/products", {"id": id});
+    final response = await http.delete(
+      url,
+      headers: httpHeaders,
+    );
+    if (response.statusCode == 200) {
+      String ans = response.body;
+      if (ans == id)
+        return "Eliminado exitoso";
+      else
+        return "Eliminado erroneo";
+    }
+    return null;
+  }
+
+  Future<bool> update(ProductModel p) async {
+    final url = Uri.https(baseUri, "api/products");
+    final response = await http.put(
+      url,
+      body: json.encode(p.toJson()),
+      headers: httpHeaders,
+    );
+    if (response.statusCode == 200) {
+      String ans = response.body;
+      if (ans == p.id)
+        return true;
+      else
+        return false;
+    }
     return null;
   }
 }

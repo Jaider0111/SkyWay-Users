@@ -106,8 +106,8 @@ class AuthProvider extends Bloc {
     return null;
   }
 
-  Future<String> saveOrder(OrderModel oModel) async {
-    final url = Uri.https(baseUri, "checkout");
+  Future<bool> saveOrder(OrderModel oModel) async {
+    final url = Uri.https(baseUri, "api/orders/create");
     print(oModel.toJson());
     final response = await http.post(
       url,
@@ -115,7 +115,7 @@ class AuthProvider extends Bloc {
       headers: httpHeaders,
     );
     print(response.body);
-    if (response.statusCode == 200) return response.body;
+    if (response.statusCode == 200) return response.body != null;
     return null;
   }
 

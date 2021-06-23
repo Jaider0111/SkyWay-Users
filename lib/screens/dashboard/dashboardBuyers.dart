@@ -8,6 +8,7 @@ import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 import 'package:skyway_users/screens/navigation_bar.dart';
+import 'package:skyway_users/screens/productView/product_view.dart';
 
 class DashBoard2Page extends StatefulWidget {
   DashBoard2Page({Key key}) : super(key: key);
@@ -210,6 +211,9 @@ class _DashBoard2PageState extends State<DashBoard2Page> {
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
               return DashboardProductWidget(
+                onChange: () {
+                  setState(() {});
+                },
                 product: list[index],
               );
             },
@@ -404,9 +408,13 @@ class DashboardProductWidget extends StatefulWidget {
   const DashboardProductWidget({
     Key key,
     @required this.product,
+    this.toBuy = true,
+    @required this.onChange,
   }) : super(key: key);
 
   final ProductModel product;
+  final bool toBuy;
+  final Function onChange;
 
   @override
   _DashboardProductWidgetState createState() => _DashboardProductWidgetState();
@@ -425,78 +433,85 @@ class _DashboardProductWidgetState extends State<DashboardProductWidget> {
     return Container(
       height: 736.0 / 6.0 * 1.9 - 20.0,
       width: 736.0 / 6.0 * 1.9 - 20.0,
-      child: Card(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-          color: Colors.white,
-          child: Center(
-              child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  height: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
-                  width: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
-                  child: Image(
-                    image: NetworkImage(widget.product.images[0]),
+      child: InkWell(
+        onTap: () async {
+          await showProduct(context, widget.product, toBuy: widget.toBuy);
+          widget.onChange();
+        },
+        child: Card(
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            color: Colors.white,
+            child: Center(
+                child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    height: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
+                    width: (736.0 / 6.0 * 1.9 - 20.0) * 2.0 / 3.0,
+                    child: Image(
+                      image: NetworkImage(widget.product.images[0]),
+                    ),
                   ),
-                ),
-                RatingBarIndicator(
-                  rating: widget.product.stars,
-                  itemBuilder: (context, index) => Icon(
-                    Icons.star,
-                    color: Colors.amber,
+                  RatingBarIndicator(
+                    rating: widget.product.stars,
+                    itemBuilder: (context, index) => Icon(
+                      Icons.star,
+                      color: Colors.amber,
+                    ),
+                    itemCount: 5,
+                    itemSize: (736.0 / 6.0 * 1.9 - 20.0) * 1.0 / 8.0,
+                    direction: Axis.horizontal,
                   ),
-                  itemCount: 5,
-                  itemSize: (736.0 / 6.0 * 1.9 - 20.0) * 1.0 / 8.0,
-                  direction: Axis.horizontal,
-                ),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      widget.product.name,
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Itim",
-                        fontSize: 20.0,
+                  Expanded(
+                    child: Center(
+                      child: Text(
+                        widget.product.name,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Itim",
+                          fontSize: 20.0,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      "\$${formatter.format(precio)}",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontFamily: "Itim",
-                        fontSize: 20.0,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "\$${formatter.format(precio)}",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontFamily: "Itim",
+                          fontSize: 20.0,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 5.0),
-                    SizedBox(
-                      height: 25.0,
-                      width: 25.0,
-                      child: FloatingActionButton(
-                        onPressed: () {
-                          setState(() {
-                            if (isInCart)
-                              _productProvider.removeOfCart(widget.product.id);
-                            else
-                              _productProvider.addToCart(widget.product, 1);
-                          });
-                        },
-                        mini: true,
-                        backgroundColor: (isInCart) ? Colors.red : Colors.green,
-                        child: Icon((isInCart) ? Icons.remove : Icons.add),
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ))),
+                      SizedBox(width: 5.0),
+                      if (widget.toBuy)
+                        SizedBox(
+                          height: 25.0,
+                          width: 25.0,
+                          child: FloatingActionButton(
+                            onPressed: () {
+                              setState(() {
+                                if (isInCart)
+                                  _productProvider.removeOfCart(widget.product.id);
+                                else
+                                  _productProvider.addToCart(widget.product, 1);
+                              });
+                            },
+                            mini: true,
+                            backgroundColor: (isInCart) ? Colors.red : Colors.green,
+                            child: Icon((isInCart) ? Icons.remove : Icons.add),
+                          ),
+                        ),
+                    ],
+                  )
+                ],
+              ),
+            ))),
+      ),
     );
   }
 }

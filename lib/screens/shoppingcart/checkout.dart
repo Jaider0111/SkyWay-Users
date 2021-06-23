@@ -15,7 +15,6 @@ import 'package:skyway_users/providers/auth_provider.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/navigation_bar.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
-
 import 'package:skyway_users/screens/appbar.dart';
 
 class CheckoutPage extends StatefulWidget {
@@ -27,7 +26,6 @@ class CheckoutPage extends StatefulWidget {
 
 class CheckoutState extends State<CheckoutPage> {
   final _formKey = GlobalKey<FormState>();
-  final _formKeycc = GlobalKey<FormState>();
   String _name;
   String _address;
   String _indication;
@@ -38,14 +36,11 @@ class CheckoutState extends State<CheckoutPage> {
   int _year;
   int _pay;
   bool _creditCard;
-  List<String> _opts = [];
-  Map<String, List<String>> _options = Map();
-  String _customerId;
-  String _businessId;
 
   Map<ProductModel, int> _productsList;
   int _total;
   BoxConstraints _constraints;
+  Map<String, List<ProductModel>> orders = {};
 
   @override
   void initState() {
@@ -124,7 +119,7 @@ class CheckoutState extends State<CheckoutPage> {
       ),
       Expanded(
         child: SizedBox(
-          height: min(200, constraints.maxWidth),
+          height: 225.0,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -141,16 +136,62 @@ class CheckoutState extends State<CheckoutPage> {
                   Text("Cantidad: " /*+ */),
                   Expanded(child: SizedBox()),
                   SizedBox(
-                    width: 90.0,
+                    width: 110.0,
                     child: TextField(
+                      onChanged: (val) {
+                        int n = -1;
+                        if (product.isCountable) n = product.amount;
+                        if (n > int.tryParse(val) || n == -1)
+                          BlocProvider.of<ProductsProvider>(context)
+                              .setAmountof(product.id, int.tryParse(val));
+                      },
                       controller: controller,
                       decoration: InputDecoration(
-                        prefixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.remove)),
-                        suffixIcon: IconButton(onPressed: () {}, icon: Icon(Icons.add)),
+                        prefixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              if (BlocProvider.of<ProductsProvider>(context)
+                                      .getAmountof(product.id) >
+                                  1)
+                                BlocProvider.of<ProductsProvider>(context)
+                                    .deleteOneToProduct(product.id);
+                            });
+                          },
+                          icon: Icon(Icons.remove),
+                        ),
+                        suffixIcon: IconButton(
+                          onPressed: () {
+                            setState(() {
+                              int n = -1;
+                              if (product.isCountable) n = product.amount;
+                              if (n > int.tryParse((controller.text)) || n == -1)
+                                BlocProvider.of<ProductsProvider>(context)
+                                    .addOneToProduct(product.id);
+                            });
+                          },
+                          icon: Icon(Icons.add),
+                        ),
                       ),
                     ),
                   ),
                 ],
+              ),
+              Expanded(child: SizedBox()),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    BlocProvider.of<ProductsProvider>(context).removeOfCart(product.id);
+                  });
+                },
+                style: ElevatedButton.styleFrom(padding: EdgeInsets.all(5.0)),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.remove),
+                    SizedBox(width: 5.0),
+                    Text('Eliminar del carrito'),
+                  ],
+                ),
               ),
             ],
           ),
@@ -173,16 +214,56 @@ class CheckoutState extends State<CheckoutPage> {
   }
 
   Widget productInList(Map<ProductModel, int> list, BoxConstraints constraints) {
+    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    orders = {};
+    for (var key in list.keys) {
+      if (orders.keys.contains(key.businessId))
+        orders[key.businessId].add(key);
+      else
+        orders[key.businessId] = [key];
+    }
+    List o = orders.keys.toList();
     return ListView.builder(
-      shrinkWrap: true,
-      itemCount: list.length,
-      itemBuilder: (BuildContext context, int index) {
-        return productLine(list.keys.elementAt(index), list[list.keys.elementAt(index)]);
-      },
-    );
+        shrinkWrap: true,
+        itemCount: orders.length,
+        itemBuilder: (context, index) {
+          int total = 0;
+          orders[o[index]].forEach((element) {
+            total += element.price * _productsList[element];
+          });
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Orden ${index + 1}',
+                style: TextStyle(fontSize: 30.0),
+              ),
+              SizedBox(height: 15.0),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: orders[o[index]].length,
+                itemBuilder: (BuildContext context, int i) {
+                  return productLine(
+                      orders[o[index]].elementAt(i), list[orders[o[index]].elementAt(i)]);
+                },
+              ),
+              SizedBox(height: 15.0),
+              Text(
+                'Total: ${formatter.format(total)}',
+                style: TextStyle(fontSize: 25.0),
+              ),
+              SizedBox(height: 25.0),
+            ],
+          );
+        });
   }
 
   Widget dataForm(BoxConstraints constraints) {
+    _total = 0;
+    _productsList.forEach((key, value) {
+      _total += key.price * value;
+    });
+    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     return Card(
       color: Colors.white70,
       child: Column(
@@ -229,7 +310,7 @@ class CheckoutState extends State<CheckoutPage> {
                       icon: Icons.attach_money,
                     ),
                     AutoSizeText(
-                      'Total: \$' + _total.toString(),
+                      'Total: \$' + formatter.format(_total),
                       style: TextStyle(fontSize: 35.0),
                       minFontSize: 0.0,
                       maxLines: 2,
@@ -255,9 +336,11 @@ class CheckoutState extends State<CheckoutPage> {
                                 ? null
                                 : "Ingresa una cantidad valida",
                             initialValue: 0.toString(),
+                            autovalidateMode: AutovalidateMode.disabled,
                             icon: Icons.money,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly])
+                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                          )
                         : creditCard(constraints),
                     Center(
                         child: Row(
@@ -371,11 +454,6 @@ class CheckoutState extends State<CheckoutPage> {
     bool valid = validate();
     if (!valid) return;
 
-    _opts.forEach((element) {
-      if (!_options.containsKey(element)) _options[element] = [];
-    });
-    if (!valid) return;
-
     await showDialog(
       context: context,
       builder: (context) {
@@ -385,11 +463,12 @@ class CheckoutState extends State<CheckoutPage> {
               Text("Estas seguro que quieres hacer el pedido"),
             ],
           ),
-          content: Text("Pulsa continuar para ordenar el pedido"),
+          content: Text("Pulsa continuar para ordenar los pedidos"),
           actions: [
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.cancel),
                   SizedBox(width: 10),
@@ -413,59 +492,51 @@ class CheckoutState extends State<CheckoutPage> {
                     );
                   },
                 );
-                OrderModel pedido;
-                if (!_creditCard) {
-                  pedido = OrderModel(
-                      id: _address + _indication,
-                      name: _name,
-                      address: _address,
-                      floorApto: _indication,
-                      bonus: _propina,
-                      date: DateTime.now(),
-                      creditCard: _creditCard,
-                      creditCardNumber: null,
-                      cvv: null,
-                      month: null,
-                      year: null,
-                      pay: _pay,
-                      products: _productsList.map((key, value) => MapEntry(key.id, value)),
-                      total: _total,
-                      status: "open",
-                      consumerId: _customerId,
-                      businessId: _businessId);
-                } else {
-                  pedido = OrderModel(
-                      id: _address + _indication,
-                      name: _name,
-                      address: _address,
-                      floorApto: _indication,
-                      bonus: _propina,
-                      date: DateTime.now(),
-                      creditCard: _creditCard,
-                      creditCardNumber: _cardNumber,
-                      cvv: _cvv,
-                      month: _month,
-                      year: _year,
-                      pay: null,
-                      products: _productsList.map((key, value) => MapEntry(key.id, value)),
-                      total: _total,
-                      status: "open",
-                      consumerId: _customerId,
-                      businessId: _businessId);
-                }
+                List<OrderModel> pedido = [];
+                orders.forEach((key, value) {
+                  pedido.add(OrderModel(
+                    name: _name,
+                    address: _address,
+                    floorApto: _indication,
+                    bonus: _propina,
+                    date: DateTime.now(),
+                    creditCard: _creditCard,
+                    creditCardNumber: (_creditCard) ? _cardNumber : null,
+                    cvv: (_creditCard) ? _cvv : null,
+                    month: (_creditCard) ? _month : null,
+                    year: (_creditCard) ? _year : null,
+                    pay: (_creditCard) ? null : _pay,
+                    products: _productsList.map((key, value) => MapEntry(key.id, value)),
+                    total: _total,
+                    status: "paid",
+                    consumerId: BlocProvider.of<AuthProvider>(this.context).user.id,
+                    businessId: key,
+                  ));
+                });
+                int c = 0;
 
-                String savedOrder =
-                    await BlocProvider.of<AuthProvider>(this.context).saveOrder(pedido);
+                bool savedOrder;
+                pedido.forEach((element) async {
+                  savedOrder = await BlocProvider.of<AuthProvider>(this.context).saveOrder(element);
+                  if (savedOrder)
+                    orders[element.businessId].forEach((element) {
+                      BlocProvider.of<ProductsProvider>(this.context).removeOfCart(element.id);
+                    });
+                  else
+                    c++;
+                });
 
                 Navigator.of(this.context).pop();
-                if (savedOrder == "El pedido no se ha generado correctamente")
-                  messenger("El pedido no se ha generado correctamente", 3);
-                else if (savedOrder != null) {
-                  messenger("Pedido Recibido", 3);
+                if (c == 0)
+                  messenger("El pedido se ha generado correctamente", 3);
+                else if (c == pedido.length) {
+                  messenger("Error al generar el pedido", 3);
                 } else
-                  messenger("Error al hacer el pedido", 2);
+                  messenger("Error al generar algunas ordenes", 2);
+                setState(() {});
               },
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.navigate_next),
                   SizedBox(width: 10),
@@ -481,18 +552,17 @@ class CheckoutState extends State<CheckoutPage> {
 
   bool validate() {
     bool valid = _formKey.currentState.validate();
-    print("$valid-1");
     if (!_creditCard && valid) {
-      print("$valid-2");
       if (_pay < _total) {
         messenger("Debes ingresar un valor valido", 3);
-        print("$valid-3");
         return false;
       }
-      print("$valid-4");
       return valid;
     }
-    print("$valid-5");
+    if (valid && _productsList.length < 0) {
+      messenger("TU carrito esta vacio, por favor agrega productos", 4);
+      valid = false;
+    }
     return valid;
   }
 

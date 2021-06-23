@@ -41,13 +41,40 @@ class _AddProductPageState extends State<AddProductPage> {
   AuthProvider _authProvider;
   ProductsProvider _productsProvider;
   String _type;
+  bool isUpdate;
+  ProductModel initialProduct;
 
   @override
   void initState() {
     _isCountable = false;
     _isCustomizable = false;
-    _category = BlocProvider.of<AuthProvider>(context).shop?.category;
+    _category = BlocProvider.of<AuthProvider>(this.context).shop?.category;
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    Map<String, dynamic> args = ModalRoute.of(this.context).settings.arguments ?? {};
+    if (args.containsKey("update"))
+      isUpdate = args["update"];
+    else
+      isUpdate = false;
+    if (args.containsKey("product")) {
+      initialProduct = args["product"];
+      _name = initialProduct.name;
+      _description = initialProduct.description;
+      _price = initialProduct.price;
+      _category = initialProduct.category;
+      _subcategoty = initialProduct.subcategory;
+      _isCountable = initialProduct.isCountable;
+      if (_isCountable) _amount = initialProduct.amount;
+      _isCustomizable = initialProduct.isCustomizable;
+      if (_isCustomizable) {
+        _opts = initialProduct.options.keys.toList();
+        _options = initialProduct.options;
+      }
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -77,6 +104,7 @@ class _AddProductPageState extends State<AddProductPage> {
     return Row(
       children: [
         ImagesView(
+          initialImages: (isUpdate) ? initialProduct.images : null,
           multiImage: true,
           title: "Muestranos tu producto",
           updateImages: (imgs) => _images = imgs,
@@ -93,6 +121,7 @@ class _AddProductPageState extends State<AddProductPage> {
     return ListView(
       children: [
         ImagesView(
+          initialImages: (isUpdate) ? initialProduct.images : null,
           multiImage: true,
           title: "Muestranos tu producto",
           updateImages: (imgs) => _images = imgs,
@@ -129,14 +158,14 @@ class _AddProductPageState extends State<AddProductPage> {
               ),
               SizedBox(height: 40.0),
               CustomInputText(
-                initialValue: "",
+                initialValue: (isUpdate) ? initialProduct.name : "",
                 valueCallback: (val) => _name = val,
                 label: "Nombre del Producto",
                 icon: Icons.food_bank_rounded,
                 validator: (val) => (val.length > 0) ? null : "Ingresa un nombre",
               ),
               CustomInputText(
-                initialValue: "",
+                initialValue: (isUpdate) ? initialProduct.description : "",
                 valueCallback: (val) => _description = val,
                 label: "Describe tu producto",
                 icon: Icons.description_rounded,
@@ -207,14 +236,14 @@ class _AddProductPageState extends State<AddProductPage> {
                   label: "Cantidad",
                   validator: (val) =>
                       (int.tryParse(val ?? "0") > 0) ? null : "Ingresa una cantidad valida",
-                  initialValue: 0.toString(),
+                  initialValue: (isUpdate) ? initialProduct.amount.toString() : 0.toString(),
                   icon: IconData('#'.codeUnitAt(0)),
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
               CustomInputText(
                 autovalidateMode: AutovalidateMode.disabled,
-                initialValue: (_price ?? 0).toString(),
+                initialValue: (isUpdate) ? initialProduct.price.toString() : 0.toString(),
                 valueCallback: (val) => _price = int.tryParse(val ?? "0"),
                 label: "Precio",
                 validator: (val) =>
@@ -255,7 +284,7 @@ class _AddProductPageState extends State<AddProductPage> {
                             children: [
                               Expanded(
                                 child: CustomInputText(
-                                  initialValue: "",
+                                  initialValue: (isUpdate) ? _opts[index] : "",
                                   valueCallback: (val) => _opts[index] = val,
                                   enabled: _enabledFilds[index],
                                   label: 'Item ${index + 1}',
@@ -284,7 +313,7 @@ class _AddProductPageState extends State<AddProductPage> {
                                   ),
                                   Expanded(
                                     child: CustomInputText(
-                                      initialValue: "",
+                                      initialValue: (isUpdate) ? _options[_opts[index]][item] : "",
                                       valueCallback: (val) => _options[_opts[index]][item] = val,
                                       label: "Opción ${item + 1}",
                                       icon: Icons.label_important,
@@ -328,7 +357,7 @@ class _AddProductPageState extends State<AddProductPage> {
                     children: [
                       Icon(Icons.add_to_photos_rounded),
                       SizedBox(width: 5.0),
-                      Text("Registrar nuevo producto"),
+                      Text((isUpdate) ? "Actualizar producto" : "Registrar nuevo producto"),
                     ],
                   ),
                 ),
@@ -341,8 +370,10 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-  bool validate() {
+  Future<bool> validate() async {
     bool valid = _formKey.currentState.validate();
+    if (isUpdate && _images.length < 1)
+      _images = [for (var i in initialProduct.images) await _productsProvider.getImage(i)];
     if (_images.length < 1) {
       messenger("Agrega por lo menos una foto de tu producto", 2);
       return false;
@@ -351,7 +382,7 @@ class _AddProductPageState extends State<AddProductPage> {
   }
 
   void registProduct() async {
-    bool valid = validate();
+    bool valid = await validate();
     _opts.forEach((element) {
       if (!_options.containsKey(element)) _options[element] = [];
     });
@@ -375,6 +406,7 @@ class _AddProductPageState extends State<AddProductPage> {
             ElevatedButton(
               onPressed: () => Navigator.of(context).pop(),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.cancel),
                   SizedBox(width: 10),
@@ -413,7 +445,12 @@ class _AddProductPageState extends State<AddProductPage> {
                   options: (_isCustomizable) ? _options : null,
                   images: images,
                 );
-                bool save = await _productsProvider.saveProduct(product);
+                bool save;
+                if (isUpdate) {
+                  product.id = initialProduct.id;
+                  save = await _productsProvider.update(product);
+                } else
+                  save = await _productsProvider.saveProduct(product);
                 Navigator.of(this.context).pop();
                 if (save) {
                   messenger("Datos guardados", 2);
@@ -422,6 +459,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   messenger("Error al enviar datos", 2);
               },
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.navigate_next),
                   SizedBox(width: 10),

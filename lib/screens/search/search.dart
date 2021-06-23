@@ -230,7 +230,7 @@ class _SearchPageState extends State<SearchPage> {
   void makeSearch({String cat = '', String subcat = '', String shop = ''}) async {
     if (shop != '') {
       resultIds = await _productsProvider.searchProductsByBusinessId(shop);
-    } else if (cat == '' && subcat == '')
+    } else if (cat == '' && subcat == '' && search != null)
       resultIds = await _productsProvider.searchProducts(search);
     else
       resultIds = await _productsProvider.searchProductsByCatOrSubcat(cat, subcat);
@@ -420,21 +420,22 @@ class _SearchProductViewState extends State<SearchProductView> {
       ),
     ];
     return InkWell(
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.all(15.0),
-            child: (widget.constraints.width >= 600)
-                ? Row(
-                    children: children,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  )
-                : Column(children: children),
-          ),
+      child: Card(
+        child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: (widget.constraints.width >= 600)
+              ? Row(
+                  children: children,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                )
+              : Column(children: children),
         ),
-        onTap: () {
-          showProduct(context, widget.product);
-        });
+      ),
+      onTap: () async {
+        await showProduct(context, widget.product);
+      },
+    );
   }
 }
 

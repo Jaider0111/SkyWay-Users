@@ -20,7 +20,7 @@ class OrderModel {
   DateTime date;
 
   OrderModel(
-      {@required this.id,
+      {this.id,
       @required this.name,
       @required this.address,
       @required this.floorApto,

@@ -11,7 +11,8 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:skyway_users/providers/products_provider.dart';
 import 'package:skyway_users/screens/appbar.dart';
 
-Future showProduct(BuildContext context, ProductModel product, {bool toBuy = true}) async {
+Future showProduct(BuildContext context, ProductModel product,
+    {bool toBuy = true}) async {
   await showDialog(
     context: context,
     builder: (context) {
@@ -41,10 +42,12 @@ class ProductView extends StatefulWidget {
 class _ProductViewState extends State<ProductView> {
   @override
   Widget build(BuildContext context) {
-    ProductsProvider productsProvider = BlocProvider.of<ProductsProvider>(context);
+    ProductsProvider productsProvider =
+        BlocProvider.of<ProductsProvider>(context);
     bool isInCart = productsProvider.isInCart(widget.product.id);
     final Size constraints = MediaQuery.of(context).size;
-    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    final formatter =
+        NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     Map<String, List<String>> mapa = widget.product.options;
     final controller = (isInCart)
         ? TextEditingController(
@@ -53,8 +56,12 @@ class _ProductViewState extends State<ProductView> {
         : null;
     List<Widget> children = [
       SizedBox(
-        width: (constraints.width > 600) ? max(300, constraints.width * 0.36) : constraints.width,
-        height: (constraints.width > 600) ? max(300, constraints.width * 0.36) : constraints.width,
+        width: (constraints.width > 600)
+            ? max(300, constraints.width * 0.36)
+            : constraints.width,
+        height: (constraints.width > 600)
+            ? max(300, constraints.width * 0.36)
+            : constraints.width,
         child: Swiper(
           curve: Curves.bounceInOut,
           itemCount: widget.product.images.length,
@@ -210,7 +217,7 @@ class _ProductViewState extends State<ProductView> {
             ],
             if (widget.product.isCustomizable) ...[
               Text(
-                "Caracteristicas",
+                "Características",
                 style: TextStyle(
                   color: Colors.black,
                   fontFamily: "Itim",
@@ -310,7 +317,7 @@ class _ProductViewState extends State<ProductView> {
                               ],
                             ),
                             content: Text(
-                                "¿Deseas eliminar tu producto? Esta operacion es irreversible"),
+                                "¿Deseas eliminar tu producto? Esta operación es irreversible"),
                             actions: [
                               ElevatedButton(
                                 onPressed: () => Navigator.of(context).pop(),
@@ -340,17 +347,20 @@ class _ProductViewState extends State<ProductView> {
                                     },
                                   );
                                   String delete =
-                                      await BlocProvider.of<ProductsProvider>(this.context)
+                                      await BlocProvider.of<ProductsProvider>(
+                                              this.context)
                                           .delete(widget.product.id);
 
                                   Navigator.of(this.context).pop();
                                   if (delete == "Eliminado exitoso") {
                                     messenger(delete, 3, this.context);
-                                    Navigator.of(this.context).popAndPushNamed('profile');
+                                    Navigator.of(this.context)
+                                        .popAndPushNamed('profile');
                                   } else if (delete == "Eliminado erroneo")
                                     messenger(delete, 3, this.context);
                                   else
-                                    messenger("Error al enviar datos", 2, this.context);
+                                    messenger("Error al enviar datos", 2,
+                                        this.context);
                                 },
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
@@ -388,9 +398,11 @@ class _ProductViewState extends State<ProductView> {
                         onChanged: (val) {
                           setState(() {
                             int n = -1;
-                            if (widget.product.isCountable) n = widget.product.amount;
+                            if (widget.product.isCountable)
+                              n = widget.product.amount;
                             if (n > int.tryParse(val) || n == -1)
-                              productsProvider.setAmountof(widget.product.id, int.tryParse(val));
+                              productsProvider.setAmountof(
+                                  widget.product.id, int.tryParse(val));
                           });
                         },
                         controller: controller,
@@ -398,8 +410,11 @@ class _ProductViewState extends State<ProductView> {
                           prefixIcon: IconButton(
                             onPressed: () {
                               setState(() {
-                                if (productsProvider.getAmountof(widget.product.id) > 1)
-                                  productsProvider.deleteOneToProduct(widget.product.id);
+                                if (productsProvider
+                                        .getAmountof(widget.product.id) >
+                                    1)
+                                  productsProvider
+                                      .deleteOneToProduct(widget.product.id);
                               });
                             },
                             icon: Icon(Icons.remove),
@@ -408,9 +423,12 @@ class _ProductViewState extends State<ProductView> {
                             onPressed: () {
                               setState(() {
                                 int n = -1;
-                                if (widget.product.isCountable) n = widget.product.amount;
-                                if (n > int.tryParse((controller.text)) || n == -1)
-                                  productsProvider.addOneToProduct(widget.product.id);
+                                if (widget.product.isCountable)
+                                  n = widget.product.amount;
+                                if (n > int.tryParse((controller.text)) ||
+                                    n == -1)
+                                  productsProvider
+                                      .addOneToProduct(widget.product.id);
                               });
                             },
                             icon: Icon(Icons.add),
@@ -436,7 +454,9 @@ class _ProductViewState extends State<ProductView> {
                   children: [
                     Icon((isInCart) ? Icons.remove : Icons.add),
                     SizedBox(width: 15.0),
-                    Text((isInCart) ? 'Eliminar del carrito' : 'Agregar al carrito'),
+                    Text((isInCart)
+                        ? 'Eliminar del carrito'
+                        : 'Agregar al carrito'),
                   ],
                 ),
               ),
@@ -445,8 +465,12 @@ class _ProductViewState extends State<ProductView> {
         ),
       ),
     ];
-    final width = (constraints.width >= 600) ? constraints.width * 0.80 : constraints.width;
-    final height = (constraints.height >= 600) ? constraints.height * 0.85 : constraints.height;
+    final width = (constraints.width >= 600)
+        ? constraints.width * 0.80
+        : constraints.width;
+    final height = (constraints.height >= 600)
+        ? constraints.height * 0.85
+        : constraints.height;
     return BackgroundWidget(
       constraints: BoxConstraints.expand(height: height, width: width),
       child: Container(

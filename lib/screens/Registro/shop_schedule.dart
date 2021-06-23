@@ -270,7 +270,7 @@ class _DaySelectorState extends State<DaySelector> {
       child: DropdownButtonFormField<String>(
         autovalidateMode: AutovalidateMode.onUserInteraction,
         validator: (val) =>
-            (val != null) ? null : "Selecciona un dia de la semana",
+            (val != null) ? null : "Selecciona un día de la semana",
         value: day,
         style: Theme.of(context).textTheme.bodyText1,
         elevation: 10,

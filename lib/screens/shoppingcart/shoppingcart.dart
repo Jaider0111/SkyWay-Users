@@ -56,7 +56,8 @@ class ShoppingCartState extends State<ShoppingCartPage> {
         ));
   }
 
-  Widget _rowView(BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
+  Widget _rowView(
+      BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
     if (_productsLista.length == 0)
       return Card(
         margin: EdgeInsets.symmetric(horizontal: 50.0, vertical: 50.0),
@@ -76,7 +77,9 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           Row(
             children: [
               Expanded(child: SizedBox()),
-              Card(child: productCard(constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n1), n1)),
               if (_modify)
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
@@ -112,8 +115,12 @@ class ShoppingCartState extends State<ShoppingCartPage> {
           Row(
             children: [
               Expanded(child: SizedBox()),
-              Card(child: productCard(constraints, _productsLista.keys.elementAt(n1), n1)),
-              Card(child: productCard(constraints, _productsLista.keys.elementAt(n2), n2)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n2), n2)),
               if (_modify)
                 SizedBox(
                     height: (constraints.maxWidth > 800.0)
@@ -153,8 +160,12 @@ class ShoppingCartState extends State<ShoppingCartPage> {
                 icon: Icon(Icons.chevron_left),
                 onPressed: () => backProduct(),
               ),
-              Card(child: productCard(constraints, _productsLista.keys.elementAt(n1), n1)),
-              Card(child: productCard(constraints, _productsLista.keys.elementAt(n2), n2)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n1), n1)),
+              Card(
+                  child: productCard(
+                      constraints, _productsLista.keys.elementAt(n2), n2)),
               IconButton(
                 icon: Icon(Icons.chevron_right),
                 onPressed: () => nextProduct(),
@@ -204,16 +215,20 @@ class ShoppingCartState extends State<ShoppingCartPage> {
     }
   }
 
-  Widget _columnView(BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
+  Widget _columnView(
+      BoxConstraints constraints, Map<ProductModel, int> _productsLista) {
     return productCard(constraints, _productsLista.keys.elementAt(n1), 0);
   }
 
-  Widget productCard(BoxConstraints constraints, ProductModel product, int indexp) {
+  Widget productCard(
+      BoxConstraints constraints, ProductModel product, int indexp) {
     return SizedBox(
         height: (constraints.maxWidth > 800.0)
             ? constraints.maxHeight / 2.0
             : min(constraints.maxWidth, constraints.maxHeight),
-        width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 4.5 : constraints.maxWidth,
+        width: (constraints.maxWidth > 800.0)
+            ? constraints.maxWidth / 4.5
+            : constraints.maxWidth,
         child: Column(
           children: [
             SizedBox(
@@ -291,7 +306,7 @@ class ShoppingCartState extends State<ShoppingCartPage> {
             height: 20.0,
           ),
           Text(
-            "Numero de productos",
+            "Número de productos",
             style: TextStyle(fontSize: 32.0),
           ),
           SizedBox(

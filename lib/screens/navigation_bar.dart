@@ -45,7 +45,8 @@ class NavBar extends StatelessWidget {
           width: width,
           height: height,
           child: Card(
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30)),
               color: Colors.white70,
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -58,17 +59,19 @@ class NavBar extends StatelessWidget {
                         child: Container(
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                                image: AssetImage("assets/images/logoapp.png"), fit: BoxFit.fill),
+                                image: AssetImage("assets/images/logoapp.png"),
+                                fit: BoxFit.fill),
                           ),
                         )),
                     NavBarButton(
                       name: "Home",
                       icon: Icons.home_rounded,
-                      route:
-                          (_authProvider.status == 'Tienda') ? 'dashboard' : "dashboard_for_buyers",
+                      route: (_authProvider.status == 'Tienda')
+                          ? 'dashboard'
+                          : "dashboard_for_buyers",
                     ),
                     NavBarButton(
-                      name: "Mis ordenes",
+                      name: "Mis órdenes",
                       icon: Icons.assignment_turned_in,
                       route: 'orders',
                     ),
@@ -99,7 +102,8 @@ class NavBarButton extends StatelessWidget {
   final IconData icon;
   final String route;
 
-  const NavBarButton({Key key, @required this.name, @required this.icon, @required this.route})
+  const NavBarButton(
+      {Key key, @required this.name, @required this.icon, @required this.route})
       : super(key: key);
 
   @override
@@ -108,7 +112,8 @@ class NavBarButton extends StatelessWidget {
       onPressed: () {
         if (route == "login") {
           BlocProvider.of<AuthProvider>(context).logout();
-          Navigator.of(context).pushNamedAndRemoveUntil('login', (route) => false);
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('login', (route) => false);
         } else {
           Navigator.of(context).pushNamed(route, arguments: {
             if (name == "Editar perfil") 'edit': true,

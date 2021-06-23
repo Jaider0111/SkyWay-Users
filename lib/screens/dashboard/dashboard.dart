@@ -30,7 +30,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
     _type = _provider.status;
 
     if (_type != "Usuario" && _type != "Tienda") {
-      return UnauthorizedPage(info: "Por favor inicia sesión en la aplicación");
+      return UnauthorizedPage(
+          info: "Por favor, inicia sesión en la aplicación");
     }
     _store = _provider.shop;
     return Scaffold(
@@ -42,7 +43,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
             child: Card(
               child: Row(
                 children: [
-                  NavBar(width: constraints.maxWidth / 6.0, height: constraints.maxHeight),
+                  NavBar(
+                      width: constraints.maxWidth / 6.0,
+                      height: constraints.maxHeight),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +54,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         Center(
                           child: Text(
                             'Mis Productos',
-                            style: TextStyle(fontSize: 40.0, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 40.0, fontWeight: FontWeight.bold),
                           ),
                         ),
                         SizedBox(
@@ -62,11 +66,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           child: Row(
                             children: [
                               Expanded(
-                                  child: Text("¿Deseas agregar un nuevo producto a tu tienda?")),
+                                  child: Text(
+                                      "¿Deseas agregar un nuevo producto a tu tienda?")),
                               SizedBox(width: 20.0),
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.of(context).pushNamed('addProduct', arguments: {
+                                  Navigator.of(context)
+                                      .pushNamed('addProduct', arguments: {
                                     "businessId": _provider.shop.id,
                                   });
                                 },
@@ -80,12 +86,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         ),
                         Expanded(
                           child: FutureBuilder<List<String>>(
-                            future: _productsProvider.searchProductsByBusinessId(_store.id),
+                            future: _productsProvider
+                                .searchProductsByBusinessId(_store.id),
                             builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.done) {
-                                final List<String> products = snapshot.requireData;
+                              if (snapshot.connectionState ==
+                                  ConnectionState.done) {
+                                final List<String> products =
+                                    snapshot.requireData;
                                 return GridView.builder(
-                                  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                                  gridDelegate:
+                                      SliverGridDelegateWithMaxCrossAxisExtent(
                                     maxCrossAxisExtent: 215.0,
                                     mainAxisExtent: 300.0,
                                   ),
@@ -93,9 +103,11 @@ class _DashBoardPageState extends State<DashBoardPage> {
                                   shrinkWrap: true,
                                   itemBuilder: (context, index) {
                                     return FutureBuilder<ProductModel>(
-                                      future: _productsProvider.getProductById(products[index]),
+                                      future: _productsProvider
+                                          .getProductById(products[index]),
                                       builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.done) {
+                                        if (snapshot.connectionState ==
+                                            ConnectionState.done) {
                                           return DashboardProductWidget(
                                             onChange: () {
                                               setState(() {});

@@ -51,7 +51,8 @@ class CheckoutState extends State<CheckoutPage> {
 
   @override
   Widget build(BuildContext context) {
-    _productsList = BlocProvider.of<ProductsProvider>(context).getProductsToBuy();
+    _productsList =
+        BlocProvider.of<ProductsProvider>(context).getProductsToBuy();
     return Scaffold(
         appBar: appBar,
         body: LayoutBuilder(
@@ -59,8 +60,9 @@ class CheckoutState extends State<CheckoutPage> {
             _constraints = constraints;
             return BackgroundWidget(
               constraints: constraints,
-              child:
-                  (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
+              child: (constraints.maxWidth > 800.0)
+                  ? _rowView(constraints)
+                  : _columnView(constraints),
             );
           },
         ));
@@ -101,7 +103,8 @@ class CheckoutState extends State<CheckoutPage> {
 
   Widget productLine(ProductModel product, int cant) {
     final constraints = _constraints;
-    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    final formatter =
+        NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     final controller = TextEditingController(
       text: cant.toString(),
     );
@@ -164,7 +167,8 @@ class CheckoutState extends State<CheckoutPage> {
                             setState(() {
                               int n = -1;
                               if (product.isCountable) n = product.amount;
-                              if (n > int.tryParse((controller.text)) || n == -1)
+                              if (n > int.tryParse((controller.text)) ||
+                                  n == -1)
                                 BlocProvider.of<ProductsProvider>(context)
                                     .addOneToProduct(product.id);
                             });
@@ -180,7 +184,8 @@ class CheckoutState extends State<CheckoutPage> {
               ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    BlocProvider.of<ProductsProvider>(context).removeOfCart(product.id);
+                    BlocProvider.of<ProductsProvider>(context)
+                        .removeOfCart(product.id);
                   });
                 },
                 style: ElevatedButton.styleFrom(padding: EdgeInsets.all(5.0)),
@@ -213,8 +218,10 @@ class CheckoutState extends State<CheckoutPage> {
     );
   }
 
-  Widget productInList(Map<ProductModel, int> list, BoxConstraints constraints) {
-    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+  Widget productInList(
+      Map<ProductModel, int> list, BoxConstraints constraints) {
+    final formatter =
+        NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     orders = {};
     for (var key in list.keys) {
       if (orders.keys.contains(key.businessId))
@@ -243,8 +250,8 @@ class CheckoutState extends State<CheckoutPage> {
                 shrinkWrap: true,
                 itemCount: orders[o[index]].length,
                 itemBuilder: (BuildContext context, int i) {
-                  return productLine(
-                      orders[o[index]].elementAt(i), list[orders[o[index]].elementAt(i)]);
+                  return productLine(orders[o[index]].elementAt(i),
+                      list[orders[o[index]].elementAt(i)]);
                 },
               ),
               SizedBox(height: 15.0),
@@ -263,7 +270,8 @@ class CheckoutState extends State<CheckoutPage> {
     _productsList.forEach((key, value) {
       _total += key.price * value;
     });
-    final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
+    final formatter =
+        NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
     return Card(
       color: Colors.white70,
       child: Column(
@@ -289,15 +297,19 @@ class CheckoutState extends State<CheckoutPage> {
                     CustomInputText(
                         initialValue: "",
                         valueCallback: (val) => _name = val,
-                        label: "Quien recibirá el pedido?",
+                        label: "¿Quién recibirá el pedido?",
                         icon: Icons.people,
-                        validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
+                        validator: (val) => (val.length > 0)
+                            ? null
+                            : "Debes llenar este campo"),
                     CustomInputText(
                         initialValue: "",
                         valueCallback: (val) => _address = val,
-                        label: "Ingresa la dirección",
+                        label: "Ingresa la dirección:",
                         icon: Icons.house,
-                        validator: (val) => (val.length > 0) ? null : "Debes llenar este campo"),
+                        validator: (val) => (val.length > 0)
+                            ? null
+                            : "Debes llenar este campo"),
                     CustomInputText(
                         initialValue: "",
                         valueCallback: (val) => _indication = val,
@@ -331,7 +343,7 @@ class CheckoutState extends State<CheckoutPage> {
                     (!_creditCard)
                         ? CustomInputText(
                             valueCallback: (val) => _pay = int.tryParse(val),
-                            label: "Cantidad de efectivo con la que pagaras",
+                            label: "Cantidad de efectivo con la que pagarás",
                             validator: (val) => (int.tryParse(val ?? "0") > 0)
                                 ? null
                                 : "Ingresa una cantidad valida",
@@ -339,7 +351,9 @@ class CheckoutState extends State<CheckoutPage> {
                             autovalidateMode: AutovalidateMode.disabled,
                             icon: Icons.money,
                             keyboardType: TextInputType.number,
-                            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                           )
                         : creditCard(constraints),
                     Center(
@@ -392,9 +406,10 @@ class CheckoutState extends State<CheckoutPage> {
   Widget creditCard(BoxConstraints constraints) {
     return SizedBox(
         height: constraints.maxHeight - 240.0,
-        width:
-            ((constraints.maxWidth > 800.0) ? constraints.maxWidth / 2.0 : constraints.maxWidth) -
-                100.0,
+        width: ((constraints.maxWidth > 800.0)
+                ? constraints.maxWidth / 2.0
+                : constraints.maxWidth) -
+            100.0,
         child: ListView(padding: EdgeInsets.all(30.0), children: [
           AutoSizeText(
             'Ingresa los datos de tu tarjeta',
@@ -410,8 +425,9 @@ class CheckoutState extends State<CheckoutPage> {
             valueCallback: (val) => _cardNumber = val,
             label: "Numero de tarjeta",
             icon: Icons.credit_card,
-            validator: (val) =>
-                (val.length < 16 || val.length > 22) ? "Ingresa un numero de tarjeta valido" : null,
+            validator: (val) => (val.length < 16 || val.length > 22)
+                ? "Ingresa un numero de tarjeta valido"
+                : null,
           ),
           CustomInputText(
             inputFormatters: [CreditCardCvcInputFormatter()],
@@ -420,7 +436,8 @@ class CheckoutState extends State<CheckoutPage> {
             valueCallback: (val) => _cvv = int.tryParse(val),
             label: "Codigo de seguridad",
             icon: Icons.lock,
-            validator: (val) => (val.length < 3) ? "Ingresa un CVC valido" : null,
+            validator: (val) =>
+                (val.length < 3) ? "Ingresa un CVC valido" : null,
           ),
           CustomInputText(
             inputFormatters: [CreditCardExpirationDateFormatter()],
@@ -438,13 +455,14 @@ class CheckoutState extends State<CheckoutPage> {
               if (val.length == 5) {
                 final month = int.tryParse(val.substring(0, 2));
                 final year = int.tryParse(val.substring(3, 5));
-                final cyear = int.tryParse(DateTime.now().year.toString().substring(2, 4));
+                final cyear = int.tryParse(
+                    DateTime.now().year.toString().substring(2, 4));
                 if (month < 1 || month > 12)
-                  return "Ingresa un mes valido";
-                else if (year < cyear) return "Ingresa un año valido";
+                  return "Ingresa un mes válido";
+                else if (year < cyear) return "Ingresa un año válido";
                 return null;
               } else
-                return "Ingresa una fecha valida";
+                return "Ingresa una fecha válida";
             },
           ),
         ]));
@@ -460,7 +478,7 @@ class CheckoutState extends State<CheckoutPage> {
         return AlertDialog(
           title: Column(
             children: [
-              Text("Estas seguro que quieres hacer el pedido"),
+              Text("¿Estás seguro que quieres hacer el pedido?"),
             ],
           ),
           content: Text("Pulsa continuar para ordenar los pedidos"),
@@ -506,10 +524,12 @@ class CheckoutState extends State<CheckoutPage> {
                     month: (_creditCard) ? _month : null,
                     year: (_creditCard) ? _year : null,
                     pay: (_creditCard) ? null : _pay,
-                    products: _productsList.map((key, value) => MapEntry(key.id, value)),
+                    products: _productsList
+                        .map((key, value) => MapEntry(key.id, value)),
                     total: _total,
                     status: "paid",
-                    consumerId: BlocProvider.of<AuthProvider>(this.context).user.id,
+                    consumerId:
+                        BlocProvider.of<AuthProvider>(this.context).user.id,
                     businessId: key,
                   ));
                 });
@@ -517,10 +537,12 @@ class CheckoutState extends State<CheckoutPage> {
 
                 bool savedOrder;
                 pedido.forEach((element) async {
-                  savedOrder = await BlocProvider.of<AuthProvider>(this.context).saveOrder(element);
+                  savedOrder = await BlocProvider.of<AuthProvider>(this.context)
+                      .saveOrder(element);
                   if (savedOrder)
                     orders[element.businessId].forEach((element) {
-                      BlocProvider.of<ProductsProvider>(this.context).removeOfCart(element.id);
+                      BlocProvider.of<ProductsProvider>(this.context)
+                          .removeOfCart(element.id);
                     });
                   else
                     c++;
@@ -532,7 +554,7 @@ class CheckoutState extends State<CheckoutPage> {
                 else if (c == pedido.length) {
                   messenger("Error al generar el pedido", 3);
                 } else
-                  messenger("Error al generar algunas ordenes", 2);
+                  messenger("Error al generar algunas órdenes", 2);
                 setState(() {});
               },
               child: Row(
@@ -554,13 +576,13 @@ class CheckoutState extends State<CheckoutPage> {
     bool valid = _formKey.currentState.validate();
     if (!_creditCard && valid) {
       if (_pay < _total) {
-        messenger("Debes ingresar un valor valido", 3);
+        messenger("Debes ingresar un valor válido", 3);
         return false;
       }
       return valid;
     }
     if (valid && _productsList.length < 0) {
-      messenger("TU carrito esta vacio, por favor agrega productos", 4);
+      messenger("TU carrito esta vacío, por favor agrega productos", 4);
       valid = false;
     }
     return valid;

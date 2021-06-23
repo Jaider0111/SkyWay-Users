@@ -62,8 +62,9 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (BuildContext context, BoxConstraints constraints) {
           return BackgroundWidget(
             constraints: constraints,
-            child:
-                (constraints.maxWidth > 800.0) ? _rowView(constraints) : _columnView(constraints),
+            child: (constraints.maxWidth > 800.0)
+                ? _rowView(constraints)
+                : _columnView(constraints),
           );
         },
       ),
@@ -101,7 +102,9 @@ class _ProfilePageState extends State<ProfilePage> {
         height: (constraints.maxWidth > 800.0)
             ? constraints.maxHeight
             : min(constraints.maxWidth, constraints.maxHeight),
-        width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 1.3 : constraints.maxWidth,
+        width: (constraints.maxWidth > 800.0)
+            ? constraints.maxWidth / 1.3
+            : constraints.maxWidth,
         child: Theme(
           data: ThemeData(fontFamily: "Itim", primaryColor: Colors.black),
           child: Scrollbar(
@@ -135,14 +138,19 @@ class _ProfilePageState extends State<ProfilePage> {
                             children: [
                               Container(
                                 padding: EdgeInsets.only(
-                                    left: (constraints.maxWidth <= 800) ? 150.0 : 250.0,
-                                    top: (constraints.maxWidth <= 800) ? 100.0 : 150.0),
+                                    left: (constraints.maxWidth <= 800)
+                                        ? 150.0
+                                        : 250.0,
+                                    top: (constraints.maxWidth <= 800)
+                                        ? 100.0
+                                        : 150.0),
                                 child: Text(
                                   '${_user.name} ${(_type == "Usuario") ? _user.lastname : ""}\n ${_provider.status}',
                                   textAlign: TextAlign.start,
                                   style: TextStyle(
                                     fontFamily: "Itim",
-                                    fontSize: (constraints.maxWidth <= 800) ? 20 : 35,
+                                    fontSize:
+                                        (constraints.maxWidth <= 800) ? 20 : 35,
                                   ),
                                 ),
                               ),
@@ -159,10 +167,14 @@ class _ProfilePageState extends State<ProfilePage> {
                               children: [
                                 CircleAvatar(
                                   backgroundColor: Colors.white,
-                                  radius: (constraints.maxWidth <= 800) ? 65.0 : 110.0,
-                                  backgroundImage: (_type == "Usuario" && _user.image != null)
+                                  radius: (constraints.maxWidth <= 800)
+                                      ? 65.0
+                                      : 110.0,
+                                  backgroundImage: (_type == "Usuario" &&
+                                          _user.image != null)
                                       ? NetworkImage(_user.image)
-                                      : AssetImage("assets/images/avatar_profile.png"),
+                                      : AssetImage(
+                                          "assets/images/avatar_profile.png"),
                                 ),
                               ],
                             ),
@@ -181,7 +193,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.name}",
                     edit: _edit,
                     onChange: (val) => _user.name = val,
-                    validator: (val) => (val.length >= 3) ? null : "Ingrese nombre valido",
+                    validator: (val) =>
+                        (val.length >= 3) ? null : "Ingrese nombre válido",
                   ),
                   if (_type == "Usuario")
                     MyContainer(
@@ -190,7 +203,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       text: "${_user.lastname} ",
                       edit: _edit,
                       onChange: (val) => _user.lastname = val,
-                      validator: (val) => (val.length >= 3) ? null : "Ingrese apellido valido",
+                      validator: (val) =>
+                          (val.length >= 3) ? null : "Ingrese apellido válido",
                     ),
                   MyContainer(
                     constraints: constraints,
@@ -198,7 +212,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.identification}",
                     edit: _edit,
                     onChange: (val) => _user.identification = val,
-                    validator: (val) => (val.length >= 8) ? null : "Ingrese identificación valida",
+                    validator: (val) => (val.length >= 8)
+                        ? null
+                        : "Ingrese identificación válida",
                   ),
                   MyContainer(
                     constraints: constraints,
@@ -206,7 +222,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.address ?? "-"}",
                     edit: _edit,
                     onChange: (val) => _user.address = val,
-                    validator: (val) => (val.length > 5) ? null : "Ingresa una dirección válida",
+                    validator: (val) => (val.length > 5)
+                        ? null
+                        : "Ingresa una dirección válida",
                   ),
                   MyContainer(
                     constraints: constraints,
@@ -214,7 +232,8 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.email}",
                     edit: _edit,
                     onChange: (val) => _user.email = val,
-                    validator: (val) => (val.contains(RegExp(r'^[\w\.\*-_\+]+@[a-z]+(\.[a-z]+)+$')))
+                    validator: (val) => (val.contains(
+                            RegExp(r'^[\w\.\*-_\+]+@[a-z]+(\.[a-z]+)+$')))
                         ? null
                         : "Ingresa un correo correcto",
                   ),
@@ -224,8 +243,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     text: "${_user.phone ?? "-"}",
                     edit: _edit,
                     onChange: (val) => _user.phone = val,
-                    validator: (val) =>
-                        (val.length >= 10) ? null : "Ingrese número de teléfono valido",
+                    validator: (val) => (val.length >= 10)
+                        ? null
+                        : "Ingrese número de teléfono valido",
                   ),
                   if (_type == "Tienda")
                     MyContainerV2(
@@ -244,7 +264,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       constraints: constraints,
                       child: DropdownButtonFormField<String>(
                         autovalidateMode: AutovalidateMode.onUserInteraction,
-                        validator: (val) => (val != null) ? null : "Selecciona una categoria",
+                        validator: (val) =>
+                            (val != null) ? null : "Selecciona una categoría",
                         value: _user.category,
                         style: Theme.of(context).textTheme.bodyText1,
                         elevation: 10,
@@ -300,7 +321,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           showText: false,
                           validator: (val) => (val.length >= 8)
                               ? null
-                              : "La contraseña debe contener minimo 8 caracteres"),
+                              : "La contraseña debe contener mínimo 8 caracteres"),
                       constraints: constraints,
                     ),
                     MyContainerV2(
@@ -311,8 +332,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           label: "Confirma tu contraseña",
                           icon: Icons.lock,
                           showText: false,
-                          validator: (val) =>
-                              (val == _password) ? null : "Las contraseñas no coinciden"),
+                          validator: (val) => (val == _password)
+                              ? null
+                              : "Las contraseñas no coinciden"),
                       constraints: constraints,
                     ),
                   ],
@@ -391,8 +413,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     : null;
                     */
                 String save = (_type == "Tienda")
-                    ? await BlocProvider.of<AuthProvider>(this.context).updateStore(_user)
-                    : await BlocProvider.of<AuthProvider>(this.context).updatePersona(_user);
+                    ? await BlocProvider.of<AuthProvider>(this.context)
+                        .updateStore(_user)
+                    : await BlocProvider.of<AuthProvider>(this.context)
+                        .updatePersona(_user);
 
                 Navigator.of(this.context).pop();
                 if (save == "Actualización exitosa") {
@@ -441,7 +465,9 @@ class MyContainer extends StatelessWidget {
     final controller = TextEditingController(text: text);
     return Container(
       margin: EdgeInsets.all(20),
-      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 4 : constraints.maxWidth,
+      width: (constraints.maxWidth > 800.0)
+          ? constraints.maxWidth / 4
+          : constraints.maxWidth,
       decoration: BoxDecoration(
         color: Colors.white70,
         borderRadius: BorderRadius.all(Radius.circular(20)),
@@ -451,8 +477,9 @@ class MyContainer extends StatelessWidget {
           Container(
             padding: EdgeInsets.all(20.0),
             decoration: BoxDecoration(
-              borderRadius:
-                  BorderRadius.only(topLeft: Radius.circular(20), bottomLeft: Radius.circular(20)),
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  bottomLeft: Radius.circular(20)),
               color: Colors.white60,
             ),
             child: Text(
@@ -491,7 +518,8 @@ class MyContainer extends StatelessWidget {
 }
 
 class MyContainerV2 extends StatelessWidget {
-  const MyContainerV2({Key key, @required this.child, @required this.constraints})
+  const MyContainerV2(
+      {Key key, @required this.child, @required this.constraints})
       : super(key: key);
   final Widget child;
   final BoxConstraints constraints;
@@ -500,7 +528,9 @@ class MyContainerV2 extends StatelessWidget {
     return Container(
       margin: EdgeInsets.all(20),
       padding: EdgeInsets.all(20),
-      width: (constraints.maxWidth > 800.0) ? constraints.maxWidth / 4 : constraints.maxWidth,
+      width: (constraints.maxWidth > 800.0)
+          ? constraints.maxWidth / 4
+          : constraints.maxWidth,
       decoration: BoxDecoration(
         color: Colors.white70,
         borderRadius: BorderRadius.all(Radius.circular(20)),

@@ -38,6 +38,7 @@ class NavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _authProvider = BlocProvider.of<AuthProvider>(context);
     return Hero(
       tag: 'navbar',
       child: SizedBox(
@@ -63,7 +64,8 @@ class NavBar extends StatelessWidget {
                     NavBarButton(
                       name: "Home",
                       icon: Icons.home_rounded,
-                      route: "dashboard_for_buyers",
+                      route:
+                          (_authProvider.status == 'Tienda') ? 'dashboard' : "dashboard_for_buyers",
                     ),
                     NavBarButton(
                       name: "Mis ordenes",

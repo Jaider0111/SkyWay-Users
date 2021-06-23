@@ -82,7 +82,7 @@ class CheckoutState extends State<CheckoutPage> {
               child: Column(
                 children: [
                   Text(
-                    "PRODUCTOS A COMPRAR",
+                    " PRODUCTOS A COMPRAR ",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.black,

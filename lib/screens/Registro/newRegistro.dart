@@ -27,14 +27,14 @@ class RegistroPage extends StatefulWidget {
 class RegistroState extends State<RegistroPage> {
   final _formKey = GlobalKey<FormState>();
   List<Uint8List> _perfil = [];
-  String _name;
-  String _lastname;
-  String _identification;
-  String _email;
-  String _phone;
-  String _address;
-  String _password;
-  String _cPassword;
+  String _name = "";
+  String _lastname = "";
+  String _identification = "0";
+  String _email = "";
+  String _phone = "0";
+  String _address = "";
+  String _password = "";
+  String _cPassword = "";
   List _hora;
   String _category;
   bool _type;
@@ -142,7 +142,7 @@ class RegistroState extends State<RegistroPage> {
             SizedBox(height: 40.0),
             CustomInputText(
               errorStyle: errorStyle,
-              initialValue: "",
+              initialValue: _name,
               valueCallback: (val) => _name = val,
               label: (_type) ? "¿Como se llama tu tienda?" : 'Ingresa tu nombre',
               icon: (_type) ? Icons.shopping_cart : Icons.badge,
@@ -151,7 +151,7 @@ class RegistroState extends State<RegistroPage> {
             if (!_type)
               CustomInputText(
                 errorStyle: errorStyle,
-                initialValue: "",
+                initialValue: _lastname,
                 valueCallback: (val) => _lastname = val,
                 label: 'Ingresa tus apellidos',
                 icon: Icons.badge,
@@ -159,7 +159,7 @@ class RegistroState extends State<RegistroPage> {
               ),
             CustomInputText(
               errorStyle: errorStyle,
-              initialValue: "0",
+              initialValue: _identification,
               autovalidateMode: AutovalidateMode.disabled,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -206,7 +206,7 @@ class RegistroState extends State<RegistroPage> {
             ],
             CustomInputText(
               errorStyle: errorStyle,
-              initialValue: "",
+              initialValue: _email,
               valueCallback: (val) => _email = val,
               label: "Ingresa tu correo",
               icon: Icons.mail,
@@ -216,15 +216,12 @@ class RegistroState extends State<RegistroPage> {
             ),
             CustomInputText(
               errorStyle: errorStyle,
-              initialValue: "0",
+              initialValue: _phone,
               keyboardType: TextInputType.number,
               autovalidateMode: AutovalidateMode.disabled,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               valueCallback: (val) {
                 _phone = val;
-                print(_perfil != null);
-                print(_phone);
-                print(_email);
               },
               label: "Ingresa tu numero telefonico",
               icon: Icons.phone,
@@ -233,7 +230,7 @@ class RegistroState extends State<RegistroPage> {
             ),
             CustomInputText(
                 errorStyle: errorStyle,
-                initialValue: "",
+                initialValue: _address,
                 valueCallback: (val) => _address = val,
                 label: "Ingresa tu direccion",
                 icon: Icons.location_city,
@@ -241,7 +238,7 @@ class RegistroState extends State<RegistroPage> {
             CustomInputText(
                 errorStyle: errorStyle,
                 autovalidateMode: AutovalidateMode.always,
-                initialValue: "",
+                initialValue: _password,
                 valueCallback: (val) => _password = val,
                 label: "Ingresa tu contraseña",
                 icon: Icons.lock,
@@ -251,7 +248,7 @@ class RegistroState extends State<RegistroPage> {
             CustomInputText(
                 errorStyle: errorStyle,
                 autovalidateMode: AutovalidateMode.always,
-                initialValue: "",
+                initialValue: _cPassword,
                 valueCallback: (val) => _cPassword = val,
                 label: "Confirma tu contraseña",
                 icon: Icons.lock,

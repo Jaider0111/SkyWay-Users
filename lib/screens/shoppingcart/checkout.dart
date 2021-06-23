@@ -360,23 +360,6 @@ class CheckoutState extends State<CheckoutPage> {
                             ],
                           ),
                         ),
-                        SizedBox(
-                          width: 20.0,
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('shoppingCart');
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.shopping_cart),
-                              SizedBox(width: 5.0),
-                              Text("Volver al carrito"),
-                            ],
-                          ),
-                        ),
                       ],
                     )),
                   ],

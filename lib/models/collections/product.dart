@@ -44,9 +44,10 @@ class ProductModel {
     this.amount = json["amount"];
     this.price = json["price"];
     this.isCustomizable = json["isCustomizable"];
-    this.options = (json["options"] as Map)?.cast<String, List<String>>();
+    this.options = (json["options"] as Map)
+        ?.map((key, value) => MapEntry(key.toString(), value.cast<String>()));
     this.images = (json["images"] as List)?.cast<String>();
-    this.stars = Random().nextDouble() * 5.0;
+    this.stars = Random().nextDouble() * 2.0 + 3;
   }
 
   ProductModel.fromJson2(dynamic json) {

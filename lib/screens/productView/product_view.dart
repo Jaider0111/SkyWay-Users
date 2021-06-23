@@ -45,7 +45,8 @@ class _ProductViewState extends State<ProductView> {
     bool isInCart = productsProvider.isInCart(widget.product.id);
     final Size constraints = MediaQuery.of(context).size;
     final formatter = NumberFormat.currency(decimalDigits: 0, symbol: '', locale: 'es_CO');
-    Map<String, List<String>> mapa = widget.product.options;
+    Map<String, List<String>> mapa =
+        widget.product.options.map((key, value) => MapEntry(key.toString(), value.cast<String>()));
     final controller = (isInCart)
         ? TextEditingController(
             text: productsProvider.getAmountof(widget.product.id).toString(),
@@ -226,7 +227,7 @@ class _ProductViewState extends State<ProductView> {
                 indent: 20,
                 endIndent: 20,
               ),
-              for (var key in mapa.keys)
+              for (var key in mapa.keys.cast<String>())
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -253,7 +254,7 @@ class _ProductViewState extends State<ProductView> {
                     Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        for (var texts in mapa[key])
+                        for (var texts in mapa[key].cast<String>())
                           Row(
                             children: [
                               SizedBox(

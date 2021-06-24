@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "903943053519",
+    "project_id": "skyway-d302a",
+    "storage_bucket": "skyway-d302a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:903943053519:android:76e31099ca7fc218b497ba",
+        "android_client_info": {
+          "package_name": "com.example.skyway_users"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "903943053519-ub7c8d8h7k5sn11kmmcg5v7efnbabdne.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyClLohS-G1nd4b4vbYwacUKpI40wNWjXH4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "903943053519-ub7c8d8h7k5sn11kmmcg5v7efnbabdne.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "903943053519-e8389gr1cg9fipoqilmuah4jtec5eb64.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.skywayUsers"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

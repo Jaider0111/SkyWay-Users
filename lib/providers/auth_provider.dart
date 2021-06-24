@@ -64,8 +64,8 @@ class AuthProvider extends Bloc {
   }
 
   Future<String> updatePersona(UserModel pModel) async {
-    //final url = Uri.https(baseUri, "api/users/update");
-    final url = Uri.http("127.0.0.1:8080", "api/users/update");
+    final url = Uri.https(baseUri, "api/users/update");
+    //final url = Uri.http("127.0.0.1:8080", "api/users/update");
     print(url.toString());
     final response = await http.put(
       url,
@@ -86,8 +86,8 @@ class AuthProvider extends Bloc {
   }
 
   Future<String> updateStore(StoreModel tModel) async {
-    //final url = Uri.https(baseUri, "api/stores/update");
-    final url = Uri.http("127.0.0.1:8080", "api/stores/update");
+    final url = Uri.https(baseUri, "api/stores/update");
+    //final url = Uri.http("127.0.0.1:8080", "api/stores/update");
     final response = await http.put(
       url,
       body: json.encode(tModel.toJson()),
